@@ -1,7 +1,7 @@
 <template>
   <div class="about">
     <RouterLink to="/">Home</RouterLink>
-    <h1>ABOUT</h1>
+    <h1>GAME</h1>
   </div>
 </template>
 

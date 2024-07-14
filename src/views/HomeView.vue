@@ -1,9 +1,15 @@
-<script setup lang="ts">
-import TheWelcome from '../components/TheWelcome.vue'
-</script>
+<script setup lang="ts"></script>
 
 <template>
   <main>
-    <TheWelcome />
+    <header>
+      <div class="wrapper">
+        <nav class="flex flex-col">
+          <RouterLink to="/">Home</RouterLink>
+          <RouterLink to="/about">About</RouterLink>
+          <RouterLink to="/game">New Game</RouterLink>
+        </nav>
+      </div>
+    </header>
   </main>
 </template>
