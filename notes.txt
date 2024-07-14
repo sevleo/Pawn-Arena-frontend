@@ -1,0 +1,39 @@
+npm run dev
+npx tailwindcss -i ./src/assets/main.css -o ./src/assets/output.css --watch
+
+Frontend (Vue.js)
+
+	1.	Vue Router:
+	•	Helps in managing navigation between different components or pages in your application.
+	•	Vue Router
+	2.	Vuex:
+	•	State management library for Vue.js. It can help manage the state of your dots and other game-related data.
+	•	Vuex
+	3.	Vue Draggable:
+	•	Allows you to create draggable elements, which can be useful for moving the dots around.
+	•	Vue Draggable
+	4.	Vue Socket.io:
+	•	A wrapper for Socket.io to use with Vue.js, making it easier to manage socket connections.
+	•	Vue Socket.io
+
+Backend (Node.js)
+
+	1.	Express.js:
+	•	A fast, unopinionated, minimalist web framework for Node.js.
+	•	Express.js
+	2.	Mongoose (for MongoDB):
+	•	An ODM (Object Data Modeling) library for MongoDB and Node.js, providing a straightforward, schema-based solution to model your application data.
+	•	Mongoose
+	3.	Sequelize (for MySQL):
+	•	A promise-based Node.js ORM for MySQL, Postgres, and other databases.
+	•	Sequelize
+	4.	Socket.io:
+	•	Enables real-time, bidirectional, and event-based communication. Essential for the real-time updates of the dot positions.
+	•	Socket.io
+	5.	dotenv:
+	•	Loads environment variables from a .env file into process.env. Useful for managing environment-specific configurations.
+	•	dotenv
+
+
+
+
