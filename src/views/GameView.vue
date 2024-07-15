@@ -1,16 +1,10 @@
+<script setup lang="ts">
+import { RouterLink } from 'vue-router'
+</script>
+
 <template>
-  <div class="about">
+  <div class="about flex flex-col">
     <RouterLink to="/">Home</RouterLink>
     <h1>GAME</h1>
   </div>
 </template>
-
-<style>
-@media (min-width: 1024px) {
-  .about {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-  }
-}
-</style>
