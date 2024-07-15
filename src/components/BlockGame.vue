@@ -1,4 +1,48 @@
-<script>
+<script setup lang="ts">
+import { ref, onMounted } from 'vue'
+import { io } from 'socket.io-client'
+
+const socket = io('http://localhost:3000')
+const canvasRef = ref<HTMLCanvasElement | null>(null)
+const position = ref({ x: 0, y: 0 })
+let context: CanvasRenderingContext2D | null = null
+
+const move = (direction: string) => {
+  socket.emit('move', direction)
+}
+
+onMounted(() => {
+  if (canvasRef.value) {
+    context = canvasRef.value.getContext('2d')
+  }
+
+  socket.on('position', (data: { x: number; y: number }) => {
+    console.log('position received:', data)
+    position.value = data
+
+    if (context) {
+      context.clearRect(0, 0, canvasRef.value!.width, canvasRef.value!.height)
+      context.fillRect(position.value.x, position.value.y, 20, 20)
+    }
+  })
+})
+</script>
+
+<template>
+  <div>
+    <canvas ref="canvasRef" width="640" height="480" style="border: 1px solid black"> </canvas>
+    <div>
+      <button v-on:click="move('right')">Right</button>
+      <button v-on:click="move('left')">Left</button>
+      <button v-on:click="move('up')">Up</button>
+      <button v-on:click="move('down')">Down</button>
+    </div>
+  </div>
+</template>
+
+<style scoped></style>
+
+<!-- <script>
 import io from 'socket.io-client'
 
 export default {
@@ -31,35 +75,4 @@ export default {
     }
   }
 }
-</script>
-
-<!-- <script setup lang="ts">
-import { ref, onMounted } from 'vue';
-import { io } from 'socket.io-client';
-
-const socket = ref({});
-const context = ref<CanvasRenderingContext2D | null>(null);
-const position = ref({ x: 0, y: 0 });
-
-onMounted(() => {
-  socket.value = io('http://localhost:3000');
-  const canvas = document.querySelector('canvas');
-  if (canvas) {
-    context.value = canvas.getContext('2d');
-  }
-});
 </script> -->
-
-<template>
-  <div>
-    <canvas ref="game" width="640" height="480" style="border: 1px solid black"> </canvas>
-    <div>
-      <button v-on:click="move('right')">Right</button>
-      <button v-on:click="move('left')">Left</button>
-      <button v-on:click="move('up')">Up</button>
-      <button v-on:click="move('down')">Down</button>
-    </div>
-  </div>
-</template>
-
-<style scoped></style>
