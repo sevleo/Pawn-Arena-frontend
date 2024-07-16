@@ -35,5 +35,4 @@ Backend (Node.js)
 	•	dotenv
 
 
-
-
+	1.	Redis: Use Redis as an in-memory data store that can be accessed by multiple servers. This allows you to keep the state centralized and synchronized across different instances.

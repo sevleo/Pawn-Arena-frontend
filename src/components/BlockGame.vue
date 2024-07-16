@@ -2,13 +2,15 @@
 import { ref, onMounted } from 'vue'
 import { io } from 'socket.io-client'
 
-const socket = io('http://localhost:3000')
+// const socket = io('http://localhost:3000')
 const canvasRef = ref<HTMLCanvasElement | null>(null)
 const position = ref({ x: 0, y: 0 })
 let context: CanvasRenderingContext2D | null = null
+let ws: WebSocket
 
 const move = (direction: string) => {
-  socket.emit('move', direction)
+  // socket.emit('move', direction)
+  ws.send(JSON.stringify({ type: 'move', data: direction }))
 }
 
 onMounted(() => {
@@ -16,15 +18,36 @@ onMounted(() => {
     context = canvasRef.value.getContext('2d')
   }
 
-  socket.on('position', (data: { x: number; y: number }) => {
-    console.log('position received:', data)
-    position.value = data
+  ws = new WebSocket('ws://localhost:3000')
+  ws.onopen = () => {
+    console.log('WebSocket connection established')
+  }
 
-    if (context) {
-      context.clearRect(0, 0, canvasRef.value!.width, canvasRef.value!.height)
-      context.fillRect(position.value.x, position.value.y, 20, 20)
+  ws.onmessage = (event) => {
+    const msg = JSON.parse(event.data)
+    if (msg.type === 'position') {
+      position.value = msg.data
+
+      if (context && canvasRef.value) {
+        context.clearRect(0, 0, canvasRef.value.width, canvasRef.value.height)
+        context.fillRect(position.value.x, position.value.y, 20, 20)
+      }
     }
-  })
+  }
+
+  ws.onclose = () => {
+    console.log('WebSocket connection closed')
+  }
+
+  // socket.on('position', (data: { x: number; y: number }) => {
+  //   console.log('position received:', data)
+  //   position.value = data
+
+  //   if (context) {
+  //     context.clearRect(0, 0, canvasRef.value!.width, canvasRef.value!.height)
+  //     context.fillRect(position.value.x, position.value.y, 20, 20)
+  //   }
+  // })
 })
 </script>
 
@@ -41,38 +64,3 @@ onMounted(() => {
 </template>
 
 <style scoped></style>
-
-<!-- <script>
-import io from 'socket.io-client'
-
-export default {
-  name: 'BlockGame',
-  data() {
-    return {
-      socket: {},
-      context: {},
-      position: {
-        x: 0,
-        y: 0
-      }
-    }
-  },
-  created() {
-    this.socket = io('http://localhost:3000')
-  },
-  mounted() {
-    this.context = this.$refs.game.getContext('2d')
-    this.socket.on('position', (data) => {
-      console.log('position received:', data)
-      this.position = data
-      this.context.clearRect(0, 0, this.$refs.game.width, this.$refs.game.height)
-      this.context.fillRect(this.position.x, this.position.y, 20, 20)
-    })
-  },
-  methods: {
-    move(direction) {
-      this.socket.emit('move', direction)
-    }
-  }
-}
-</script> -->
