@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { io } from 'socket.io-client'
+// import { io } from 'socket.io-client'
 
 // const socket = io('http://localhost:3000')
 const canvasRef = ref<HTMLCanvasElement | null>(null)
@@ -19,6 +19,7 @@ onMounted(() => {
   }
 
   ws = new WebSocket('ws://localhost:3000')
+
   ws.onopen = () => {
     console.log('WebSocket connection established')
   }
