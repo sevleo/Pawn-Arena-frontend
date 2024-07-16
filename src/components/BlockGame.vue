@@ -1,12 +1,9 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-// import { io } from 'socket.io-client'
+import { ws, setupWebSocket } from './utilities/webSocket'
+// import { socket, setupSocketIo } from './utilities/socketIo'
 
-// const socket = io('http://localhost:3000')
 const canvasRef = ref<HTMLCanvasElement | null>(null)
-const position = ref({ x: 0, y: 0 })
-let context: CanvasRenderingContext2D | null = null
-let ws: WebSocket
 
 const move = (direction: string) => {
   // socket.emit('move', direction)
@@ -14,41 +11,8 @@ const move = (direction: string) => {
 }
 
 onMounted(() => {
-  if (canvasRef.value) {
-    context = canvasRef.value.getContext('2d')
-  }
-
-  ws = new WebSocket('ws://localhost:3000')
-
-  ws.onopen = () => {
-    console.log('WebSocket connection established')
-  }
-
-  ws.onmessage = (event) => {
-    const msg = JSON.parse(event.data)
-    if (msg.type === 'position') {
-      position.value = msg.data
-
-      if (context && canvasRef.value) {
-        context.clearRect(0, 0, canvasRef.value.width, canvasRef.value.height)
-        context.fillRect(position.value.x, position.value.y, 20, 20)
-      }
-    }
-  }
-
-  ws.onclose = () => {
-    console.log('WebSocket connection closed')
-  }
-
-  // socket.on('position', (data: { x: number; y: number }) => {
-  //   console.log('position received:', data)
-  //   position.value = data
-
-  //   if (context) {
-  //     context.clearRect(0, 0, canvasRef.value!.width, canvasRef.value!.height)
-  //     context.fillRect(position.value.x, position.value.y, 20, 20)
-  //   }
-  // })
+  setupWebSocket(canvasRef)
+  // setupSocketIo(canvasRef)
 })
 </script>
 
