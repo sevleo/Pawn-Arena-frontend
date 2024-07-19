@@ -16,14 +16,12 @@ export function setupWebSocket(canvasRef: Ref<HTMLCanvasElement | null>) {
 
   ws.onmessage = (event) => {
     const msg = JSON.parse(event.data)
+    if (msg.type === 'initial position') {
+      console.log('initial position received:', msg.data)
+      clientId = msg.data.clientId
+    }
     if (msg.type === 'position') {
       console.log('position received:', msg.data)
-      if (msg.clientId) {
-        clientId = msg.clientId
-      }
-
-      console.log(clientId)
-
       if (context && canvasRef.value) {
         context.clearRect(0, 0, canvasRef.value.width, canvasRef.value.height)
         if (msg.data.x !== undefined) {
@@ -38,8 +36,10 @@ export function setupWebSocket(canvasRef: Ref<HTMLCanvasElement | null>) {
             } else {
               context.fillStyle = 'white'
             }
-
-            context.fillRect(value.position.x, value.position.y, 20, 20)
+            // context.fillRect(value.position.x, value.position.y, 20, 20)
+            context.beginPath() // Start a new path
+            context.arc(value.position.x, value.position.y, 10, 0, Math.PI * 2) // Draw a circle with radius 10
+            context.fill() // Fill the circle with the current fill style
           })
         }
       }
