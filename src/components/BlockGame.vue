@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import { ws, setupWebSocket } from './utilities/webSocket'
 // import { socket, setupSocketIo } from './utilities/socketIo'
 
@@ -10,9 +10,31 @@ const move = (direction: string) => {
   ws.send(JSON.stringify({ type: 'move', data: direction }))
 }
 
+const handleKeyDown = (event: KeyboardEvent) => {
+  switch (event.key) {
+    case 'ArrowUp':
+      move('up')
+      break
+    case 'ArrowDown':
+      move('down')
+      break
+    case 'ArrowLeft':
+      move('left')
+      break
+    case 'ArrowRight':
+      move('right')
+      break
+  }
+}
+
 onMounted(() => {
   setupWebSocket(canvasRef)
   // setupSocketIo(canvasRef)
+  window.addEventListener('keydown', handleKeyDown)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('keydown', handleKeyDown)
 })
 </script>
 
