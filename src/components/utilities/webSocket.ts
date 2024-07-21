@@ -1,6 +1,5 @@
 import { ref, type Ref } from 'vue'
 
-const position = ref({ x: 0, y: 0 })
 let clientId
 
 export let ws: WebSocket
@@ -24,24 +23,22 @@ export function setupWebSocket(canvasRef: Ref<HTMLCanvasElement | null>) {
       console.log('position received:', msg.data)
       if (context && canvasRef.value) {
         context.clearRect(0, 0, canvasRef.value.width, canvasRef.value.height)
-        if (msg.data.x !== undefined) {
-          context.fillRect(msg.data.x, msg.data.y, 20, 20)
-        } else {
-          Object.entries(msg.data).forEach(([key, value]) => {
-            // console.log(key)
-            // console.log(value.position.x)
-            // console.log(value.position.y)
-            if (value.clientId === clientId) {
-              context.fillStyle = 'green'
-            } else {
-              context.fillStyle = 'white'
-            }
-            // context.fillRect(value.position.x, value.position.y, 20, 20)
-            context.beginPath() // Start a new path
-            context.arc(value.position.x, value.position.y, 10, 0, Math.PI * 2) // Draw a circle with radius 10
-            context.fill() // Fill the circle with the current fill style
-          })
-        }
+
+        Object.entries(msg.data.allPositions).forEach(([key, value]) => {
+          console.log(value)
+          console.log(value.clientId)
+          console.log(clientId)
+          if (value.clientId === clientId) {
+            context.fillStyle = 'green'
+          } else {
+            context.fillStyle = 'white'
+          }
+          // context.fillRect(value.position.x, value.position.y, 20, 20)
+          context.beginPath() // Start a new path
+          console.log()
+          context.arc(value.position.x, value.position.y, 10, 0, Math.PI * 2) // Draw a circle with radius 10
+          context.fill() // Fill the circle with the current fill style
+        })
       }
     }
   }

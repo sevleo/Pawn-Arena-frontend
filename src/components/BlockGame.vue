@@ -1,59 +1,62 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
 import { ws, setupWebSocket } from './utilities/webSocket'
-// import { socket, setupSocketIo } from './utilities/socketIo'
 
 const canvasRef = ref<HTMLCanvasElement | null>(null)
 const activeDirections = ref<Set<string>>(new Set())
 let animationFrameId: number | null = null
 
-const move = (direction: string) => {
-  // socket.emit('move', direction)
+const move = (direction: string[]) => {
   ws.send(JSON.stringify({ type: 'move', data: direction }))
 }
 
 const animateMovement = () => {
   if (activeDirections.value.size > 0) {
-    activeDirections.value.forEach((direction) => {
-      move(direction)
-    })
+    const directionsArray = Array.from(activeDirections.value)
+    move(directionsArray)
   }
   animationFrameId = requestAnimationFrame(animateMovement)
 }
 
 const handleKeyDown = (event: KeyboardEvent) => {
-  const direction = getDirectionFromKey(event.key)
-  if (direction) {
-    activeDirections.value.add(direction)
+  // Start moving
+  if (
+    event.key === 'ArrowLeft' ||
+    event.key === 'ArrowRight' ||
+    event.key === 'ArrowUp' ||
+    event.key === 'ArrowDown'
+  ) {
+    activeDirections.value.add(event.key)
     if (!animationFrameId) {
       animateMovement()
     }
   }
+
+  // Start boosting
+  if (event.key === 'Shift') {
+    console.log(event.key)
+    ws.send(JSON.stringify({ type: 'boost', data: true }))
+  }
 }
 
 const handleKeyUp = (event: KeyboardEvent) => {
-  const direction = getDirectionFromKey(event.key)
-  if (direction) {
-    activeDirections.value.delete(direction)
+  // Stop moving
+  if (
+    event.key === 'ArrowLeft' ||
+    event.key === 'ArrowRight' ||
+    event.key === 'ArrowUp' ||
+    event.key === 'ArrowDown'
+  ) {
+    activeDirections.value.delete(event.key)
     if (activeDirections.value.size === 0 && animationFrameId) {
       cancelAnimationFrame(animationFrameId)
       animationFrameId = null
     }
   }
-}
 
-const getDirectionFromKey = (key: string): string | null => {
-  switch (key) {
-    case 'ArrowUp':
-      return 'up'
-    case 'ArrowDown':
-      return 'down'
-    case 'ArrowLeft':
-      return 'left'
-    case 'ArrowRight':
-      return 'right'
-    default:
-      return null
+  // Stop boosting
+  if (event.key === 'Shift') {
+    console.log(event.key)
   }
 }
 
@@ -76,12 +79,6 @@ onUnmounted(() => {
 <template>
   <div>
     <canvas ref="canvasRef" width="640" height="480" style="border: 1px solid black"> </canvas>
-    <!-- <div>
-      <button v-on:click="move('right')">Right</button>
-      <button v-on:click="move('left')">Left</button>
-      <button v-on:click="move('up')">Up</button>
-      <button v-on:click="move('down')">Down</button>
-    </div> -->
   </div>
 </template>
 
