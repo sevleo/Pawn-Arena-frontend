@@ -36,3 +36,12 @@ Backend (Node.js)
 
 
 	1.	Redis: Use Redis as an in-memory data store that can be accessed by multiple servers. This allows you to keep the state centralized and synchronized across different instances.
+
+
+
+
+	on index/:
+		New Game button
+		/game opens on click
+		show current number of players
+		if 2 players
