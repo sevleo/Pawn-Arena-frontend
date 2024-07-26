@@ -57,6 +57,7 @@ const handleKeyUp = (event: KeyboardEvent) => {
   // Stop boosting
   if (event.key === 'Shift') {
     console.log(event.key)
+    ws.send(JSON.stringify({ type: 'boost', data: false }))
   }
 }
 
