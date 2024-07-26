@@ -6,15 +6,11 @@ const canvasRef = ref<HTMLCanvasElement | null>(null)
 const activeDirections = ref<Set<string>>(new Set())
 let animationFrameId: number | null = null
 
-const move = (direction: string[]) => {
-  ws.send(JSON.stringify({ type: 'move', data: direction }))
+const updateDirections = () => {
+  ws.send(JSON.stringify({ type: 'move', data: Array.from(activeDirections.value) }))
 }
 
 const animateMovement = () => {
-  if (activeDirections.value.size > 0) {
-    const directionsArray = Array.from(activeDirections.value)
-    move(directionsArray)
-  }
   animationFrameId = requestAnimationFrame(animateMovement)
 }
 
@@ -26,9 +22,9 @@ const handleKeyDown = (event: KeyboardEvent) => {
     event.key === 'ArrowUp' ||
     event.key === 'ArrowDown'
   ) {
-    activeDirections.value.add(event.key)
-    if (!animationFrameId) {
-      animateMovement()
+    if (!activeDirections.value.has(event.key)) {
+      activeDirections.value.add(event.key)
+      updateDirections()
     }
   }
 
@@ -48,9 +44,9 @@ const handleKeyUp = (event: KeyboardEvent) => {
     event.key === 'ArrowDown'
   ) {
     activeDirections.value.delete(event.key)
-    if (activeDirections.value.size === 0 && animationFrameId) {
-      cancelAnimationFrame(animationFrameId)
-      animationFrameId = null
+    if (activeDirections.value.has(event.key)) {
+      activeDirections.value.delete(event.key)
+      updateDirections()
     }
   }
 
@@ -66,6 +62,7 @@ onMounted(() => {
   // setupSocketIo(canvasRef)
   window.addEventListener('keydown', handleKeyDown)
   window.addEventListener('keyup', handleKeyUp)
+  animateMovement()
 })
 
 onUnmounted(() => {

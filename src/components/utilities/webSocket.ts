@@ -20,14 +20,11 @@ export function setupWebSocket(canvasRef: Ref<HTMLCanvasElement | null>) {
       clientId = msg.data.clientId
     }
     if (msg.type === 'position') {
-      console.log('position received:', msg.data)
+      console.log(msg.data.allPositions)
       if (context && canvasRef.value) {
         context.clearRect(0, 0, canvasRef.value.width, canvasRef.value.height)
 
         Object.entries(msg.data.allPositions).forEach(([key, value]) => {
-          console.log(value)
-          console.log(value.clientId)
-          console.log(clientId)
           if (value.clientId === clientId) {
             context.fillStyle = 'green'
           } else {
@@ -35,7 +32,6 @@ export function setupWebSocket(canvasRef: Ref<HTMLCanvasElement | null>) {
           }
           // context.fillRect(value.position.x, value.position.y, 20, 20)
           context.beginPath() // Start a new path
-          console.log()
           context.arc(value.position.x, value.position.y, 10, 0, Math.PI * 2) // Draw a circle with radius 10
           context.fill() // Fill the circle with the current fill style
         })
