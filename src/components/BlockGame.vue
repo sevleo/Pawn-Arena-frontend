@@ -24,6 +24,7 @@ const handleKeyDown = (event: KeyboardEvent) => {
   ) {
     if (!activeDirections.value.has(event.key)) {
       activeDirections.value.add(event.key)
+      console.log('update directions down')
       updateDirections()
     }
   }
@@ -43,7 +44,6 @@ const handleKeyUp = (event: KeyboardEvent) => {
     event.key === 'ArrowUp' ||
     event.key === 'ArrowDown'
   ) {
-    activeDirections.value.delete(event.key)
     if (activeDirections.value.has(event.key)) {
       activeDirections.value.delete(event.key)
       updateDirections()

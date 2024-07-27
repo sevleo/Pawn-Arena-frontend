@@ -20,7 +20,7 @@ export function setupWebSocket(canvasRef: Ref<HTMLCanvasElement | null>) {
       clientId = msg.data.clientId
     }
     if (msg.type === 'position') {
-      console.log(msg.data.allPositions)
+      // console.log(msg.data.allPositions)
       if (context && canvasRef.value) {
         context.clearRect(0, 0, canvasRef.value.width, canvasRef.value.height)
 

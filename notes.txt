@@ -35,13 +35,18 @@ Backend (Node.js)
 	•	dotenv
 
 
-	1.	Redis: Use Redis as an in-memory data store that can be accessed by multiple servers. This allows you to keep the state centralized and synchronized across different instances.
-
+	1. Redis: Use Redis as an in-memory data store that can be accessed by multiple servers. This allows you to keep the state centralized and synchronized across different instances.
+	2. Docker
 
 
 
 	on index/:
-		New Game button
-		/game opens on click
-		show current number of players
-		if 2 players
+		List of open games
+			On each game, current number of players & "join game" button
+		
+		New game button
+			Create a new game and adds it to the list
+
+		When last player leaves a game, the game is terminated and removed from the list
+
+		When player joins a game, /game opens
