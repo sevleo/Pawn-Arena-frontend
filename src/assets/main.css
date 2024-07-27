@@ -5,6 +5,9 @@
   margin: 0 auto;
   padding: 2rem;
   font-weight: normal;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 a,
@@ -27,8 +30,8 @@ a,
   }
 
   #app {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    padding: 0 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 }

@@ -1,15 +1,24 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
-import { ws, setupWebSocket } from './utilities/webSocket'
+import { ws, setupWebSocket } from '../services/webSocket'
+import { initializeCanvas, drawPositions } from '@/utilities/canvasManager'
+import { type PositionMessage, type InitialPositionMessage } from '@/types/message'
 
-const canvasRef = ref<HTMLCanvasElement | null>(null)
+// List of active directions
 const activeDirections = ref<Set<string>>(new Set())
+
+// Variable for requesting frame animation update
 let animationFrameId: number | null = null
 
+// CanvasRef for canvas drawing
+const canvasRef = ref<HTMLCanvasElement | null>(null)
+
+// Send updated directions to server
 const updateDirections = () => {
   ws.send(JSON.stringify({ type: 'move', data: Array.from(activeDirections.value) }))
 }
 
+// Frame update loop
 const animateMovement = () => {
   animationFrameId = requestAnimationFrame(animateMovement)
 }
@@ -24,14 +33,12 @@ const handleKeyDown = (event: KeyboardEvent) => {
   ) {
     if (!activeDirections.value.has(event.key)) {
       activeDirections.value.add(event.key)
-      console.log('update directions down')
       updateDirections()
     }
   }
 
   // Start boosting
   if (event.key === 'Shift') {
-    console.log(event.key)
     ws.send(JSON.stringify({ type: 'boost', data: true }))
   }
 }
@@ -57,8 +64,15 @@ const handleKeyUp = (event: KeyboardEvent) => {
   }
 }
 
+const onMessage = (msg: PositionMessage | InitialPositionMessage) => {
+  if (msg.type === 'position') {
+    drawPositions(canvasRef, msg.data.allPositions)
+  }
+}
+
 onMounted(() => {
-  setupWebSocket(canvasRef)
+  initializeCanvas(canvasRef)
+  setupWebSocket(onMessage)
   // setupSocketIo(canvasRef)
   window.addEventListener('keydown', handleKeyDown)
   window.addEventListener('keyup', handleKeyUp)
@@ -76,7 +90,7 @@ onUnmounted(() => {
 
 <template>
   <div>
-    <canvas ref="canvasRef" width="640" height="480" style="border: 1px solid black"> </canvas>
+    <canvas ref="canvasRef" width="800" height="800" style="border: 0.5px solid wheat"> </canvas>
   </div>
 </template>
 

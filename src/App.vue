@@ -3,7 +3,7 @@ import BlockGame from './components/BlockGame.vue'
 </script>
 
 <template>
-  <div id="app">
+  <div className="">
     <BlockGame />
   </div>
 </template>

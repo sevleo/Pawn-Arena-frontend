@@ -50,3 +50,8 @@ Backend (Node.js)
 		When last player leaves a game, the game is terminated and removed from the list
 
 		When player joins a game, /game opens
+
+
+
+Tasks:
+1. refactor webSocket.ts to seperate websocket logic from game logic
