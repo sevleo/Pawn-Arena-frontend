@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
-import { ws, setupWebSocket } from '../services/webSocket'
-import { initializeCanvas, drawPositions } from '@/utilities/canvasManager'
-import { type PositionMessage, type InitialPositionMessage } from '@/types/message'
+import { ws } from '../services/webSocket'
+import { setup } from '@/utilities/setup'
 
 // List of active directions
 const activeDirections = ref<Set<string>>(new Set())
@@ -64,16 +63,8 @@ const handleKeyUp = (event: KeyboardEvent) => {
   }
 }
 
-const onMessage = (msg: PositionMessage | InitialPositionMessage) => {
-  if (msg.type === 'position') {
-    drawPositions(canvasRef, msg.data.allPositions)
-  }
-}
-
 onMounted(() => {
-  initializeCanvas(canvasRef)
-  setupWebSocket(onMessage)
-  // setupSocketIo(canvasRef)
+  setup(canvasRef)
   window.addEventListener('keydown', handleKeyDown)
   window.addEventListener('keyup', handleKeyUp)
   animateMovement()

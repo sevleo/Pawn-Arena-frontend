@@ -1,10 +1,12 @@
-// src/setup.ts
 import { type Ref } from 'vue'
 import { setupWebSocket } from '../services/webSocket'
-import { drawPositions } from './canvasManager'
+import { drawPositions, initializeCanvas } from './canvasManager'
+import { type PositionMessage, type InitialPositionMessage } from '@/types/message'
 
 export function setup(canvasRef: Ref<HTMLCanvasElement | null>) {
-  setupWebSocket((msg) => {
+  initializeCanvas(canvasRef)
+
+  setupWebSocket((msg: PositionMessage | InitialPositionMessage) => {
     if (msg.type === 'position') {
       drawPositions(canvasRef, msg.data.allPositions)
     }

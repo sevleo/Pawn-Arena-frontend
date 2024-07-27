@@ -16,11 +16,11 @@ export function drawPositions(
   canvasRef: Ref<HTMLCanvasElement | null>,
   allPositions: AllPositions
 ) {
-  // console.log(msg.data.allPositions)
   if (context && canvasRef.value) {
     context.clearRect(0, 0, canvasRef.value.width, canvasRef.value.height)
 
     Object.entries(allPositions).forEach(([, value]) => {
+      // console.log(value)
       if (context) {
         context.fillStyle = value.clientId === getClientId() ? 'green' : 'white'
         context.beginPath() // Start a new path
