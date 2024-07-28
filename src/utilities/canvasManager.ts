@@ -38,6 +38,7 @@ export function drawPositions(
 
         let targetPosition
         let weaponPosition
+
         const lineLength = 30
         if (value.clientId === getClientId()) {
           // Calculate direction towards mouse position
@@ -76,10 +77,10 @@ export function drawPositions(
             y: value.position.y + (direction.directionY / magnitude) * lineLength
           }
 
-          targetPosition = {
-            x: value.position.x + (direction.directionX / magnitude) * lineLength * 2,
-            y: value.position.y + (direction.directionY / magnitude) * lineLength * 2
-          }
+          // targetPosition = {
+          //   x: value.position.x + direction.directionX,
+          //   y: value.position.y + direction.directionY
+          // }
         }
 
         // Draw the target position line
