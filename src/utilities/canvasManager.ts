@@ -2,6 +2,7 @@ import { type Ref } from 'vue'
 import { getClientId } from '@/services/webSocket'
 import { type AllPositions } from '@/types/allPositions'
 import { ws } from '@/services/webSocket'
+import { sendFaceDirectionUpdate } from '@/services/webSocket'
 
 let context: CanvasRenderingContext2D | null = null
 let mousePosition = { x: 0, y: 0 }
@@ -57,7 +58,7 @@ export function drawPositions(
             y: value.position.y + directionY
           }
 
-          sendDirectionUpdate({
+          sendFaceDirectionUpdate({
             directionX: directionX,
             directionY: directionY
           })
@@ -107,13 +108,4 @@ function updateMousePosition(event: MouseEvent) {
       y: event.clientY - rect.top
     }
   }
-}
-
-function sendDirectionUpdate(direction: { directionX: number; directionY: number }) {
-  const message = {
-    type: 'updateDirection',
-    clientId: getClientId(),
-    direction
-  }
-  ws.send(JSON.stringify(message))
 }

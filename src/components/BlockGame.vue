@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
-import { ws } from '../services/webSocket'
 import { setup } from '@/utilities/setup'
-
+import { updateDirections, updateBoost } from '../services/webSocket'
 // List of active directions
 const activeDirections = ref<Set<string>>(new Set())
 
@@ -11,11 +10,6 @@ let animationFrameId: number | null = null
 
 // CanvasRef for canvas drawing
 const canvasRef = ref<HTMLCanvasElement | null>(null)
-
-// Send updated directions to server
-const updateDirections = () => {
-  ws.send(JSON.stringify({ type: 'move', data: Array.from(activeDirections.value) }))
-}
 
 // Frame update loop
 const animateMovement = () => {
@@ -37,13 +31,13 @@ const handleKeyDown = (event: KeyboardEvent) => {
   ) {
     if (!activeDirections.value.has(key)) {
       activeDirections.value.add(key)
-      updateDirections()
+      updateDirections(activeDirections)
     }
   }
 
   // Start boosting
   if (event.key === 'Shift') {
-    ws.send(JSON.stringify({ type: 'boost', data: true }))
+    updateBoost(true)
   }
 }
 
@@ -63,13 +57,13 @@ const handleKeyUp = (event: KeyboardEvent) => {
   ) {
     if (activeDirections.value.has(key)) {
       activeDirections.value.delete(key)
-      updateDirections()
+      updateDirections(activeDirections)
     }
   }
 
   // Stop boosting
   if (event.key === 'Shift') {
-    ws.send(JSON.stringify({ type: 'boost', data: false }))
+    updateBoost(false)
   }
 }
 
