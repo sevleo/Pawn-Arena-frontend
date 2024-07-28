@@ -47,8 +47,6 @@ export function drawPositions(
 
           const magnitude = Math.sqrt(directionX * directionX + directionY * directionY)
 
-          // console.log(magnitude)
-
           weaponPosition = {
             x: value.position.x + (directionX / magnitude) * lineLength,
             y: value.position.y + (directionY / magnitude) * lineLength
