@@ -1,19 +1,23 @@
-import { type PositionMessage, type InitialPositionMessage } from '@/types/message'
 import { type Ref } from 'vue'
+import { drawPositions } from '@/utilities/canvasManager'
 
 export let ws: WebSocket
 let clientId: string | undefined
 
-export function setupWebSocket(onMessage: (msg: PositionMessage | InitialPositionMessage) => void) {
+export function setupWebSocket(canvasRef: Ref<HTMLCanvasElement | null>) {
   ws = new WebSocket('ws://localhost:3000')
 
   ws.onmessage = (event) => {
     const msg = JSON.parse(event.data)
+
     if (msg.type === 'initial position') {
       console.log('initial position received:', msg)
       clientId = msg.data.clientId
     }
-    onMessage(msg)
+
+    if (msg.type === 'position') {
+      drawPositions(canvasRef, msg.data.allPositions)
+    }
   }
 
   ws.onclose = () => {

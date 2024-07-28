@@ -1,7 +1,6 @@
 import { type Ref } from 'vue'
 import { getClientId } from '@/services/webSocket'
 import { type AllPositions } from '@/types/allPositions'
-import { ws } from '@/services/webSocket'
 import { sendFaceDirectionUpdate } from '@/services/webSocket'
 
 let context: CanvasRenderingContext2D | null = null
