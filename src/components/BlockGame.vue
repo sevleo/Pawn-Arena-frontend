@@ -23,15 +23,20 @@ const animateMovement = () => {
 }
 
 const handleKeyDown = (event: KeyboardEvent) => {
+  const key = event.key.toLowerCase() // Convert key to lowercase
   // Start moving
   if (
-    event.key === 'ArrowLeft' ||
-    event.key === 'ArrowRight' ||
-    event.key === 'ArrowUp' ||
-    event.key === 'ArrowDown'
+    key === 'arrowleft' ||
+    key === 'arrowright' ||
+    key === 'arrowup' ||
+    key === 'arrowdown' ||
+    key === 'a' ||
+    key === 'd' ||
+    key === 'w' ||
+    key === 's'
   ) {
-    if (!activeDirections.value.has(event.key)) {
-      activeDirections.value.add(event.key)
+    if (!activeDirections.value.has(key)) {
+      activeDirections.value.add(key)
       updateDirections()
     }
   }
@@ -43,22 +48,27 @@ const handleKeyDown = (event: KeyboardEvent) => {
 }
 
 const handleKeyUp = (event: KeyboardEvent) => {
+  const key = event.key.toLowerCase() // Convert key to lowercase
+
   // Stop moving
   if (
-    event.key === 'ArrowLeft' ||
-    event.key === 'ArrowRight' ||
-    event.key === 'ArrowUp' ||
-    event.key === 'ArrowDown'
+    key === 'arrowleft' ||
+    key === 'arrowright' ||
+    key === 'arrowup' ||
+    key === 'arrowdown' ||
+    key === 'a' ||
+    key === 'd' ||
+    key === 'w' ||
+    key === 's'
   ) {
-    if (activeDirections.value.has(event.key)) {
-      activeDirections.value.delete(event.key)
+    if (activeDirections.value.has(key)) {
+      activeDirections.value.delete(key)
       updateDirections()
     }
   }
 
   // Stop boosting
   if (event.key === 'Shift') {
-    console.log(event.key)
     ws.send(JSON.stringify({ type: 'boost', data: false }))
   }
 }

@@ -574,6 +574,10 @@ video {
   border-width: 1px;
 }
 
+.lowercase {
+  text-transform: lowercase;
+}
+
 /* color palette from <https://github.com/vuejs/theme> */
 
 :root {
