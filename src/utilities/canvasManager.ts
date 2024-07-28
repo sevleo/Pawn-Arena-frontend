@@ -1,10 +1,11 @@
 import { type Ref } from 'vue'
-import { getClientId } from '@/services/webSocket'
+import { getClientId, getDefaultMousePosition } from '@/services/webSocket'
 import { type AllPositions } from '@/types/allPositions'
 import { sendFaceDirectionUpdate } from '@/services/webSocket'
 
 let context: CanvasRenderingContext2D | null = null
 let mousePosition = { x: 0, y: 0 }
+let mouseMoved = false
 
 export function initializeCanvas(
   canvasRef: Ref<HTMLCanvasElement | null>
@@ -36,14 +37,18 @@ export function drawPositions(
         context.beginPath()
         context.moveTo(value.position.x, value.position.y)
 
-        let targetPosition
+        // let targetPosition
         let weaponPosition
-
         const lineLength = 30
+
         if (value.clientId === getClientId()) {
-          // Calculate direction towards mouse position
-          const directionX = mousePosition.x - value.position.x
-          const directionY = mousePosition.y - value.position.y
+          const defaultMousePosition = getDefaultMousePosition()
+
+          const targetX = mouseMoved ? mousePosition.x : defaultMousePosition.x
+          const targetY = mouseMoved ? mousePosition.y : defaultMousePosition.y
+
+          const directionX = targetX - value.position.x
+          const directionY = targetY - value.position.y
 
           const magnitude = Math.sqrt(directionX * directionX + directionY * directionY)
 
@@ -52,10 +57,10 @@ export function drawPositions(
             y: value.position.y + (directionY / magnitude) * lineLength
           }
 
-          targetPosition = {
-            x: value.position.x + directionX,
-            y: value.position.y + directionY
-          }
+          // targetPosition = {
+          //   x: value.position.x + directionX,
+          //   y: value.position.y + directionY
+          // }
 
           sendFaceDirectionUpdate({
             directionX: directionX,
@@ -106,5 +111,6 @@ function updateMousePosition(event: MouseEvent) {
       x: event.clientX - rect.left,
       y: event.clientY - rect.top
     }
+    mouseMoved = true
   }
 }

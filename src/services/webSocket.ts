@@ -3,6 +3,7 @@ import { drawPositions } from '@/utilities/canvasManager'
 
 export let ws: WebSocket
 let clientId: string | undefined
+let defaultMousePosition: { x: number; y: number } = { x: 0, y: 0 } // Initialize with default values
 
 export function setupWebSocket(canvasRef: Ref<HTMLCanvasElement | null>) {
   ws = new WebSocket('ws://localhost:3000')
@@ -13,6 +14,7 @@ export function setupWebSocket(canvasRef: Ref<HTMLCanvasElement | null>) {
     if (msg.type === 'initial position') {
       console.log('initial position received:', msg)
       clientId = msg.data.clientId
+      defaultMousePosition = msg.data.defaultMousePosition
     }
 
     if (msg.type === 'position') {
@@ -27,6 +29,10 @@ export function setupWebSocket(canvasRef: Ref<HTMLCanvasElement | null>) {
 
 export function getClientId() {
   return clientId
+}
+
+export function getDefaultMousePosition() {
+  return defaultMousePosition
 }
 
 export function sendFaceDirectionUpdate(direction: { directionX: number; directionY: number }) {
