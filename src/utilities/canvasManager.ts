@@ -24,7 +24,7 @@ export function drawPositions(
       if (context) {
         context.fillStyle = value.clientId === getClientId() ? 'green' : 'white'
         context.beginPath() // Start a new path
-        context.arc(value.position.x, value.position.y, 10, 0, Math.PI * 2) // Draw a circle with radius 10
+        context.arc(value.position.x, value.position.y, value.radius, 0, Math.PI * 2) // Draw a circle with radius 10
         context.fill() // Fill the circle with the current fill style
       }
     })

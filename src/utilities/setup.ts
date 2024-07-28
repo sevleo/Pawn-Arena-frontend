@@ -8,6 +8,7 @@ export function setup(canvasRef: Ref<HTMLCanvasElement | null>) {
 
   setupWebSocket((msg: PositionMessage | InitialPositionMessage) => {
     if (msg.type === 'position') {
+      console.log(msg)
       drawPositions(canvasRef, msg.data.allPositions)
     }
   })
