@@ -17,7 +17,7 @@ export function setupWebSocket(canvasRef: Ref<HTMLCanvasElement | null>) {
       defaultMousePosition = msg.data.defaultMousePosition
     }
 
-    if (msg.type === 'position') {
+    if (msg.type === 'gameState') {
       drawPositions(canvasRef, msg.data.allPositions, msg.data.bullets)
     }
   }
@@ -37,14 +37,13 @@ export function getDefaultMousePosition() {
 
 export function sendFaceDirectionUpdate(direction: { directionX: number; directionY: number }) {
   const message = {
-    type: 'updateDirection',
+    type: 'updateFaceDirection',
     clientId: clientId,
     direction
   }
   ws.send(JSON.stringify(message))
 }
 
-// Send updated directions to server
 export function updateDirections(activeDirections: Ref<Set<string>>) {
   ws.send(JSON.stringify({ type: 'move', data: Array.from(activeDirections.value) }))
 }
