@@ -18,7 +18,7 @@ export function setupWebSocket(canvasRef: Ref<HTMLCanvasElement | null>) {
     }
 
     if (msg.type === 'position') {
-      drawPositions(canvasRef, msg.data.allPositions)
+      drawPositions(canvasRef, msg.data.allPositions, msg.data.bullets)
     }
   }
 
@@ -51,4 +51,8 @@ export function updateDirections(activeDirections: Ref<Set<string>>) {
 
 export function updateBoost(value: boolean) {
   ws.send(JSON.stringify({ type: 'boost', data: value }))
+}
+
+export function fireBullet() {
+  ws.send(JSON.stringify({ type: 'fireBullet' }))
 }

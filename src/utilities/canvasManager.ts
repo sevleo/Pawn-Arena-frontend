@@ -19,11 +19,13 @@ export function initializeCanvas(
 
 export function drawPositions(
   canvasRef: Ref<HTMLCanvasElement | null>,
-  allPositions: AllPositions
+  allPositions: AllPositions,
+  bullets: { x: number; y: number }[]
 ) {
   if (context && canvasRef.value) {
     context.clearRect(0, 0, canvasRef.value.width, canvasRef.value.height)
 
+    // Draw Controllable Units
     Object.entries(allPositions).forEach(([, value]) => {
       // console.log(value)
       if (context) {
@@ -37,7 +39,7 @@ export function drawPositions(
         context.beginPath()
         context.moveTo(value.position.x, value.position.y)
 
-        // let targetPosition
+        let targetPosition
         let weaponPosition
         const lineLength = 30
 
@@ -47,6 +49,7 @@ export function drawPositions(
           const targetX = mouseMoved ? mousePosition.x : defaultMousePosition.x
           const targetY = mouseMoved ? mousePosition.y : defaultMousePosition.y
 
+          // Direction from current object coordinates to target coordinates
           const directionX = targetX - value.position.x
           const directionY = targetY - value.position.y
 
@@ -57,15 +60,21 @@ export function drawPositions(
             y: value.position.y + (directionY / magnitude) * lineLength
           }
 
-          // targetPosition = {
-          //   x: value.position.x + directionX,
-          //   y: value.position.y + directionY
-          // }
+          targetPosition = {
+            x: targetX,
+            y: targetY
+          }
 
           sendFaceDirectionUpdate({
             directionX: directionX,
             directionY: directionY
           })
+
+          // console.log(value.position.x)
+          // console.log(directionX)
+          // console.log(magnitude)
+          // console.log(weaponPosition)
+          // console.log(targetPosition)
         } else {
           // Use the provided direction
           const direction = value.direction || { directionX: 0, directionY: 0 }
@@ -80,18 +89,20 @@ export function drawPositions(
             y: value.position.y + (direction.directionY / magnitude) * lineLength
           }
 
-          // targetPosition = {
-          //   x: value.position.x + direction.directionX,
-          //   y: value.position.y + direction.directionY
-          // }
+          targetPosition = {
+            x: value.position.x + direction.directionX,
+            y: value.position.y + direction.directionY
+          }
         }
 
         // Draw the target position line
-        // context.strokeStyle = 'red'
-        // context.beginPath()
-        // context.moveTo(value.position.x, value.position.y)
-        // context.lineTo(targetPosition.x, targetPosition.y)
-        // context.stroke()
+        context.strokeStyle = 'red'
+        context.beginPath()
+        context.moveTo(value.position.x, value.position.y)
+        context.lineTo(targetPosition.x, targetPosition.y)
+        context.stroke()
+
+        // console.log(value.position.x)
 
         // Draw the weapon position line
         context.strokeStyle = 'white'
@@ -99,6 +110,16 @@ export function drawPositions(
         context.moveTo(value.position.x, value.position.y)
         context.lineTo(weaponPosition.x, weaponPosition.y)
         context.stroke()
+      }
+    })
+
+    // Draw Bullets
+    bullets.forEach((bullet: { x: number; y: number }) => {
+      if (context) {
+        context.fillStyle = 'yellow'
+        context.beginPath()
+        context.arc(bullet.x, bullet.y, 5, 0, Math.PI * 2)
+        context.fill()
       }
     })
   }

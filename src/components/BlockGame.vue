@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
 import { setup } from '@/utilities/setup'
-import { updateDirections, updateBoost } from '../services/webSocket'
+import { updateDirections, updateBoost, fireBullet } from '../services/webSocket'
 // List of active directions
 const activeDirections = ref<Set<string>>(new Set())
 
@@ -38,6 +38,10 @@ const handleKeyDown = (event: KeyboardEvent) => {
   // Start boosting
   if (event.key === 'Shift') {
     updateBoost(true)
+  }
+
+  if (event.key === ' ') {
+    fireBullet()
   }
 }
 
