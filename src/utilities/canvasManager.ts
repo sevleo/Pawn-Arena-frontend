@@ -20,7 +20,7 @@ export function initializeCanvas(
 export function drawPositions(
   canvasRef: Ref<HTMLCanvasElement | null>,
   allPawns: allPawns,
-  bullets: { clientid: string; position: { x: number; y: number } }[]
+  bullets: { clientid: string; position: { x: number; y: number }; bulletRadius: number }[]
 ) {
   if (context && canvasRef.value) {
     context.clearRect(0, 0, canvasRef.value.width, canvasRef.value.height)
@@ -118,7 +118,7 @@ export function drawPositions(
       if (context) {
         context.fillStyle = 'yellow'
         context.beginPath()
-        context.arc(bullet.position.x, bullet.position.y, 5, 0, Math.PI * 2)
+        context.arc(bullet.position.x, bullet.position.y, bullet.bulletRadius, 0, Math.PI * 2)
         context.fill()
       }
     })
