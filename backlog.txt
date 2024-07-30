@@ -1,0 +1,3 @@
+- refactor webSocket.ts to seperate websocket logic from game logic // Done
+- Utilize setup.ts // Done
+-  
