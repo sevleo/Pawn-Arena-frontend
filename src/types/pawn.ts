@@ -1,4 +1,4 @@
-export interface Position {
+export interface Pawn {
   direction: { directionX: number; directionY: number }
   radius: number
   clientId: string

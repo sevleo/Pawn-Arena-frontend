@@ -1,3 +1,3 @@
-import { type Position } from './position'
+import { type Pawn } from './pawn'
 
-export type allPawns = Position[]
+export type allPawns = Pawn[]

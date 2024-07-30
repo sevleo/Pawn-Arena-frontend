@@ -20,7 +20,7 @@ export function initializeCanvas(
 export function drawPositions(
   canvasRef: Ref<HTMLCanvasElement | null>,
   allPawns: allPawns,
-  bullets: { x: number; y: number }[]
+  bullets: { clientid: string; position: { x: number; y: number } }[]
 ) {
   if (context && canvasRef.value) {
     context.clearRect(0, 0, canvasRef.value.width, canvasRef.value.height)
@@ -114,11 +114,11 @@ export function drawPositions(
     })
 
     // Draw Bullets
-    bullets.forEach((bullet: { x: number; y: number }) => {
+    bullets.forEach((bullet) => {
       if (context) {
         context.fillStyle = 'yellow'
         context.beginPath()
-        context.arc(bullet.x, bullet.y, 5, 0, Math.PI * 2)
+        context.arc(bullet.position.x, bullet.position.y, 5, 0, Math.PI * 2)
         context.fill()
       }
     })

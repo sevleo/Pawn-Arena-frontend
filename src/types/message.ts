@@ -1,16 +1,16 @@
-import { type Position } from './position'
+import { type Pawn } from './pawn'
 
 export interface PositionMessage {
   type: 'position'
   data: {
-    allPawns: Position[]
+    allPawns: Pawn[]
   }
 }
 
 export interface InitialPositionMessage {
   type: 'initial position'
   data: {
-    allPawns: Position[]
+    allPawns: Pawn[]
     clientId: string
     position: {
       x: number
