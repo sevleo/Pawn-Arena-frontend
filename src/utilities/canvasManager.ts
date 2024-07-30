@@ -1,6 +1,6 @@
 import { type Ref } from 'vue'
 import { getClientId, getDefaultMousePosition } from '@/services/webSocket'
-import { type AllPositions } from '@/types/allPositions'
+import { type allPawns } from '@/types/allPawns'
 import { sendFaceDirectionUpdate } from '@/services/webSocket'
 
 let context: CanvasRenderingContext2D | null = null
@@ -19,14 +19,14 @@ export function initializeCanvas(
 
 export function drawPositions(
   canvasRef: Ref<HTMLCanvasElement | null>,
-  allPositions: AllPositions,
+  allPawns: allPawns,
   bullets: { x: number; y: number }[]
 ) {
   if (context && canvasRef.value) {
     context.clearRect(0, 0, canvasRef.value.width, canvasRef.value.height)
 
     // Draw Controllable Units
-    Object.entries(allPositions).forEach(([, value]) => {
+    Object.entries(allPawns).forEach(([, value]) => {
       // console.log(value)
       if (context) {
         context.fillStyle = value.clientId === getClientId() ? 'green' : 'white'

@@ -18,7 +18,8 @@ export function setupWebSocket(canvasRef: Ref<HTMLCanvasElement | null>) {
     }
 
     if (msg.type === 'gameState') {
-      drawPositions(canvasRef, msg.data.allPositions, msg.data.bullets)
+      console.log(msg)
+      drawPositions(canvasRef, msg.data.allPawns, msg.data.bullets)
     }
   }
 
