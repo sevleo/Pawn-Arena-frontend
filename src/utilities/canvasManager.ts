@@ -20,7 +20,7 @@ export function initializeCanvas(
 export function drawPositions(
   canvasRef: Ref<HTMLCanvasElement | null>,
   allPawns: allPawns,
-  bullets: { clientid: string; position: { x: number; y: number }; bulletRadius: number }[]
+  bullets: { clientid: string; position: { x: number; y: number }; radius: number }[]
 ) {
   if (context && canvasRef.value) {
     context.clearRect(0, 0, canvasRef.value.width, canvasRef.value.height)
@@ -33,11 +33,6 @@ export function drawPositions(
         context.beginPath() // Start a new path
         context.arc(value.position.x, value.position.y, value.radius, 0, Math.PI * 2) // Draw a circle with radius 10
         context.fill() // Fill the circle with the current fill style
-
-        // Draw the direction line
-        context.strokeStyle = 'red'
-        context.beginPath()
-        context.moveTo(value.position.x, value.position.y)
 
         let targetPosition
         let weaponPosition
@@ -96,11 +91,11 @@ export function drawPositions(
         }
 
         // Draw the target position line
-        context.strokeStyle = 'red'
-        context.beginPath()
-        context.moveTo(value.position.x, value.position.y)
-        context.lineTo(targetPosition.x, targetPosition.y)
-        context.stroke()
+        // context.strokeStyle = 'red'
+        // context.beginPath()
+        // context.moveTo(value.position.x, value.position.y)
+        // context.lineTo(targetPosition.x, targetPosition.y)
+        // context.stroke()
 
         // console.log(value.position.x)
 
@@ -118,7 +113,7 @@ export function drawPositions(
       if (context) {
         context.fillStyle = 'yellow'
         context.beginPath()
-        context.arc(bullet.position.x, bullet.position.y, bullet.bulletRadius, 0, Math.PI * 2)
+        context.arc(bullet.position.x, bullet.position.y, bullet.radius, 0, Math.PI * 2)
         context.fill()
       }
     })
