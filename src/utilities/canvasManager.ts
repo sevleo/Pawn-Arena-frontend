@@ -111,10 +111,18 @@ export function drawPositions(
     // Draw Bullets
     bullets.forEach((bullet) => {
       if (context) {
-        context.fillStyle = 'yellow'
-        context.beginPath()
-        context.arc(bullet.position.x, bullet.position.y, bullet.radius, 0, Math.PI * 2)
-        context.fill()
+        // context.fillStyle = 'yellow'
+        // context.beginPath()
+        // // context.arc(bullet.position.x, bullet.position.y, bullet.radius, 0, Math.PI * 2)
+        // context.rect(bullet.position.x, bullet.position.y, bullet.width, bullet.height)
+        // context.fill()
+
+        context.fillStyle = 'gray'
+        context.save()
+        context.translate(bullet.position.x, bullet.position.y)
+        context.rotate(bullet.angle) // Rotate based on the bullet's angle
+        context.fillRect(-bullet.height / 2, -bullet.width / 2, bullet.height, bullet.width) // Draw rectangle centered
+        context.restore()
       }
     })
   }
