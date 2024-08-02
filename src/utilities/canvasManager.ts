@@ -22,7 +22,14 @@ export function initializeCanvas(
 export function drawPositions(
   canvasRef: Ref<HTMLCanvasElement | null>,
   allPawns: allPawns,
-  bullets: { clientid: string; position: { x: number; y: number }; radius: number }[]
+  bullets: {
+    clientid: string
+    position: { x: number; y: number }
+    radius: number
+    angle: number
+    height: number
+    width: number
+  }[]
 ) {
   if (context && canvasRef.value) {
     context.clearRect(0, 0, canvasRef.value.width, canvasRef.value.height)
@@ -118,7 +125,9 @@ export function drawPositions(
       }
     })
   }
-  drawGrid(canvasRef.value.width, canvasRef.value.height)
+  if (canvasRef.value) {
+    drawGrid(canvasRef.value.width, canvasRef.value.height)
+  }
 }
 
 function updateMousePosition(event: MouseEvent) {
