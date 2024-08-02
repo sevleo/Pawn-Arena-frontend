@@ -7,12 +7,28 @@ let context: CanvasRenderingContext2D | null = null
 let mousePosition = { x: 0, y: 0 }
 let mouseMoved = false
 
+const GRID_SIZE = 50
+
+const offScreenCanvas = document.createElement('canvas')
+const offScreenContext = offScreenCanvas.getContext('2d')
+
+function initializeOffScreenCanvas(width: number, height: number) {
+  if (offScreenContext) {
+    offScreenCanvas.width = width
+    offScreenCanvas.height = height
+    drawGrid(offScreenContext, width, height)
+  }
+}
+
 export function initializeCanvas(
   canvasRef: Ref<HTMLCanvasElement | null>
 ): CanvasRenderingContext2D | null {
   if (canvasRef.value) {
     context = canvasRef.value.getContext('2d')
-    canvasRef.value.addEventListener('mousemove', updateMousePosition)
+    if (context) {
+      initializeOffScreenCanvas(canvasRef.value.width, canvasRef.value.height)
+      canvasRef.value.addEventListener('mousemove', updateMousePosition)
+    }
   }
   return context
 }
@@ -24,6 +40,9 @@ export function drawPositions(
 ) {
   if (context && canvasRef.value) {
     context.clearRect(0, 0, canvasRef.value.width, canvasRef.value.height)
+
+    // Draw the off-screen canvas (grid)
+    context.drawImage(offScreenCanvas, 0, 0)
 
     // Draw Controllable Units
     Object.entries(allPawns).forEach(([, value]) => {
@@ -136,5 +155,26 @@ function updateMousePosition(event: MouseEvent) {
       y: event.clientY - rect.top
     }
     mouseMoved = true
+  }
+}
+
+function drawGrid(ctx: CanvasRenderingContext2D, canvasWidth: number, canvasHeight: number) {
+  ctx.strokeStyle = 'lightgray'
+  ctx.lineWidth = 0.5
+
+  // Draw vertical lines
+  for (let x = 0; x <= canvasWidth; x += GRID_SIZE) {
+    ctx.beginPath()
+    ctx.moveTo(x, 0)
+    ctx.lineTo(x, canvasHeight)
+    ctx.stroke()
+  }
+
+  // Draw horizontal lines
+  for (let y = 0; y <= canvasHeight; y += GRID_SIZE) {
+    ctx.beginPath()
+    ctx.moveTo(0, y)
+    ctx.lineTo(canvasWidth, y)
+    ctx.stroke()
   }
 }
