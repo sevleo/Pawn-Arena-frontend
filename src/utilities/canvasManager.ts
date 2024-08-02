@@ -7,6 +7,8 @@ let context: CanvasRenderingContext2D | null = null
 let mousePosition = { x: 0, y: 0 }
 let mouseMoved = false
 
+const GRID_SIZE = 50
+
 export function initializeCanvas(
   canvasRef: Ref<HTMLCanvasElement | null>
 ): CanvasRenderingContext2D | null {
@@ -24,6 +26,8 @@ export function drawPositions(
 ) {
   if (context && canvasRef.value) {
     context.clearRect(0, 0, canvasRef.value.width, canvasRef.value.height)
+    context.fillStyle = '#333300' // Set your desired background color here
+    context.fillRect(0, 0, canvasRef.value.width, canvasRef.value.height)
 
     // Draw Controllable Units
     Object.entries(allPawns).forEach(([, value]) => {
@@ -90,33 +94,21 @@ export function drawPositions(
           }
         }
 
-        // Draw the target position line
-        // context.strokeStyle = 'red'
-        // context.beginPath()
-        // context.moveTo(value.position.x, value.position.y)
-        // context.lineTo(targetPosition.x, targetPosition.y)
-        // context.stroke()
-
-        // console.log(value.position.x)
-
         // Draw the weapon position line
-        context.strokeStyle = 'white'
+        context.save() // Save the current state
+        context.strokeStyle = 'black'
+        context.lineWidth = 1 // Set specific line width for weapon line
         context.beginPath()
         context.moveTo(value.position.x, value.position.y)
         context.lineTo(weaponPosition.x, weaponPosition.y)
         context.stroke()
+        context.restore() // Restore the previous state
       }
     })
 
     // Draw Bullets
     bullets.forEach((bullet) => {
       if (context) {
-        // context.fillStyle = 'yellow'
-        // context.beginPath()
-        // // context.arc(bullet.position.x, bullet.position.y, bullet.radius, 0, Math.PI * 2)
-        // context.rect(bullet.position.x, bullet.position.y, bullet.width, bullet.height)
-        // context.fill()
-
         context.fillStyle = 'gray'
         context.save()
         context.translate(bullet.position.x, bullet.position.y)
@@ -126,6 +118,7 @@ export function drawPositions(
       }
     })
   }
+  drawGrid(canvasRef.value.width, canvasRef.value.height)
 }
 
 function updateMousePosition(event: MouseEvent) {
@@ -136,5 +129,28 @@ function updateMousePosition(event: MouseEvent) {
       y: event.clientY - rect.top
     }
     mouseMoved = true
+  }
+}
+
+function drawGrid(canvasWidth: number, canvasHeight: number) {
+  if (context) {
+    context.strokeStyle = 'gray'
+    context.lineWidth = 0.2
+
+    // Draw vertical lines
+    for (let x = 0; x <= canvasWidth; x += GRID_SIZE) {
+      context.beginPath()
+      context.moveTo(x, 0)
+      context.lineTo(x, canvasHeight)
+      context.stroke()
+    }
+
+    // Draw horizontal lines
+    for (let y = 0; y <= canvasHeight; y += GRID_SIZE) {
+      context.beginPath()
+      context.moveTo(0, y)
+      context.lineTo(canvasWidth, y)
+      context.stroke()
+    }
   }
 }
