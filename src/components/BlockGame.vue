@@ -11,6 +11,8 @@ let animationFrameId: number | null = null
 // CanvasRef for canvas drawing
 const canvasRef = ref<HTMLCanvasElement | null>(null)
 
+const health = ref<number>(0)
+
 // Frame update loop
 const animateMovement = () => {
   animationFrameId = requestAnimationFrame(animateMovement)
@@ -72,7 +74,7 @@ const handleKeyUp = (event: KeyboardEvent) => {
 }
 
 onMounted(() => {
-  setup(canvasRef)
+  setup(canvasRef, health)
   window.addEventListener('keydown', handleKeyDown)
   window.addEventListener('keyup', handleKeyUp)
   animateMovement()
@@ -90,6 +92,9 @@ onUnmounted(() => {
 <template>
   <div>
     <canvas ref="canvasRef" width="800" height="800" style="border: 0.5px solid wheat"> </canvas>
+    <div>
+      <p>Health: {{ health }}</p>
+    </div>
   </div>
 </template>
 

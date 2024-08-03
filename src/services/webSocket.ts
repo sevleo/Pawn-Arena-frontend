@@ -5,7 +5,7 @@ export let ws: WebSocket
 let clientId: string | undefined
 let defaultMousePosition: { x: number; y: number } = { x: 0, y: 0 } // Initialize with default values
 
-export function setupWebSocket(canvasRef: Ref<HTMLCanvasElement | null>) {
+export function setupWebSocket(canvasRef: Ref<HTMLCanvasElement | null>, health: Ref<number>) {
   ws = new WebSocket('ws://localhost:3000')
 
   ws.onmessage = (event) => {
@@ -18,8 +18,9 @@ export function setupWebSocket(canvasRef: Ref<HTMLCanvasElement | null>) {
     }
 
     if (msg.type === 'gameState') {
-      // console.log(msg)
+      console.log(msg)
       drawPositions(canvasRef, msg.data.allPawns, msg.data.bullets)
+      health.value = msg.data.clientData.health
     }
   }
 
