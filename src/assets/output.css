@@ -566,10 +566,6 @@ video {
   display: flex;
 }
 
-.grid {
-  display: grid;
-}
-
 .flex-col {
   flex-direction: column;
 }

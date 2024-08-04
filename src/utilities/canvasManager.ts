@@ -2,9 +2,9 @@ import { type Ref } from 'vue'
 import { getClientId, getDefaultMousePosition } from '@/services/webSocket'
 import { type allPawns } from '@/types/allPawns'
 import { sendFaceDirectionUpdate } from '@/services/webSocket'
+import { mousePosition, faceDirection } from '@/sharedState'
 
 let context: CanvasRenderingContext2D | null = null
-let mousePosition = { x: 0, y: 0 }
 let mouseMoved = false
 
 const GRID_SIZE = 50
@@ -52,8 +52,8 @@ export function drawPositions(
         if (value.clientId === getClientId()) {
           const defaultMousePosition = getDefaultMousePosition()
 
-          const targetX = mouseMoved ? mousePosition.x : defaultMousePosition.x
-          const targetY = mouseMoved ? mousePosition.y : defaultMousePosition.y
+          const targetX = mouseMoved ? mousePosition.value.x : defaultMousePosition.x
+          const targetY = mouseMoved ? mousePosition.value.y : defaultMousePosition.y
 
           // Direction from current object coordinates to target coordinates
           const directionX = targetX - value.position.x
@@ -70,6 +70,9 @@ export function drawPositions(
             x: targetX,
             y: targetY
           }
+
+          faceDirection.value.directionX = directionX
+          faceDirection.value.directionY = directionY
 
           sendFaceDirectionUpdate({
             directionX: directionX,
@@ -133,7 +136,7 @@ export function drawPositions(
 function updateMousePosition(event: MouseEvent) {
   if (context) {
     const rect = context.canvas.getBoundingClientRect()
-    mousePosition = {
+    mousePosition.value = {
       x: event.clientX - rect.left,
       y: event.clientY - rect.top
     }

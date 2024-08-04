@@ -2,6 +2,7 @@
 import { ref, onMounted, onUnmounted } from 'vue'
 import { setup } from '@/utilities/setup'
 import { updateDirections, updateBoost, fireBullet } from '../services/webSocket'
+
 // List of active directions
 const activeDirections = ref<Set<string>>(new Set())
 

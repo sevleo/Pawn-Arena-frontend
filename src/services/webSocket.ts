@@ -1,12 +1,15 @@
 import { type Ref } from 'vue'
 import { drawPositions } from '@/utilities/canvasManager'
+import { mousePosition, faceDirection } from '@/sharedState'
 
 export let ws: WebSocket
 let clientId: string | undefined
 let defaultMousePosition: { x: number; y: number } = { x: 0, y: 0 } // Initialize with default values
+let reconnectTimeout: ReturnType<typeof setTimeout> | null = null
 
-export function setupWebSocket(canvasRef: Ref<HTMLCanvasElement | null>, health: Ref<number>) {
-  ws = new WebSocket('ws://localhost:3000')
+export const setupWebSocket = (canvasRef: Ref<HTMLCanvasElement | null>, health: Ref<number>) => {
+  // ws = new WebSocket('ws://localhost:3000')
+  ws = new WebSocket(`${import.meta.env.VITE_BACKEND_URL}`)
 
   ws.onmessage = (event) => {
     const msg = JSON.parse(event.data)
@@ -20,12 +23,23 @@ export function setupWebSocket(canvasRef: Ref<HTMLCanvasElement | null>, health:
     if (msg.type === 'gameState') {
       console.log(msg)
       drawPositions(canvasRef, msg.data.allPawns, msg.data.bullets)
-      health.value = msg.data.clientData.health
+      health.value = msg.data.clientPawn.health
     }
   }
 
   ws.onclose = () => {
-    console.log('WebSocket connection closed')
+    console.log('WebSocket connection closed, attempting to reconnect...')
+    if (reconnectTimeout === null) {
+      reconnectTimeout = setTimeout(() => {
+        reconnectTimeout = null
+        setupWebSocket(canvasRef, health)
+      }, 1000)
+    }
+  }
+
+  ws.onerror = (error) => {
+    console.error('WebSocket error:', error)
+    ws.close() // Close the connection on error
   }
 }
 
@@ -55,5 +69,5 @@ export function updateBoost(value: boolean) {
 }
 
 export function fireBullet() {
-  ws.send(JSON.stringify({ type: 'fireBullet' }))
+  ws.send(JSON.stringify({ type: 'fireBullet', faceDirection: faceDirection.value }))
 }
