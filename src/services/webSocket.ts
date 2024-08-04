@@ -1,6 +1,6 @@
 import { type Ref } from 'vue'
 import { drawPositions } from '@/utilities/canvasManager'
-import { mousePosition, faceDirection } from '@/sharedState'
+import { clientPosition, faceDirection } from '@/sharedState'
 
 export let ws: WebSocket
 let clientId: string | undefined
@@ -21,8 +21,10 @@ export const setupWebSocket = (canvasRef: Ref<HTMLCanvasElement | null>, health:
     }
 
     if (msg.type === 'gameState') {
+      console.log(msg)
       drawPositions(canvasRef, msg.data.allPawns, msg.data.bullets)
       health.value = msg.data.clientPawn.health
+      clientPosition.value = msg.data.clientPawn.position
     }
   }
 
@@ -68,5 +70,11 @@ export function updateBoost(value: boolean) {
 }
 
 export function fireBullet() {
-  ws.send(JSON.stringify({ type: 'fireBullet', faceDirection: faceDirection.value }))
+  ws.send(
+    JSON.stringify({
+      type: 'fireBullet',
+      faceDirection: faceDirection.value,
+      position: clientPosition.value
+    })
+  )
 }

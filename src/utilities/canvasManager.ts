@@ -2,7 +2,7 @@ import { type Ref } from 'vue'
 import { getClientId, getDefaultMousePosition } from '@/services/webSocket'
 import { type allPawns } from '@/types/allPawns'
 import { sendFaceDirectionUpdate } from '@/services/webSocket'
-import { mousePosition, faceDirection } from '@/sharedState'
+import { mousePosition, faceDirection, clientPosition } from '@/sharedState'
 
 let context: CanvasRenderingContext2D | null = null
 let mouseMoved = false
