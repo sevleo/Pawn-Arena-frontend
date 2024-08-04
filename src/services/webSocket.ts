@@ -4,8 +4,9 @@ import { drawPositions } from '@/utilities/canvasManager'
 export let ws: WebSocket
 let clientId: string | undefined
 let defaultMousePosition: { x: number; y: number } = { x: 0, y: 0 } // Initialize with default values
+let reconnectTimeout: ReturnType<typeof setTimeout> | null = null
 
-export function setupWebSocket(canvasRef: Ref<HTMLCanvasElement | null>, health: Ref<number>) {
+export const setupWebSocket = (canvasRef: Ref<HTMLCanvasElement | null>, health: Ref<number>) => {
   // ws = new WebSocket('ws://localhost:3000')
   ws = new WebSocket(`${import.meta.env.VITE_BACKEND_URL}`)
 
@@ -25,7 +26,18 @@ export function setupWebSocket(canvasRef: Ref<HTMLCanvasElement | null>, health:
   }
 
   ws.onclose = () => {
-    console.log('WebSocket connection closed')
+    console.log('WebSocket connection closed, attempting to reconnect...')
+    if (reconnectTimeout === null) {
+      reconnectTimeout = setTimeout(() => {
+        reconnectTimeout = null
+        setupWebSocket(canvasRef, health)
+      }, 1000)
+    }
+  }
+
+  ws.onerror = (error) => {
+    console.error('WebSocket error:', error)
+    ws.close() // Close the connection on error
   }
 }
 
