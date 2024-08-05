@@ -21,7 +21,7 @@ export const setupWebSocket = (canvasRef: Ref<HTMLCanvasElement | null>, health:
     }
 
     if (msg.type === 'gameState') {
-      console.log(msg)
+      // console.log(msg)
       drawPositions(canvasRef, msg.data.allPawns, msg.data.bullets)
       health.value = msg.data.clientPawn.health
       clientPosition.value = msg.data.clientPawn.position

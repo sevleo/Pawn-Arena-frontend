@@ -9,6 +9,13 @@ let mouseMoved = false
 
 const GRID_SIZE = 50
 
+// Store previous direction to compare
+let previousDirectionX = null
+let previousDirectionY = null
+
+// Define a tolerance for floating-point comparisons
+const TOLERANCE = 0.01
+
 export function initializeCanvas(
   canvasRef: Ref<HTMLCanvasElement | null>
 ): CanvasRenderingContext2D | null {
@@ -74,10 +81,24 @@ export function drawPositions(
           faceDirection.value.directionX = directionX
           faceDirection.value.directionY = directionY
 
-          sendFaceDirectionUpdate({
-            directionX: directionX,
-            directionY: directionY
-          })
+          // Compare with previous direction and update if changed
+          if (
+            !areValuesApproximatelyEqual(directionX, previousDirectionX) ||
+            !areValuesApproximatelyEqual(directionY, previousDirectionY)
+          ) {
+            sendFaceDirectionUpdate({
+              directionX: directionX,
+              directionY: directionY
+            })
+
+            previousDirectionX = directionX
+            previousDirectionY = directionY
+          }
+
+          // sendFaceDirectionUpdate({
+          //   directionX: directionX,
+          //   directionY: directionY
+          // })
 
           // console.log(value.position.x)
           // console.log(directionX)
@@ -165,4 +186,10 @@ function drawGrid(canvasWidth: number, canvasHeight: number) {
       context.stroke()
     }
   }
+}
+
+// Function to compare two values with tolerance
+function areValuesApproximatelyEqual(value1: number, value2: number | null): boolean {
+  if (value2 === null) return false
+  return Math.abs(value1 - value2) < TOLERANCE
 }
