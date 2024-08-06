@@ -10,8 +10,8 @@ let mouseMoved = false
 const GRID_SIZE = 50
 
 // Store previous direction to compare
-let previousDirectionX = null
-let previousDirectionY = null
+let previousDirectionX: number | null = null
+let previousDirectionY: number | null = null
 
 // Define a tolerance for floating-point comparisons
 const TOLERANCE = 0.01
@@ -43,13 +43,26 @@ export function drawPositions(
     context.fillStyle = '#333300' // Set your desired background color here
     context.fillRect(0, 0, canvasRef.value.width, canvasRef.value.height)
 
+    const cameraX = clientPosition.value.x - canvasRef.value.width / 2
+    const cameraY = clientPosition.value.y - canvasRef.value.height / 2
+
+    // console.log(clientPosition.value.x)
+    // console.log(cameraX)
+
     // Draw Controllable Units
     Object.entries(allPawns).forEach(([, value]) => {
       // console.log(value)
+
       if (context) {
         context.fillStyle = value.clientId === getClientId() ? 'green' : 'white'
         context.beginPath() // Start a new path
-        context.arc(value.position.x, value.position.y, value.radius, 0, Math.PI * 2) // Draw a circle with radius 10
+        context.arc(
+          value.position.x - cameraX,
+          value.position.y - cameraY,
+          value.radius,
+          0,
+          Math.PI * 2
+        ) // Draw a circle with radius 10
         context.fill() // Fill the circle with the current fill style
 
         let targetPosition
@@ -59,8 +72,8 @@ export function drawPositions(
         if (value.clientId === getClientId()) {
           const defaultMousePosition = getDefaultMousePosition()
 
-          const targetX = mouseMoved ? mousePosition.value.x : defaultMousePosition.x
-          const targetY = mouseMoved ? mousePosition.value.y : defaultMousePosition.y
+          const targetX = (mouseMoved ? mousePosition.value.x : defaultMousePosition.x) + cameraX
+          const targetY = (mouseMoved ? mousePosition.value.y : defaultMousePosition.y) + cameraY
 
           // Direction from current object coordinates to target coordinates
           const directionX = targetX - value.position.x
@@ -130,8 +143,8 @@ export function drawPositions(
         context.strokeStyle = 'black'
         context.lineWidth = 1 // Set specific line width for weapon line
         context.beginPath()
-        context.moveTo(value.position.x, value.position.y)
-        context.lineTo(weaponPosition.x, weaponPosition.y)
+        context.moveTo(value.position.x - cameraX, value.position.y - cameraY)
+        context.lineTo(weaponPosition.x - cameraX, weaponPosition.y - cameraY)
         context.stroke()
         context.restore() // Restore the previous state
       }
@@ -142,15 +155,15 @@ export function drawPositions(
       if (context) {
         context.fillStyle = 'gray'
         context.save()
-        context.translate(bullet.position.x, bullet.position.y)
+        context.translate(bullet.position.x - cameraX, bullet.position.y - cameraY)
         context.rotate(bullet.angle) // Rotate based on the bullet's angle
         context.fillRect(-bullet.height / 2, -bullet.width / 2, bullet.height, bullet.width) // Draw rectangle centered
         context.restore()
       }
     })
-  }
-  if (canvasRef.value) {
-    drawGrid(canvasRef.value.width, canvasRef.value.height)
+    if (canvasRef.value) {
+      drawGrid(canvasRef.value.width, canvasRef.value.height, cameraX, cameraY)
+    }
   }
 }
 
@@ -165,24 +178,38 @@ function updateMousePosition(event: MouseEvent) {
   }
 }
 
-function drawGrid(canvasWidth: number, canvasHeight: number) {
+function drawGrid(canvasWidth: number, canvasHeight: number, cameraX: number, cameraY: number) {
   if (context) {
     context.strokeStyle = 'gray'
     context.lineWidth = 0.2
 
+    // Define the boundaries of the game area
+    const GAME_WIDTH = 2000
+    const GAME_HEIGHT = 2000
+
+    // Determine the visible area based on the camera position
+    const visibleXStart = Math.max(cameraX, 0)
+    const visibleYStart = Math.max(cameraY, 0)
+    const visibleXEnd = Math.min(cameraX + canvasWidth, GAME_WIDTH)
+    const visibleYEnd = Math.min(cameraY + canvasHeight, GAME_HEIGHT)
+
+    // Determine where to start drawing grid lines based on the camera position
+    const startX = Math.floor(visibleXStart / GRID_SIZE) * GRID_SIZE
+    const startY = Math.floor(visibleYStart / GRID_SIZE) * GRID_SIZE
+
     // Draw vertical lines
-    for (let x = 0; x <= canvasWidth; x += GRID_SIZE) {
+    for (let x = -startX; x <= visibleXEnd; x += GRID_SIZE) {
       context.beginPath()
-      context.moveTo(x, 0)
-      context.lineTo(x, canvasHeight)
+      context.moveTo(x - cameraX, Math.max(visibleYStart - cameraY, 0))
+      context.lineTo(x - cameraX, Math.min(visibleYEnd - cameraY, canvasHeight))
       context.stroke()
     }
 
     // Draw horizontal lines
-    for (let y = 0; y <= canvasHeight; y += GRID_SIZE) {
+    for (let y = startY; y <= visibleYEnd; y += GRID_SIZE) {
       context.beginPath()
-      context.moveTo(0, y)
-      context.lineTo(canvasWidth, y)
+      context.moveTo(Math.max(visibleXStart - cameraX, 0), y - cameraY)
+      context.lineTo(Math.min(visibleXEnd - cameraX, canvasWidth), y - cameraY)
       context.stroke()
     }
   }
