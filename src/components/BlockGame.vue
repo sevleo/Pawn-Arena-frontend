@@ -23,6 +23,7 @@ let sequenceNumber = 0
 
 // Frame update loop
 const animateMovement = () => {
+  // Predict the next position based on the input
   applyInput(activeKeys.value)
   draw()
   animationFrameId = requestAnimationFrame(animateMovement)
@@ -114,8 +115,8 @@ const setupWebSocket = () => {
   }
 }
 
+// Server reconciliation
 function handleServerUpdate(data: any) {
-  // Update the game state from the server
   const lastProcessedServerInput = data.lastProcessedServerInput
 
   // Reconcile the client state
@@ -129,6 +130,7 @@ function handleServerUpdate(data: any) {
 
   // Reapply unprocessed inputs
   for (const pendingInput of pendingInputs) {
+    console.log('reapply')
     applyInput(pendingInput.input)
   }
 }
