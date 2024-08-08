@@ -24,7 +24,7 @@ let sequenceNumber = 0
 // Frame update loop
 const animateMovement = () => {
   // Predict the next position based on the input
-  // applyInput(activeKeys.value)
+  applyInput(activeKeys.value)
   draw()
   animationFrameId = requestAnimationFrame(animateMovement)
 }
