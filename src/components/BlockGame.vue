@@ -131,7 +131,7 @@ function handleServerUpdate(data: any) {
   // Reapply unprocessed inputs
   for (const pendingInput of pendingInputs) {
     console.log('reapply')
-    applyInput(pendingInput.input)
+    // applyInput(pendingInput.input)
   }
 }
 
