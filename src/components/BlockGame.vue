@@ -134,7 +134,7 @@ function handleServerUpdate(data: any) {
 }
 
 function applyInput(input: Set<string>) {
-  const speed = 4
+  const speed = 5
 
   if (input.has('arrowleft') || input.has('a')) {
     clientState.value.position.x -= speed
