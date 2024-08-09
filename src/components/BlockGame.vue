@@ -119,6 +119,8 @@ const setupWebSocket = () => {
 function handleServerUpdate(data: any) {
   const lastProcessedServerInput = data.lastProcessedServerInput
 
+  console.log(pendingInputs)
+
   // Reconcile the client state
   clientState.value.position = data.clientPawn.position
   pawnsState.value = data.allPawns
@@ -138,17 +140,31 @@ function handleServerUpdate(data: any) {
 function applyInput(input: Set<string>) {
   const speed = 5
 
-  if (input.has('arrowleft') || input.has('a')) {
-    clientState.value.position.x -= speed
-  }
+  let xChange = 0
+  let yChange = 0
+
   if (input.has('arrowright') || input.has('d')) {
-    clientState.value.position.x += speed
+    xChange = speed
+  }
+  if (input.has('arrowleft') || input.has('a')) {
+    xChange = -speed
   }
   if (input.has('arrowup') || input.has('w')) {
-    clientState.value.position.y -= speed
+    yChange = -speed
   }
   if (input.has('arrowdown') || input.has('s')) {
-    clientState.value.position.y += speed
+    yChange = speed
+  }
+
+  if (xChange !== 0 || yChange !== 0) {
+    const diagonalFactor = 0.7071
+    if (xChange !== 0 && yChange !== 0) {
+      xChange *= diagonalFactor
+      yChange *= diagonalFactor
+    }
+
+    clientState.value.position.x += xChange
+    clientState.value.position.y += yChange
   }
 }
 
