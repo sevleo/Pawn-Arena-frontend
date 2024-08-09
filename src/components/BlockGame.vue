@@ -119,8 +119,6 @@ const setupWebSocket = () => {
 function handleServerUpdate(data: any) {
   const lastProcessedServerInput = data.lastProcessedServerInput
 
-  console.log(pendingInputs)
-
   // Reconcile the client state
   clientState.value.position = data.clientPawn.position
   pawnsState.value = data.allPawns
