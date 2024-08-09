@@ -124,15 +124,15 @@ function handleServerUpdate(data: any) {
   pawnsState.value = data.allPawns
 
   // Remove processed inputs
-  while (pendingInputs.length > 0 && pendingInputs[0].sequenceNumber <= lastProcessedServerInput) {
-    pendingInputs.shift()
-  }
+  // while (pendingInputs.length > 0 && pendingInputs[0].sequenceNumber <= lastProcessedServerInput) {
+  //   pendingInputs.shift()
+  // }
 
-  // Reapply unprocessed inputs
-  for (const pendingInput of pendingInputs) {
-    console.log(pendingInput)
-    applyInput(pendingInput.input)
-  }
+  // // Reapply unprocessed inputs
+  // for (const pendingInput of pendingInputs) {
+  //   console.log(pendingInput)
+  //   applyInput(pendingInput.input)
+  // }
 }
 
 function applyInput(input: Set<string>) {
