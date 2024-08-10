@@ -1,10 +1,12 @@
+<!-- eslint-disable no-constant-condition -->
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
 
 class Entity {
   x: number
   speed: number
-  position_buffer: never[]
+  position_buffer: []
+  entity_id: any
   constructor() {
     this.x = 0
     this.speed = 2
@@ -45,26 +47,29 @@ class LagNetwork {
 }
 
 class Client {
-  entities: {}
+  entities: any
   key_left: boolean
   key_right: boolean
   network: any
   server: any
   lag: number
   entity_id: null
-  server_reconciliation: boolean
   input_sequence_number: number
-  pending_inputs: never[]
-  entity_interpolation: boolean
+  pending_inputs: []
   canvas: any
   status: any
   update_rate: number
   update_interval: any
   last_ts: number
   constructor(canvas: any, status: any) {
+    // Local representation of the entities.
     this.entities = {}
+
+    // Input state.
     this.key_left = false
     this.key_right = false
+
+    // Simulated network connection.
     this.network = new LagNetwork()
     this.server = null
     this.lag = 100
@@ -72,41 +77,97 @@ class Client {
     // Unique ID of our entity. Assigned by Server on connection.
     this.entity_id = null
 
-    this.server_reconciliation = true
+    // Data needed for reconciliation.
     this.input_sequence_number = 0
     this.pending_inputs = []
-    this.entity_interpolation = true
+
+    // UI.
     this.canvas = canvas
     this.status = status
+
+    // Update rate.
     this.update_rate = 50
-    this.update_interval = null
     this.last_ts = null
     // this.setUpdateRate(this.update_rate)
   }
 
   setClientUpdate() {
-    if (this.update_interval) {
-      clearInterval(this.update_interval)
-    }
+    clearInterval(this.update_interval)
     this.update_interval = setInterval(() => {
       this.update()
     }, this.update_rate)
   }
 
+  // Update Client state.
   update() {
+    // Listen to the server.
     this.processServerMessages()
 
-    if (this.entity_id == null) return // Not connected yet.
+    if (this.entity_id == null) {
+      return // Not connected yet.
+    }
 
+    // Process inputs.
     this.processInputs()
 
-    if (this.entity_interpolation) this.interpolateEntities()
+    // Interpolate other entities.
+    this.interpolateEntities()
 
+    // Render the World.
     renderWorld(this.canvas, this.entities)
 
+    // Show some info.
     const info = `Non-acknowledged inputs: ${this.pending_inputs.length}`
-    if (this.status) {
-      this.status.textContent = info
+    this.status.textContent = info
+  }
+
+  // Process all messages from the server, i.e. world updates.
+  processServerMessages() {
+    while (true) {
+      const message = this.network.receive()
+      if (!message) {
+        break
+      }
+
+      // World state is a list of entity states.
+      for (let i = 0; i < message.length; i++) {
+        const state = message[i]
+
+        // If this is the first time we see this entity, create a local representation.
+        if (!this.entities[state.entity_id]) {
+          const entity = new Entity()
+          entity.entity_id = state.entity_id
+          this.entities[state.entity_id] = entity
+        }
+
+        const entity = this.entities[state.entity_id]
+
+        if (state.entity_id == this.entity_id) {
+          // Received the authoritative position of this client's entity.
+          entity.x = state.position
+
+          // Server Reconciliation. Re-apply all the inputs not yet processed by
+          // the server.
+          let j = 0
+          while (j < this.pending_inputs.length) {
+            const input = this.pending_inputs[j]
+            if (input.input_sequence_number <= state.last_processed_input) {
+              // Already processed. Its effect is already taken into account into the world update
+              // we just got, so we can drop it.
+              this.pending_inputs.splice(j, 1)
+            } else {
+              // Not processed by the server yet. Re-apply it.
+              entity.applyInput(input)
+              j++
+            }
+          }
+        } else {
+          // Received the position of an entity other than this client's.
+          // Add it to the position buffer for interpolation.
+          const timestamp = Date.now()
+          entity.position_buffer.push([timestamp, state.position])
+        }
+      }
     }
   }
 
@@ -114,12 +175,12 @@ class Client {
   processInputs() {
     // Compute delta time since last update.
     const now_ts = Date.now()
-    let last_ts = this.last_ts || now_ts
+    const last_ts = this.last_ts || now_ts
     const dt_sec = (now_ts - last_ts) / 1000.0
     this.last_ts = now_ts
 
     // Package player's input.
-    let input
+    let input: any
     if (this.key_right) {
       input = { press_time: dt_sec }
     } else if (this.key_left) {
@@ -135,69 +196,31 @@ class Client {
     this.server.network.send(this.lag, input)
 
     // Do client-side prediction.
-    this.entities[this.entity_id].applyInput(input)
+    if (this.entity_id !== null) {
+      this.entities[this.entity_id].applyInput(input)
+    }
 
+    // Save this input for later reconciliation.
     this.pending_inputs.push(input)
   }
 
-  processServerMessages() {
-    while (true) {
-      const message = this.network.receive()
-      if (!message) {
-        break
-      }
-
-      // World state is a list of entity states.
-      for (let i = 0; i < message.length; i++) {
-        const state = message[i]
-
-        if (!this.entities[state.entity_id]) {
-          const entity = new Entity()
-          entity.entity_id = state.entity_id
-          this.entities[state.entity_id] = entity
-        }
-
-        const entity = this.entities[state.entity_id]
-
-        if (state.entity_id == this.entity_id) {
-          entity.x = state.position
-
-          if (this.server_reconciliation) {
-            let j = 0
-            while (j < this.pending_inputs.length) {
-              const input = this.pending_inputs[j]
-              if (input.input_sequence_number <= state.last_processed_input) {
-                this.pending_inputs.splice(j, 1)
-              } else {
-                entity.applyInput(input)
-                j++
-              }
-            }
-          } else {
-            this.pending_inputs = []
-          }
-        } else {
-          if (!this.entity_interpolation) {
-            entity.x = state.position
-          } else {
-            const timestamp = Date.now()
-            entity.position_buffer.push([timestamp, state.position])
-          }
-        }
-      }
-    }
-  }
-
   interpolateEntities() {
+    // Compute render timestamp.
     const now = Date.now()
     const render_timestamp = now - 1000.0 / 4
 
-    for (const entity_id in this.entities) {
-      const entity = this.entities[entity_id]
-      if (entity_id == this.entity_id) continue
+    for (const i in this.entities) {
+      const entity = this.entities[i]
 
+      // No point in interpolating this client's entity.
+      if (i == this.entity_id) {
+        continue
+      }
+
+      // Find the two authoritative positions surrounding the rendering timestamp.
       const buffer = entity.position_buffer
 
+      // Drop older positions.
       while (buffer.length >= 2 && buffer[1][0] <= render_timestamp) {
         buffer.shift()
       }
