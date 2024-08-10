@@ -6,4 +6,5 @@ export interface Pawn {
     x: number
     y: number
   }
+  timeStamp: number
 }

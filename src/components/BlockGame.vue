@@ -1,223 +1,398 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, type Ref } from 'vue'
-import { type allPawns } from '@/types/allPawns'
+import { ref, onMounted, onUnmounted } from 'vue'
 
-// List of active directions
-const activeKeys = ref<Set<string>>(new Set())
+class Entity {
+  x: number
+  speed: number
+  position_buffer: never[]
+  constructor() {
+    this.x = 0
+    this.speed = 2
+    this.position_buffer = []
+  }
 
-// Variable for requesting frame animation update
-let animationFrameId: number | null = null
-
-// CanvasRef for canvas drawing
-const canvasRef = ref<HTMLCanvasElement | null>(null)
-
-const clientState = ref({
-  position: { x: Infinity, y: Infinity },
-  radius: 10
-})
-
-const pawnsState = ref<allPawns>([])
-
-const pendingInputs: { sequenceNumber: number; input: Set<string> }[] = []
-let sequenceNumber = 0
-
-// Frame update loop
-const animateMovement = () => {
-  // Predict the next position based on the input
-  applyInput(activeKeys.value)
-  draw()
-  animationFrameId = requestAnimationFrame(animateMovement)
+  applyInput(input: { press_time: number }) {
+    this.x += input.press_time * this.speed
+  }
 }
 
-const handleKeyDown = (event: KeyboardEvent) => {
-  const key = event.key.toLowerCase() // Convert key to lowercase
-  // Start moving
-  if (
-    key === 'arrowleft' ||
-    key === 'arrowright' ||
-    key === 'arrowup' ||
-    key === 'arrowdown' ||
-    key === 'a' ||
-    key === 'd' ||
-    key === 'w' ||
-    key === 's'
-  ) {
-    if (!activeKeys.value.has(key)) {
-      activeKeys.value.add(key)
-      updateDirections(activeKeys)
+class LagNetwork {
+  messages: { recv_ts: number; payload: any }[]
+  constructor() {
+    this.messages = []
+  }
+
+  // "Send" a message. Store each message with the timestamp when it should be
+  // received, to simulate lag.
+  send(lag_ms: number, message: any) {
+    this.messages.push({ recv_ts: Date.now() + lag_ms, payload: message })
+  }
+
+  // Returns a "received" message, or undefined if there are no messages available
+  // yet.
+  receive() {
+    const now = Date.now()
+    for (let i = 0; i < this.messages.length; i++) {
+      const message = this.messages[i]
+      if (message.recv_ts <= now) {
+        this.messages.splice(i, 1)
+        console.log(this.messages)
+        // console.log(message)
+        return message.payload
+      }
     }
   }
 }
 
-const handleKeyUp = (event: KeyboardEvent) => {
-  const key = event.key.toLowerCase() // Convert key to lowercase
+class Client {
+  entities: {}
+  key_left: boolean
+  key_right: boolean
+  network: any
+  server: any
+  lag: number
+  entity_id: null
+  server_reconciliation: boolean
+  input_sequence_number: number
+  pending_inputs: never[]
+  entity_interpolation: boolean
+  canvas: any
+  status: any
+  update_rate: number
+  update_interval: any
+  last_ts: number
+  constructor(canvas: any, status: any) {
+    this.entities = {}
+    this.key_left = false
+    this.key_right = false
+    this.network = new LagNetwork()
+    this.server = null
+    this.lag = 100
 
-  // Stop moving
-  if (
-    key === 'arrowleft' ||
-    key === 'arrowright' ||
-    key === 'arrowup' ||
-    key === 'arrowdown' ||
-    key === 'a' ||
-    key === 'd' ||
-    key === 'w' ||
-    key === 's'
-  ) {
-    if (activeKeys.value.has(key)) {
-      activeKeys.value.delete(key)
-      updateDirections(activeKeys)
+    // Unique ID of our entity. Assigned by Server on connection.
+    this.entity_id = null
+
+    this.server_reconciliation = true
+    this.input_sequence_number = 0
+    this.pending_inputs = []
+    this.entity_interpolation = true
+    this.canvas = canvas
+    this.status = status
+    this.update_rate = 50
+    this.update_interval = null
+    this.last_ts = null
+    // this.setUpdateRate(this.update_rate)
+  }
+
+  setClientUpdate() {
+    if (this.update_interval) {
+      clearInterval(this.update_interval)
+    }
+    this.update_interval = setInterval(() => {
+      this.update()
+    }, this.update_rate)
+  }
+
+  update() {
+    this.processServerMessages()
+
+    if (this.entity_id == null) return // Not connected yet.
+
+    this.processInputs()
+
+    if (this.entity_interpolation) this.interpolateEntities()
+
+    renderWorld(this.canvas, this.entities)
+
+    const info = `Non-acknowledged inputs: ${this.pending_inputs.length}`
+    if (this.status) {
+      this.status.textContent = info
+    }
+  }
+
+  // Get inputs and send them to the server
+  processInputs() {
+    // Compute delta time since last update.
+    const now_ts = Date.now()
+    let last_ts = this.last_ts || now_ts
+    const dt_sec = (now_ts - last_ts) / 1000.0
+    this.last_ts = now_ts
+
+    // Package player's input.
+    let input
+    if (this.key_right) {
+      input = { press_time: dt_sec }
+    } else if (this.key_left) {
+      input = { press_time: -dt_sec }
+    } else {
+      // Nothing interesting happened
+      return
+    }
+
+    // Send the input to the server.
+    input.input_sequence_number = this.input_sequence_number++
+    input.entity_id = this.entity_id
+    this.server.network.send(this.lag, input)
+
+    // Do client-side prediction.
+    this.entities[this.entity_id].applyInput(input)
+
+    this.pending_inputs.push(input)
+  }
+
+  processServerMessages() {
+    while (true) {
+      const message = this.network.receive()
+      if (!message) {
+        break
+      }
+
+      // World state is a list of entity states.
+      for (let i = 0; i < message.length; i++) {
+        const state = message[i]
+
+        if (!this.entities[state.entity_id]) {
+          const entity = new Entity()
+          entity.entity_id = state.entity_id
+          this.entities[state.entity_id] = entity
+        }
+
+        const entity = this.entities[state.entity_id]
+
+        if (state.entity_id == this.entity_id) {
+          entity.x = state.position
+
+          if (this.server_reconciliation) {
+            let j = 0
+            while (j < this.pending_inputs.length) {
+              const input = this.pending_inputs[j]
+              if (input.input_sequence_number <= state.last_processed_input) {
+                this.pending_inputs.splice(j, 1)
+              } else {
+                entity.applyInput(input)
+                j++
+              }
+            }
+          } else {
+            this.pending_inputs = []
+          }
+        } else {
+          if (!this.entity_interpolation) {
+            entity.x = state.position
+          } else {
+            const timestamp = Date.now()
+            entity.position_buffer.push([timestamp, state.position])
+          }
+        }
+      }
+    }
+  }
+
+  interpolateEntities() {
+    const now = Date.now()
+    const render_timestamp = now - 1000.0 / 4
+
+    for (const entity_id in this.entities) {
+      const entity = this.entities[entity_id]
+      if (entity_id == this.entity_id) continue
+
+      const buffer = entity.position_buffer
+
+      while (buffer.length >= 2 && buffer[1][0] <= render_timestamp) {
+        buffer.shift()
+      }
+
+      if (
+        buffer.length >= 2 &&
+        buffer[0][0] <= render_timestamp &&
+        render_timestamp <= buffer[1][0]
+      ) {
+        const [t0, x0] = buffer[0]
+        const [t1, x1] = buffer[1]
+
+        entity.x = x0 + ((x1 - x0) * (render_timestamp - t0)) / (t1 - t0)
+      }
     }
   }
 }
+
+// Define Server class
+class Server {
+  clients: Client[]
+  entities: Entity[]
+  last_processed_input: number[]
+  network: LagNetwork
+  canvas: HTMLCanvasElement | null
+  status: HTMLElement | null
+  update_rate: number
+  update_interval: any
+
+  constructor(canvas: HTMLCanvasElement | null, status: HTMLElement | null) {
+    this.clients = []
+    this.entities = []
+    this.last_processed_input = []
+    this.network = new LagNetwork()
+    this.canvas = canvas
+    this.status = status
+    this.update_rate = 200
+    this.update_interval = null
+    // this.setServerUpdate(this.update_rate)
+  }
+
+  connect(client: Client) {
+    client.server = this
+    client.entity_id = this.clients.length
+    this.clients.push(client)
+
+    const entity = new Entity()
+    this.entities.push(entity)
+    entity.entity_id = client.entity_id!
+
+    const spawn_points = [4, 6]
+    entity.x = spawn_points[client.entity_id!]
+  }
+
+  setServerUpdate() {
+    if (this.update_interval) {
+      clearInterval(this.update_interval)
+    }
+    this.update_interval = setInterval(() => {
+      this.update()
+    }, this.update_rate)
+  }
+  update() {
+    // Process all pending messages from clients.
+    while (true) {
+      const message = this.network.receive()
+      if (!message) {
+        break
+      }
+
+      const id = message.entity_id
+      this.entities[id].applyInput(message)
+      this.last_processed_input[id] = message.input_sequence_number
+    }
+
+    // Show some info.
+    var info = 'Last acknowledged input: '
+    for (let i = 0; i < this.clients.length; ++i) {
+      info += 'Player ' + i + ': #' + (this.last_processed_input[i] || 0) + '   '
+    }
+    this.status.textContent = info
+
+    // Send the world state to all the connected clients.
+    var world_state = []
+    var num_clients = this.clients.length
+
+    for (let i = 0; i < num_clients; i++) {
+      var entity = this.entities[i]
+      world_state.push({
+        entity_id: entity.entity_id,
+        position: entity.x,
+        last_processed_input: this.last_processed_input[i]
+      })
+    }
+
+    // Broadcast the state to all the clients.
+    for (var i = 0; i < num_clients; i++) {
+      var client = this.clients[i]
+      client.network.send(client.lag, world_state)
+    }
+    renderWorld(this.canvas, this.entities)
+  }
+}
+
+function keyHandler(e, player1) {
+  let input = e.type == 'keydown'
+  switch (e.key) {
+    case 'a':
+      player1.key_left = input
+      break
+    case 'd':
+      player1.key_right = input
+      break
+    // case 'a':
+    //   player2.key_left = input
+    //   break
+    // case 'd':
+    //   player2.key_right = input
+    //   break
+  }
+}
+
+function renderWorld(canvas, entities) {
+  if (!canvas) return
+  const ctx = canvas.getContext('2d')
+  if (!ctx) return
+
+  canvas.width = canvas.width
+
+  const colours = ['blue', 'red']
+
+  for (const entity_id in entities) {
+    const entity = entities[entity_id]
+    const radius = (canvas.height * 0.9) / 2
+    const x = (entity.x / 10.0) * canvas.width
+
+    ctx.beginPath()
+    ctx.arc(x, canvas.height / 2, radius, 0, 2 * Math.PI, false)
+    ctx.fillStyle = colours[entity_id]
+    ctx.fill()
+    ctx.lineWidth = 5
+    ctx.strokeStyle = 'dark' + colours[entity_id]
+    ctx.stroke()
+  }
+}
+
+// Create instances of Client and Server
+const player1Canvas = ref<HTMLCanvasElement | null>(null)
+const player1Status = ref<HTMLElement | null>(null)
+const player2Canvas = ref<HTMLCanvasElement | null>(null)
+const player2Status = ref<HTMLElement | null>(null)
+const serverCanvas = ref<HTMLCanvasElement | null>(null)
+const serverStatus = ref<HTMLElement | null>(null)
 
 onMounted(() => {
-  setup()
-  window.addEventListener('keydown', handleKeyDown)
-  window.addEventListener('keyup', handleKeyUp)
-  animateMovement()
+  const server = new Server(serverCanvas.value, serverStatus.value)
+
+  let player1 = new Client(player1Canvas.value, player1Status.value)
+  let player2 = new Client(player2Canvas.value, player2Status.value)
+
+  server.connect(player1)
+  server.connect(player2)
+
+  server.setServerUpdate()
+  player1.setClientUpdate()
+  player2.setClientUpdate()
+
+  window.addEventListener('keydown', (e) => keyHandler(e, player1))
+  window.addEventListener('keyup', (e) => keyHandler(e, player1))
 })
 
 onUnmounted(() => {
-  window.removeEventListener('keydown', handleKeyDown)
-  window.removeEventListener('keyup', handleKeyUp)
-  if (animationFrameId) {
-    cancelAnimationFrame(animationFrameId)
-  }
+  window.removeEventListener('keydown', keyHandler)
+  window.removeEventListener('keyup', keyHandler)
+  if (player1) clearInterval(player1.update_interval)
+  if (player2) clearInterval(player2.update_interval)
 })
-
-let context: CanvasRenderingContext2D | null = null
-let ws: WebSocket
-
-function setup() {
-  initializeCanvas()
-  setupWebSocket()
-}
-
-function initializeCanvas() {
-  if (canvasRef.value) {
-    context = canvasRef.value.getContext('2d')
-  }
-}
-
-const setupWebSocket = () => {
-  ws = new WebSocket(`${import.meta.env.VITE_BACKEND_URL}`)
-
-  ws.onmessage = (event) => {
-    const msg = JSON.parse(event.data)
-
-    if (msg.type === 'gameState') {
-      handleServerUpdate(msg.data)
-    }
-  }
-
-  ws.onclose = () => {
-    console.log('WebSocket connection closed')
-  }
-}
-
-// Server reconciliation
-function handleServerUpdate(data: any) {
-  const lastProcessedServerInput = data.lastProcessedServerInput
-
-  // Reconcile the client state
-  clientState.value.position = data.clientPawn.position
-  pawnsState.value = data.allPawns
-
-  // Remove processed inputs
-  while (pendingInputs.length > 0 && pendingInputs[0].sequenceNumber <= lastProcessedServerInput) {
-    pendingInputs.shift()
-  }
-
-  // Reapply unprocessed inputs
-  for (const pendingInput of pendingInputs) {
-    console.log(pendingInput)
-    applyInput(pendingInput.input)
-  }
-}
-
-function applyInput(input: Set<string>) {
-  const speed = 5
-
-  let xChange = 0
-  let yChange = 0
-
-  if (input.has('arrowright') || input.has('d')) {
-    xChange = speed
-  }
-  if (input.has('arrowleft') || input.has('a')) {
-    xChange = -speed
-  }
-  if (input.has('arrowup') || input.has('w')) {
-    yChange = -speed
-  }
-  if (input.has('arrowdown') || input.has('s')) {
-    yChange = speed
-  }
-
-  if (xChange !== 0 || yChange !== 0) {
-    const diagonalFactor = 0.7071
-    if (xChange !== 0 && yChange !== 0) {
-      xChange *= diagonalFactor
-      yChange *= diagonalFactor
-    }
-
-    clientState.value.position.x += xChange
-    clientState.value.position.y += yChange
-  }
-}
-
-function draw() {
-  if (context && canvasRef.value) {
-    // Clear the canvas
-    context.clearRect(0, 0, canvasRef.value.width, canvasRef.value.height)
-    // Draw the background
-    context.fillStyle = '#333300' // Set your desired background color here
-    context.fillRect(0, 0, canvasRef.value.width, canvasRef.value.height)
-
-    // Draw Controllable Units
-    pawnsState.value.forEach((pawn) => {
-      if (context) {
-        context.fillStyle = 'white'
-        context.beginPath()
-        context.arc(pawn.position.x, pawn.position.y, pawn.radius, 0, Math.PI * 2)
-        context.fill()
-      }
-    })
-
-    // Draw the client's pawn
-    context.fillStyle = 'blue'
-    context.beginPath()
-    if (clientState.value.position.x !== undefined && clientState.value.position.y !== undefined) {
-      context.arc(
-        clientState.value.position.x,
-        clientState.value.position.y,
-        clientState.value.radius,
-        0,
-        Math.PI * 2
-      )
-    }
-
-    context.fill()
-  }
-}
-
-function updateDirections(activeDirections: Ref<Set<string>>) {
-  sequenceNumber++
-  const input = new Set(activeDirections.value)
-  pendingInputs.push({ sequenceNumber, input })
-
-  ws.send(
-    JSON.stringify({
-      type: 'move',
-      data: { inputNumber: sequenceNumber, input: Array.from(activeDirections.value) }
-    })
-  )
-}
 </script>
 
 <template>
-  <div>
-    <canvas ref="canvasRef" width="800" height="800" style="border: 0.5px solid wheat"> </canvas>
+  <div class="main">
+    <div style="border: 5px solid blue; padding: 15px">
+      <canvas height="75" ref="player1Canvas" width="920"></canvas>
+      <div ref="player1Status" style="font-family: courier">Waiting for connection…</div>
+    </div>
+    <div style="height: 1em"></div>
+    <div style="border: 2px solid grey; padding: 15px">
+      <canvas height="75" ref="serverCanvas" width="920"></canvas>
+      <div ref="serverStatus" style="font-family: courier"></div>
+    </div>
+    <div style="height: 1em"></div>
+    <div style="border: 5px solid red; padding: 15px">
+      <canvas height="75" ref="player2Canvas" width="920"></canvas>
+      <div ref="player2Status" style="font-family: courier">Waiting for connection…</div>
+    </div>
   </div>
 </template>
 
