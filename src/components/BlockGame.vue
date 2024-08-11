@@ -35,11 +35,11 @@ class LagNetwork {
   receive() {
     const now = Date.now()
     for (let i = 0; i < this.messages.length; i++) {
+      // Access each message in the queue.
       const message = this.messages[i]
+      // // Check if the message's designated reception time has passed or is equal to the current time.
       if (message.recv_ts <= now) {
         this.messages.splice(i, 1)
-        console.log(this.messages)
-        // console.log(message)
         return message.payload
       }
     }
@@ -86,7 +86,7 @@ class Client {
     this.status = status
 
     // Update rate.
-    this.update_rate = 50
+    this.update_rate = 1000
     this.last_ts = null
     // this.setUpdateRate(this.update_rate)
   }
@@ -132,6 +132,7 @@ class Client {
       // World state is a list of entity states.
       for (let i = 0; i < message.length; i++) {
         const state = message[i]
+        console.log(state)
 
         // If this is the first time we see this entity, create a local representation.
         if (!this.entities[state.entity_id]) {
@@ -379,14 +380,14 @@ onMounted(() => {
   const server = new Server(serverCanvas.value, serverStatus.value)
 
   let player1 = new Client(player1Canvas.value, player1Status.value)
-  let player2 = new Client(player2Canvas.value, player2Status.value)
+  // let player2 = new Client(player2Canvas.value, player2Status.value)
 
   server.connect(player1)
-  server.connect(player2)
+  // server.connect(player2)
 
   server.setServerUpdate()
   player1.setClientUpdate()
-  player2.setClientUpdate()
+  // player2.setClientUpdate()
 
   window.addEventListener('keydown', (e) => keyHandler(e, player1))
   window.addEventListener('keyup', (e) => keyHandler(e, player1))
@@ -396,7 +397,7 @@ onUnmounted(() => {
   window.removeEventListener('keydown', keyHandler)
   window.removeEventListener('keyup', keyHandler)
   if (player1) clearInterval(player1.update_interval)
-  if (player2) clearInterval(player2.update_interval)
+  // if (player2) clearInterval(player2.update_interval)
 })
 </script>
 
