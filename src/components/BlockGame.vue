@@ -72,7 +72,7 @@ class Client {
     // Simulated network connection.
     this.network = new LagNetwork()
     this.server = null
-    this.lag = 100
+    this.lag = 200
 
     // Unique ID of our entity. Assigned by Server on connection.
     this.entity_id = null
@@ -86,7 +86,7 @@ class Client {
     this.status = status
 
     // Update rate.
-    this.update_rate = 1000
+    this.update_rate = 20
     this.last_ts = null
     // this.setUpdateRate(this.update_rate)
   }
@@ -132,7 +132,7 @@ class Client {
       // World state is a list of entity states.
       for (let i = 0; i < message.length; i++) {
         const state = message[i]
-        console.log(state)
+        // console.log(state)
 
         // If this is the first time we see this entity, create a local representation.
         if (!this.entities[state.entity_id]) {
@@ -169,6 +169,7 @@ class Client {
           entity.position_buffer.push([timestamp, state.position])
         }
       }
+      // console.log(this.entities)
     }
   }
 
@@ -208,7 +209,7 @@ class Client {
   interpolateEntities() {
     // Compute render timestamp.
     const now = Date.now()
-    const render_timestamp = now - 1000.0 / 4
+    const render_timestamp = now - 250
 
     for (const i in this.entities) {
       const entity = this.entities[i]
@@ -221,18 +222,22 @@ class Client {
       // Find the two authoritative positions surrounding the rendering timestamp.
       const buffer = entity.position_buffer
 
+      // console.log(buffer)
+
       // Drop older positions.
       while (buffer.length >= 2 && buffer[1][0] <= render_timestamp) {
         buffer.shift()
       }
 
+      // Check if there are at least two positions in the buffer that
+      // surround the render_timestamp
       if (
         buffer.length >= 2 &&
         buffer[0][0] <= render_timestamp &&
         render_timestamp <= buffer[1][0]
       ) {
-        const [t0, x0] = buffer[0]
-        const [t1, x1] = buffer[1]
+        const [t0, x0] = buffer[0] // represent the earlier timestamp and position.
+        const [t1, x1] = buffer[1] // represent the later timestamp and position.
 
         entity.x = x0 + ((x1 - x0) * (render_timestamp - t0)) / (t1 - t0)
       }
@@ -252,26 +257,37 @@ class Server {
   update_interval: any
 
   constructor(canvas: HTMLCanvasElement | null, status: HTMLElement | null) {
+    // Connected clients and their entities.
     this.clients = []
     this.entities = []
+
+    // Last processed input for each client.
     this.last_processed_input = []
+
+    // Simulated network connection.
     this.network = new LagNetwork()
+
+    // UI.
     this.canvas = canvas
     this.status = status
-    this.update_rate = 200
+
+    // Default update rate.
+    this.update_rate = 50
     this.update_interval = null
-    // this.setServerUpdate(this.update_rate)
   }
 
   connect(client: Client) {
+    // Give the Client enough data to identify itself.
     client.server = this
     client.entity_id = this.clients.length
     this.clients.push(client)
 
+    // Create a new Entity for this Client.
     const entity = new Entity()
     this.entities.push(entity)
     entity.entity_id = client.entity_id!
 
+    // Set the initial state of the Entity (e.g. spawn point)
     const spawn_points = [4, 6]
     entity.x = spawn_points[client.entity_id!]
   }
@@ -285,31 +301,51 @@ class Server {
     }, this.update_rate)
   }
   update() {
-    // Process all pending messages from clients.
+    // Listen to clients.
+    this.processClientMessages()
+    this.sendWorldState()
+    renderWorld(this.canvas, this.entities)
+  }
+
+  // Process all pending messages from clients.
+  processClientMessages() {
     while (true) {
       const message = this.network.receive()
       if (!message) {
         break
       }
 
-      const id = message.entity_id
-      this.entities[id].applyInput(message)
-      this.last_processed_input[id] = message.input_sequence_number
+      // Update the state of the entity, based on its input.
+      // We just ignore inputs that don't look valid; this is what prevents clients from cheating.
+      if (this.validateInput(message)) {
+        const id = message.entity_id
+        this.entities[id].applyInput(message)
+        this.last_processed_input[id] = message.input_sequence_number
+      }
     }
-
     // Show some info.
-    var info = 'Last acknowledged input: '
+    let info = 'Last acknowledged input: '
     for (let i = 0; i < this.clients.length; ++i) {
       info += 'Player ' + i + ': #' + (this.last_processed_input[i] || 0) + '   '
     }
     this.status.textContent = info
+  }
 
+  // Check whether this input seems to be valid (e.g. "make sense" according
+  // to the physical rules of the World)
+  validateInput(input) {
+    if (Math.abs(input.press_time) > 1 / 40) {
+      return false
+    }
+    return true
+  }
+
+  sendWorldState() {
     // Send the world state to all the connected clients.
-    var world_state = []
-    var num_clients = this.clients.length
-
+    let world_state = []
+    let num_clients = this.clients.length
     for (let i = 0; i < num_clients; i++) {
-      var entity = this.entities[i]
+      let entity = this.entities[i]
       world_state.push({
         entity_id: entity.entity_id,
         position: entity.x,
@@ -318,15 +354,14 @@ class Server {
     }
 
     // Broadcast the state to all the clients.
-    for (var i = 0; i < num_clients; i++) {
-      var client = this.clients[i]
+    for (let i = 0; i < num_clients; i++) {
+      let client = this.clients[i]
       client.network.send(client.lag, world_state)
     }
-    renderWorld(this.canvas, this.entities)
   }
 }
 
-function keyHandler(e, player1) {
+function keyHandler(e, player1, player2) {
   let input = e.type == 'keydown'
   switch (e.key) {
     case 'a':
@@ -335,12 +370,12 @@ function keyHandler(e, player1) {
     case 'd':
       player1.key_right = input
       break
-    // case 'a':
-    //   player2.key_left = input
-    //   break
-    // case 'd':
-    //   player2.key_right = input
-    //   break
+    case 'q':
+      player2.key_left = input
+      break
+    case 'e':
+      player2.key_right = input
+      break
   }
 }
 
@@ -380,24 +415,24 @@ onMounted(() => {
   const server = new Server(serverCanvas.value, serverStatus.value)
 
   let player1 = new Client(player1Canvas.value, player1Status.value)
-  // let player2 = new Client(player2Canvas.value, player2Status.value)
+  let player2 = new Client(player2Canvas.value, player2Status.value)
 
   server.connect(player1)
-  // server.connect(player2)
+  server.connect(player2)
 
   server.setServerUpdate()
   player1.setClientUpdate()
-  // player2.setClientUpdate()
+  player2.setClientUpdate()
 
-  window.addEventListener('keydown', (e) => keyHandler(e, player1))
-  window.addEventListener('keyup', (e) => keyHandler(e, player1))
+  window.addEventListener('keydown', (e) => keyHandler(e, player1, player2))
+  window.addEventListener('keyup', (e) => keyHandler(e, player1, player2))
 })
 
 onUnmounted(() => {
   window.removeEventListener('keydown', keyHandler)
   window.removeEventListener('keyup', keyHandler)
   if (player1) clearInterval(player1.update_interval)
-  // if (player2) clearInterval(player2.update_interval)
+  if (player2) clearInterval(player2.update_interval)
 })
 </script>
 
