@@ -47,6 +47,7 @@ class LagNetwork {
 }
 
 class Client {
+  socket: WebSocket
   entities: any
   key_left: boolean
   key_right: boolean
@@ -89,6 +90,59 @@ class Client {
     this.update_rate = 20
     this.last_ts = null
     // this.setUpdateRate(this.update_rate)
+
+    this.socket = new WebSocket('ws://localhost:3000')
+
+    this.socket.onmessage = (event) => {
+      const message = JSON.parse(event.data)
+      this.processServerMessage(message)
+    }
+
+    this.socket.onopen = () => {
+      console.log('Connected to the server')
+    }
+
+    this.socket.onclose = () => {
+      console.log('Disconnected from the server')
+    }
+  }
+
+  processServerMessage(message) {
+    // Handle the game state received from the server
+    for (const state of message) {
+      if (!this.entities[state.entity_id]) {
+        const entity = new Entity()
+        entity.entity_id = state.entity_id
+        this.entities[state.entity_id] = entity
+      }
+      const entity = this.entities[state.entity_id]
+
+      if (state.entity_id == this.entity_id) {
+        // Received the authoritative position of this client's entity.
+        entity.x = state.position
+
+        // Server Reconciliation. Re-apply all the inputs not yet processed by
+        // the server.
+        let j = 0
+        while (j < this.pending_inputs.length) {
+          const input = this.pending_inputs[j]
+          if (input.input_sequence_number <= state.last_processed_input) {
+            // Already processed. Its effect is already taken into account into the world update
+            // we just got, so we can drop it.
+            this.pending_inputs.splice(j, 1)
+          } else {
+            // Not processed by the server yet. Re-apply it.
+            entity.applyInput(input)
+            j++
+          }
+        }
+      } else {
+        // Received the position of an entity other than this client's.
+        // Add it to the position buffer for interpolation.
+        const timestamp = Date.now()
+        entity.position_buffer.push([timestamp, state.position])
+      }
+    }
   }
 
   setClientUpdate() {
