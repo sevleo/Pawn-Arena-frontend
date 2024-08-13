@@ -91,11 +91,19 @@ class Client {
     this.last_ts = null
     // this.setUpdateRate(this.update_rate)
 
-    this.socket = new WebSocket('ws://localhost:3000')
+    this.messages = []
+  }
+
+  receiveServerMessage(message) {
+    this.messages.push({ recv_ts: Date.now(), payload: message })
+  }
+
+  connectToServer() {
+    this.socket = new WebSocket(`ws://localhost:3000`)
 
     this.socket.onmessage = (event) => {
       const message = JSON.parse(event.data)
-      this.processServerMessage(message)
+      this.receiveServerMessage(message)
     }
 
     this.socket.onopen = () => {
@@ -107,42 +115,65 @@ class Client {
     }
   }
 
-  processServerMessage(message) {
-    // Handle the game state received from the server
-    for (const state of message) {
-      if (!this.entities[state.entity_id]) {
-        const entity = new Entity()
-        entity.entity_id = state.entity_id
-        this.entities[state.entity_id] = entity
-      }
-      const entity = this.entities[state.entity_id]
-
-      if (state.entity_id == this.entity_id) {
-        // Received the authoritative position of this client's entity.
-        entity.x = state.position
-
-        // Server Reconciliation. Re-apply all the inputs not yet processed by
-        // the server.
-        let j = 0
-        while (j < this.pending_inputs.length) {
-          const input = this.pending_inputs[j]
-          if (input.input_sequence_number <= state.last_processed_input) {
-            // Already processed. Its effect is already taken into account into the world update
-            // we just got, so we can drop it.
-            this.pending_inputs.splice(j, 1)
-          } else {
-            // Not processed by the server yet. Re-apply it.
-            entity.applyInput(input)
-            j++
-          }
-        }
-      } else {
-        // Received the position of an entity other than this client's.
-        // Add it to the position buffer for interpolation.
-        const timestamp = Date.now()
-        entity.position_buffer.push([timestamp, state.position])
+  getMessage() {
+    const now = Date.now()
+    for (let i = 0; i < messages.length; i++) {
+      // Access each message in the queue.
+      const message = messages[i]
+      // // Check if the message's designated reception time has passed or is equal to the current time.
+      if (message.recv_ts <= now) {
+        messages.splice(i, 1)
+        return message.payload
       }
     }
+  }
+
+  processServerMessage() {
+    // while (this.messages.length > 0) {
+    //   let message = this.getMessage()
+    //   console.log(message)
+    //   const id = message.entity_id
+    //   const entity = entities.find((entity) => entity.clientId === id)
+    //   if (entity) {
+    //     entity.applyInput(message)
+    //     last_processed_input[id] = message.input_sequence_number
+    //     // console.log(last_processed_input);
+    //   }
+    // }
+    // // Handle the game state received from the server
+    // console.log(message)
+    // for (const state of message.data) {
+    //   if (!this.entities[state.entity_id]) {
+    //     const entity = new Entity()
+    //     entity.entity_id = state.entity_id
+    //     this.entities[state.entity_id] = entity
+    //   }
+    //   const entity = this.entities[state.entity_id]
+    //   if (state.entity_id == this.entity_id) {
+    //     // Received the authoritative position of this client's entity.
+    //     entity.x = state.position
+    //     // Server Reconciliation. Re-apply all the inputs not yet processed by
+    //     // the server.
+    //     let j = 0
+    //     while (j < this.pending_inputs.length) {
+    //       const input = this.pending_inputs[j]
+    //       if (input.input_sequence_number <= state.last_processed_input) {
+    //         // Already processed. Its effect is already taken into account into the world update
+    //         // we just got, so we can drop it.
+    //         this.pending_inputs.splice(j, 1)
+    //       } else {
+    //         // Not processed by the server yet. Re-apply it.
+    //         entity.applyInput(input)
+    //         j++
+    //       }
+    //     }
+    //   } else {
+    //     // Received the position of an entity other than this client's.
+    //     // Add it to the position buffer for interpolation.
+    //     const timestamp = Date.now()
+    //     entity.position_buffer.push([timestamp, state.position])
+    //   }
+    // }
   }
 
   setClientUpdate() {
@@ -248,10 +279,13 @@ class Client {
 
     // Send the input to the server.
     input.input_sequence_number = this.input_sequence_number++
-    input.entity_id = this.entity_id
-    this.server.network.send(this.lag, input)
+    // input.entity_id = this.entity_id
+    // this.server.network.send(this.lag, input)
+
+    this.socket.send(JSON.stringify({ type: 'input', data: input }))
 
     // Do client-side prediction.
+    console.log(this.entity_id)
     if (this.entity_id !== null) {
       this.entities[this.entity_id].applyInput(input)
     }
@@ -472,7 +506,9 @@ onMounted(() => {
   let player2 = new Client(player2Canvas.value, player2Status.value)
 
   server.connect(player1)
-  server.connect(player2)
+  // server.connect(player2)
+
+  player1.connectToServer()
 
   server.setServerUpdate()
   player1.setClientUpdate()
