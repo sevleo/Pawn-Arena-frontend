@@ -37,7 +37,7 @@ let canvas: any
 let status: any
 
 // Update rate.
-let update_rate = 20
+let update_rate = 100
 let last_ts: any = null
 let update_interval: any = null
 
@@ -50,27 +50,23 @@ function receiveServerMessage(message: any) {
 }
 
 function connectToServer() {
-  socket = new WebSocket(`ws://localhost:3000`)
+  socket = new WebSocket(`${import.meta.env.VITE_BACKEND_URL}`)
 
+  // Listen for the server to send the entity_id
   socket.onmessage = (event: any) => {
     const message = JSON.parse(event.data)
-    receiveServerMessage(message)
+
+    if (message.type === 'connection') {
+      entity_id = message.entity_id // Assign entity_id
+      console.log(`Assigned entity_id: ${entity_id}`)
+    } else {
+      console.log('ss')
+      receiveServerMessage(message)
+    }
   }
 
   socket.onopen = () => {
     console.log('Connected to the server')
-
-    // Listen for the server to send the entity_id
-    socket.onmessage = (event: any) => {
-      const message = JSON.parse(event.data)
-
-      if (message.type === 'connection') {
-        entity_id = message.entity_id // Assign entity_id
-        console.log(`Assigned entity_id: ${entity_id}`)
-      } else {
-        receiveServerMessage(message)
-      }
-    }
   }
   socket.onclose = () => {
     console.log('Disconnected from the server')
@@ -91,9 +87,11 @@ function getMessage() {
 }
 
 function processServerMessage() {
-  while (messages.length > 0) {
+  while (true) {
     let message = getMessage()
-    console.log(message)
+    if (!message) {
+      break
+    }
     // Handle the game state received from the server
 
     for (const state of message.data) {
@@ -195,19 +193,19 @@ function processInputs() {
 
 function interpolateEntities() {
   // Compute render timestamp.
-  const now = Date.now()
-  const render_timestamp = now - 200
+  let now = Date.now()
+  let render_timestamp = now - 400
 
   for (const i in entities) {
     const entity = entities[i]
 
     // No point in interpolating this client's entity.
-    if (i == entity_id) {
+    if (entity.entity_id == entity_id) {
       continue
     }
 
     // Find the two authoritative positions surrounding the rendering timestamp.
-    const buffer = entity.position_buffer
+    let buffer = entity.position_buffer
 
     // Drop older positions.
     while (buffer.length >= 2 && buffer[1][0] <= render_timestamp) {

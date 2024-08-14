@@ -190,8 +190,6 @@
             var message = this.messages[i]
             if (message.recv_ts <= now) {
               this.messages.splice(i, 1)
-              console.log(this.messages)
-              //   console.log(message)
               return message.payload
             }
           }
@@ -230,7 +228,7 @@
           this.status = status
 
           // Update rate.
-          this.setUpdateRate(1)
+          this.setUpdateRate(50)
         }
 
         Client.prototype.setUpdateRate = function (hz) {
@@ -243,7 +241,7 @@
                 self.update()
               }
             })(this),
-            10
+            30
           )
         }
 
@@ -453,7 +451,7 @@
                 self.update()
               }
             })(this),
-            400
+            1000 / this.update_rate
           )
         }
 
@@ -466,9 +464,9 @@
         // Check whether this input seems to be valid (e.g. "make sense" according
         // to the physical rules of the World)
         Server.prototype.validateInput = function (input) {
-          if (Math.abs(input.press_time) > 1 / 40) {
-            return false
-          }
+          // if (Math.abs(input.press_time) > 1 / 40) {
+          //   return false
+          // }
           return true
         }
 
