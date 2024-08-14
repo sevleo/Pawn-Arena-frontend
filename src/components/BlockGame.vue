@@ -196,7 +196,7 @@ function processInputs() {
 function interpolateEntities() {
   // Compute render timestamp.
   const now = Date.now()
-  const render_timestamp = now - 250
+  const render_timestamp = now - 200
 
   for (const i in entities) {
     const entity = entities[i]

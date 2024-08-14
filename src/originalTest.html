@@ -230,7 +230,7 @@
           this.status = status
 
           // Update rate.
-          this.setUpdateRate(50)
+          this.setUpdateRate(1)
         }
 
         Client.prototype.setUpdateRate = function (hz) {
@@ -243,7 +243,7 @@
                 self.update()
               }
             })(this),
-            1000 / this.update_rate
+            10
           )
         }
 
@@ -453,7 +453,7 @@
                 self.update()
               }
             })(this),
-            1000 / this.update_rate
+            400
           )
         }
 
