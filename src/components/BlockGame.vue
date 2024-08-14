@@ -37,7 +37,7 @@ let canvas: any
 let status: any
 
 // Update rate.
-let update_rate = 100
+let update_rate = 20
 let last_ts: any = null
 let update_interval: any = null
 
