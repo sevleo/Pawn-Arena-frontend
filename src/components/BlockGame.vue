@@ -60,7 +60,6 @@ function connectToServer() {
       entity_id = message.entity_id // Assign entity_id
       console.log(`Assigned entity_id: ${entity_id}`)
     } else {
-      console.log('ss')
       receiveServerMessage(message)
     }
   }
@@ -92,6 +91,7 @@ function processServerMessage() {
     if (!message) {
       break
     }
+    // console.log(messages)
     // Handle the game state received from the server
 
     for (const state of message.data) {
@@ -194,7 +194,7 @@ function processInputs() {
 function interpolateEntities() {
   // Compute render timestamp.
   let now = Date.now()
-  let render_timestamp = now - 600
+  let render_timestamp = now - 200
 
   for (const i in entities) {
     const entity = entities[i]
