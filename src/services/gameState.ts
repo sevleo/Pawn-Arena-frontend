@@ -51,14 +51,12 @@ function interpolate() {
 
     // Find the two authoritative positions surrounding the rendering timestamp.
     const buffer = entity.position_buffer
-    // console.log(entity.position_buffer)
+    console.log(entity.position_buffer)
 
     // Drop older positions.
     while (buffer.length >= 2 && buffer[1][0] <= render_timestamp) {
-      console.log('shift')
       buffer.shift()
     }
-    console.log('continue')
 
     // Check if there are at least two positions in the buffer that
     // surround the render_timestamp
@@ -71,7 +69,6 @@ function interpolate() {
       const [t1, x1] = buffer[1] // represent the later timestamp and position.
 
       entity.x = x0 + ((x1 - x0) * (render_timestamp - t0)) / (t1 - t0)
-      // console.log(entity.x)
     }
   }
 }
