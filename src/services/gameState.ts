@@ -36,7 +36,8 @@ function updateGameState() {
 function interpolate() {
   // Compute render timestamp.
   const now = Date.now()
-  const render_timestamp = now - INTERPOLATION_OFFSET
+  const render_timestamp = now - INTERPOLATION_OFFSET / 50
+  console.log(render_timestamp)
 
   for (const i in gameState.entities) {
     const entity = gameState.entities[i]
@@ -53,7 +54,7 @@ function interpolate() {
     // Drop older positions.
     while (buffer.length >= 2 && buffer[1][0] <= render_timestamp) {
       buffer.shift()
-      console.log(buffer.length)
+      // console.log(buffer.length)
     }
 
     // Check if there are at least two positions in the buffer that
