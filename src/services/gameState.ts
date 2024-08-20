@@ -53,6 +53,7 @@ function interpolate() {
     // Drop older positions.
     while (buffer.length >= 2 && buffer[1][0] <= render_timestamp) {
       buffer.shift()
+      console.log(buffer.length)
     }
 
     // Check if there are at least two positions in the buffer that
@@ -66,7 +67,7 @@ function interpolate() {
       const [t1, x1] = buffer[1] // represent the later timestamp and position.
 
       entity.x = x0 + ((x1 - x0) * (render_timestamp - t0)) / (t1 - t0)
-      console.log(entity.x)
+      // console.log(entity.x)
     }
   }
 }
