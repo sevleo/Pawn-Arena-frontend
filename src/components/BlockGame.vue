@@ -1,85 +1,28 @@
 <!-- eslint-disable no-constant-condition -->
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
-
-class Entity {
-  x: number
-  speed: number
-  position_buffer: []
-  entity_id: any
-  constructor() {
-    this.x = 0
-    this.speed = 2
-    this.position_buffer = []
-  }
-
-  applyInput(input: { press_time: number }) {
-    this.x += input.press_time * this.speed
-  }
-}
-
-// Local representation of the entities.
-let entities: any = {}
-
-// Input state.
-let key_left = false
-let key_right = false
-
-// Unique ID of our entity. Assigned by Server on connection.
-let entity_id: any = null
-
-// Data needed for reconciliation.
-let input_sequence_number = 0
-let pending_inputs: any = []
-
-// UI.
-let canvas: any
-let status: any
-
-// Update rate.
-let update_rate = 20
-let last_ts: any = null
-let update_interval: any = null
-
-let messages: any = []
-
-let socket: any
+import Entity from '@/models/entity'
+import { connectToServer } from '@/ws/webSocket'
+import clientState from '@/services/clientState'
 
 function receiveServerMessage(message: any) {
-  messages.push({ recv_ts: Date.now(), payload: message })
+  // console.log(message)
+  clientState.messages.push({ recv_ts: Date.now(), payload: message })
 }
 
-function connectToServer() {
-  socket = new WebSocket(`${import.meta.env.VITE_BACKEND_URL}`)
-
-  // Listen for the server to send the entity_id
-  socket.onmessage = (event: any) => {
-    const message = JSON.parse(event.data)
-
-    if (message.type === 'connection') {
-      entity_id = message.entity_id // Assign entity_id
-      console.log(`Assigned entity_id: ${entity_id}`)
-    } else {
-      receiveServerMessage(message)
-    }
-  }
-
-  socket.onopen = () => {
-    console.log('Connected to the server')
-  }
-  socket.onclose = () => {
-    console.log('Disconnected from the server')
-  }
+function assignEntityId(id: string) {
+  clientState.entity_id = id
+  console.log(`Assigned entity_id: ${clientState.entity_id}`)
 }
 
 function getMessage() {
   const now = Date.now()
-  for (let i = 0; i < messages.length; i++) {
+  for (let i = 0; i < clientState.messages.length; i++) {
     // Access each message in the queue.
-    const message = messages[i]
+    const message = clientState.messages[i]
     // // Check if the message's designated reception time has passed or is equal to the current time.
     if (message.recv_ts <= now) {
-      messages.splice(i, 1)
+      clientState.messages.splice(i, 1)
       return message.payload
     }
   }
@@ -95,24 +38,24 @@ function processServerMessage() {
     // Handle the game state received from the server
 
     for (const state of message.data) {
-      if (!entities[state.entity_id]) {
+      if (!clientState.entities[state.entity_id]) {
         const entity = new Entity()
         entity.entity_id = state.entity_id
-        entities[state.entity_id] = entity
+        clientState.entities[state.entity_id] = entity
       }
-      const entity = entities[state.entity_id]
-      if (state.entity_id == entity_id) {
+      const entity = clientState.entities[state.entity_id]
+      if (state.entity_id == clientState.entity_id) {
         // Received the authoritative position of this client's entity.
         entity.x = state.position
         // Server Reconciliation. Re-apply all the inputs not yet processed by
         // the server.
         let j = 0
-        while (j < pending_inputs.length) {
-          const input = pending_inputs[j]
+        while (j < clientState.pending_inputs.length) {
+          const input = clientState.pending_inputs[j]
           if (input.input_sequence_number <= state.last_processed_input) {
             // Already processed. Its effect is already taken into account into the world update
             // we just got, so we can drop it.
-            pending_inputs.splice(j, 1)
+            clientState.pending_inputs.splice(j, 1)
           } else {
             // Not processed by the server yet. Re-apply it.
             entity.applyInput(input)
@@ -130,10 +73,10 @@ function processServerMessage() {
 }
 
 function setClientUpdate() {
-  clearInterval(update_interval)
-  update_interval = setInterval(() => {
+  clearInterval(clientState.update_interval)
+  clientState.update_interval = setInterval(() => {
     update()
-  }, update_rate)
+  }, clientState.update_rate)
 }
 
 // Update Client state.
@@ -141,7 +84,7 @@ function update() {
   // Listen to the server.
   processServerMessage()
 
-  if (entity_id == null) {
+  if (clientState.entity_id == null) {
     return // Not connected yet.
   }
 
@@ -152,26 +95,26 @@ function update() {
   interpolateEntities()
 
   // Render the World.
-  renderWorld(canvas, entities, entity_id)
+  renderWorld(clientState.canvas, clientState.entities, clientState.entity_id)
 
   // Show some info.
-  const info = `Non-acknowledged inputs: ${pending_inputs.length}`
-  status.textContent = info
+  const info = `Non-acknowledged inputs: ${clientState.pending_inputs.length}`
+  clientState.status.textContent = info
 }
 
 // Get inputs and send them to the server
 function processInputs() {
   // Compute delta time since last update.
   const now_ts = Date.now()
-  last_ts = last_ts || now_ts
-  const dt_sec = (now_ts - last_ts) / 1000.0
-  last_ts = now_ts
+  clientState.last_ts = clientState.last_ts || now_ts
+  const dt_sec = (now_ts - clientState.last_ts) / 1000.0
+  clientState.last_ts = now_ts
 
   // Package player's input.
   let input: any
-  if (key_right) {
+  if (clientState.key_right) {
     input = { press_time: dt_sec }
-  } else if (key_left) {
+  } else if (clientState.key_left) {
     input = { press_time: -dt_sec }
   } else {
     // Nothing interesting happened
@@ -179,28 +122,28 @@ function processInputs() {
   }
 
   // Send the input to the server.
-  input.input_sequence_number = input_sequence_number++
-  socket.send(JSON.stringify({ type: 'input', data: input }))
+  input.input_sequence_number = clientState.input_sequence_number++
+  clientState.socket.send(JSON.stringify({ type: 'input', data: input }))
 
   // Do client-side prediction.
-  if (entity_id !== null) {
-    entities[entity_id].applyInput(input)
+  if (clientState.entity_id !== null) {
+    clientState.entities[clientState.entity_id].applyInput(input)
   }
 
   // Save this input for later reconciliation.
-  pending_inputs.push(input)
+  clientState.pending_inputs.push(input)
 }
 
 function interpolateEntities() {
   // Compute render timestamp.
   let now = Date.now()
-  let render_timestamp = now - 200
+  let render_timestamp = now - 500
 
-  for (const i in entities) {
-    const entity = entities[i]
+  for (const i in clientState.entities) {
+    const entity = clientState.entities[i]
 
     // No point in interpolating this client's entity.
-    if (entity.entity_id == entity_id) {
+    if (entity.entity_id == clientState.entity_id) {
       continue
     }
 
@@ -231,10 +174,10 @@ function keyHandler(e: any) {
   let input = e.type == 'keydown'
   switch (e.key) {
     case 'a':
-      key_left = input
+      clientState.key_left = input
       break
     case 'd':
-      key_right = input
+      clientState.key_right = input
       break
   }
 }
@@ -268,12 +211,11 @@ const player1Canvas = ref<HTMLCanvasElement | null>(null)
 const player1Status = ref<HTMLElement | null>(null)
 
 onMounted(() => {
-  canvas = player1Canvas.value
-  status = player1Status.value
+  clientState.canvas = player1Canvas.value
+  clientState.status = player1Status.value
 
-  connectToServer()
+  clientState.socket = connectToServer(receiveServerMessage, assignEntityId)
 
-  setClientUpdate()
   setClientUpdate()
 
   window.addEventListener('keydown', (e) => keyHandler(e))
@@ -283,7 +225,7 @@ onMounted(() => {
 onUnmounted(() => {
   window.removeEventListener('keydown', keyHandler)
   window.removeEventListener('keyup', keyHandler)
-  clearInterval(update_interval)
+  clearInterval(clientState.update_interval)
 })
 </script>
 
