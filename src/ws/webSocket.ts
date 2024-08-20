@@ -1,18 +1,11 @@
-export function connectToServer(
-  receiveServerMessage: (message: any) => void,
-  assignEntityId: (id: string) => void
-) {
+import handleServerMessage from './serverMessage'
+
+export function connectToServer() {
   const socket = new WebSocket(`${import.meta.env.VITE_BACKEND_URL}`)
 
   // Listen for the server to send the entity_id
   socket.onmessage = (event: any) => {
-    const message = JSON.parse(event.data)
-
-    if (message.type === 'connection') {
-      assignEntityId(message.entity_id)
-    } else {
-      receiveServerMessage(message)
-    }
+    handleServerMessage(event)
   }
 
   socket.onopen = () => {

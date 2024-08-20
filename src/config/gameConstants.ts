@@ -2,4 +2,7 @@
 const RADIUS = 10
 const MOVEMENT_SPEED = 2
 
-export { RADIUS, MOVEMENT_SPEED }
+// Game
+const GAME_SPEED_RATE = 16.67
+
+export { RADIUS, MOVEMENT_SPEED, GAME_SPEED_RATE }
