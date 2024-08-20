@@ -1,4 +1,4 @@
-import gameState from './gameState'
+import { gameState } from './gameState'
 
 // Get inputs and send them to the server
 function processInputs() {
@@ -24,8 +24,8 @@ function processInputs() {
   gameState.socket.send(JSON.stringify({ type: 'input', data: input }))
 
   // Do client-side prediction.
-  if (gameState.gameState.entity_id !== null) {
-    gameState.gameState.entities[gameState.gameState.entity_id].applyInput(input)
+  if (gameState.entity_id !== null) {
+    gameState.entities[gameState.entity_id].applyInput(input)
   }
 
   // Save this input for later reconciliation.

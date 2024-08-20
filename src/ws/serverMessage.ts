@@ -1,4 +1,4 @@
-import gameState from '@/services/gameState'
+import { gameState } from '@/services/gameState'
 import serverMessages from '@/services/processServerMessages'
 
 export default function handleServerMessage(event: any) {
@@ -16,9 +16,9 @@ export default function handleServerMessage(event: any) {
 }
 
 function assignEntityId(id: string) {
-  gameState.gameState.entity_id = id
-  console.log(`Assigned entity_id: ${gameState.gameState.entity_id}`)
-  console.log(gameState.gameState.entity_id)
+  gameState.entity_id = id
+  console.log(`Assigned entity_id: ${gameState.entity_id}`)
+  console.log(gameState.entity_id)
 }
 
 function saveServerMessage(msg: any) {

@@ -1,5 +1,5 @@
 import Entity from '@/models/entity'
-import gameState from '@/services/gameState'
+import { gameState, reconcile } from '@/services/gameState'
 
 const messages: any = []
 
@@ -8,17 +8,17 @@ function processServerMessages() {
     const message = getMessage()
     if (message) {
       for (const state of message.data) {
-        if (!gameState.gameState.entities[state.entity_id]) {
+        if (!gameState.entities[state.entity_id]) {
           const entity = new Entity()
           entity.entity_id = state.entity_id
-          gameState.gameState.entities[state.entity_id] = entity
+          gameState.entities[state.entity_id] = entity
         }
-        const entity = gameState.gameState.entities[state.entity_id]
-        if (state.entity_id == gameState.gameState.entity_id) {
+        const entity = gameState.entities[state.entity_id]
+        if (state.entity_id == gameState.entity_id) {
           // Received the authoritative position of this client's entity.
           entity.x = state.position
           // Server Reconciliation. Re-apply all the inputs not yet processed by the server.
-          gameState.reconcile(entity, state)
+          reconcile(entity, state)
         } else {
           // Received the position of an entity other than this client's.
           // Add it to the position buffer for interpolation.

@@ -1,30 +1,20 @@
 import { processInputs } from './processInputs'
 import serverMessages from './processServerMessages'
 
-// Input state.
-const key_left = false
-const key_right = false
-const last_ts: any = null
-
 // Unique ID of our entity. Assigned by Server on connection.
 const gameState = {
   entities: [] as any,
+  key_left: false as boolean,
+  key_right: false as boolean,
+  last_ts: null as any,
   entity_id: null as any,
-  status: { textContent: null as any } as any
+  input_sequence_number: 0 as number,
+  pending_inputs: [] as any,
+  status: { textContent: null as any } as any,
+  canvas: {} as any,
+  update_interval: null as any,
+  socket: null as any
 }
-// const entity_id: any = null
-
-// Data needed for reconciliation.
-const input_sequence_number = 0
-const pending_inputs: any = []
-
-// UI.
-let canvas: any
-
-// Update rate.
-const update_interval: any = null
-
-let socket: any
 
 // Update Client state.
 function updateGameState() {
@@ -38,7 +28,7 @@ function updateGameState() {
   interpolate()
 
   // Show some info.
-  const info = `Non-acknowledged inputs: ${pending_inputs.length}`
+  const info = `Non-acknowledged inputs: ${gameState.pending_inputs.length}`
   gameState.status.textContent = info
 }
 
@@ -78,14 +68,14 @@ function interpolate() {
   }
 }
 
-function reconcile(entity, state) {
+function reconcile(entity: any, state: any) {
   let j = 0
-  while (j < pending_inputs.length) {
-    const input = pending_inputs[j]
+  while (j < gameState.pending_inputs.length) {
+    const input = gameState.pending_inputs[j]
     if (input.input_sequence_number <= state.last_processed_input) {
       // Already processed. Its effect is already taken into account into the world update
       // we just got, so we can drop it.
-      pending_inputs.splice(j, 1)
+      gameState.pending_inputs.splice(j, 1)
     } else {
       // Not processed by the server yet. Re-apply it.
       entity.applyInput(input)
@@ -94,17 +84,4 @@ function reconcile(entity, state) {
   }
 }
 
-export default {
-  key_left,
-  key_right,
-  gameState,
-  input_sequence_number,
-  pending_inputs,
-  canvas,
-  last_ts,
-  update_interval,
-  socket,
-  interpolate,
-  reconcile,
-  updateGameState
-}
+export { gameState, updateGameState, reconcile }

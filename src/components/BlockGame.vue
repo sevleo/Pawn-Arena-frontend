@@ -2,10 +2,8 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
 import { connectToServer } from '@/ws/webSocket'
-import gameState from '@/services/gameState'
-import serverMessages from '@/services/processServerMessages'
+import { gameState, updateGameState } from '@/services/gameState'
 import { GAME_SPEED_RATE } from '@/config/gameConstants'
-import { processInputs } from '@/services/processInputs'
 
 function startGameLoop() {
   // Clear the previous interval if any
@@ -13,32 +11,17 @@ function startGameLoop() {
 
   // Use setInterval for input processing and other non-visual updates
   gameState.update_interval = setInterval(() => {
-    gameState.updateGameState()
+    updateGameState()
   }, GAME_SPEED_RATE)
 
   // Start the rendering loop with requestAnimationFrame
   function renderLoop() {
-    renderWorld(gameState.canvas, gameState.gameState.entities, gameState.gameState.entity_id)
+    renderWorld(gameState.canvas, gameState.entities, gameState.entity_id)
     requestAnimationFrame(renderLoop)
   }
 
   renderLoop() // Start the loop
 }
-
-// Update Client state.
-// function updateGameState() {
-//   // Listen to the server.
-//   serverMessages.processServerMessages()
-
-//   if (gameState.entity_id == null) return // Not connected yet
-
-//   processInputs()
-//   gameState.interpolate()
-
-//   // Show some info.
-//   const info = `Non-acknowledged inputs: ${gameState.pending_inputs.length}`
-//   gameState.status.textContent = info
-// }
 
 function keyHandler(e: any) {
   let input = e.type == 'keydown'
@@ -82,7 +65,7 @@ const player1Status = ref<HTMLElement | null>(null)
 
 onMounted(() => {
   gameState.canvas = player1Canvas.value
-  gameState.gameState.status = player1Status.value
+  gameState.status = player1Status.value
 
   gameState.socket = connectToServer()
 
