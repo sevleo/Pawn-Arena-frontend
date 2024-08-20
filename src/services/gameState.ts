@@ -36,7 +36,7 @@ function updateGameState() {
 function interpolate() {
   // Compute render timestamp.
   const now = Date.now()
-  const render_timestamp = now - INTERPOLATION_OFFSET / 5
+  const render_timestamp = now - INTERPOLATION_OFFSET / 10
   // const render_timestamp = now - 500
 
   // console.log(render_timestamp)
@@ -51,13 +51,14 @@ function interpolate() {
 
     // Find the two authoritative positions surrounding the rendering timestamp.
     const buffer = entity.position_buffer
-    console.log(entity.position_buffer)
+    // console.log(entity.position_buffer)
 
     // Drop older positions.
     while (buffer.length >= 2 && buffer[1][0] <= render_timestamp) {
+      console.log('shift')
       buffer.shift()
-      // console.log(buffer.length)
     }
+    console.log('continue')
 
     // Check if there are at least two positions in the buffer that
     // surround the render_timestamp
