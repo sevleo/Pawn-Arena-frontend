@@ -53,3 +53,6 @@ Backend (Node.js)
 
 
 
+
+
+Fix the jumping effect on live environment
