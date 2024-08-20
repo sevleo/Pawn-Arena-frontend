@@ -36,8 +36,8 @@ function updateGameState() {
 function interpolate() {
   // Compute render timestamp.
   const now = Date.now()
-  // const render_timestamp = now - INTERPOLATION_OFFSET / 50
-  const render_timestamp = now - 50
+  const render_timestamp = now - INTERPOLATION_OFFSET / 5
+  // const render_timestamp = now - 500
 
   // console.log(render_timestamp)
 
