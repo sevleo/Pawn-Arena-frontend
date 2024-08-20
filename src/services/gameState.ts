@@ -1,5 +1,6 @@
 import { processInputs } from './processInputs'
 import serverMessages from './processServerMessages'
+import { INTERPOLATION_OFFSET } from '@/config/gameConstants'
 
 // Unique ID of our entity. Assigned by Server on connection.
 const gameState = {
@@ -35,7 +36,7 @@ function updateGameState() {
 function interpolate() {
   // Compute render timestamp.
   const now = Date.now()
-  const render_timestamp = now - 500
+  const render_timestamp = now - INTERPOLATION_OFFSET
 
   for (const i in gameState.entities) {
     const entity = gameState.entities[i]
