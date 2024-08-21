@@ -26,7 +26,7 @@ function processServerMessages() {
           const timestamp = Date.now()
           console.log(timestamp - message.ts)
           // entity.position_buffer.push([timestamp, state.position])
-          entity.position_buffer.push([message.ts, state.position])
+          entity.position_buffer.push([message.ts - 1500, state.position])
         }
       }
     }
