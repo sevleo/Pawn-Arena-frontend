@@ -37,9 +37,6 @@ function interpolate() {
   // Compute render timestamp.
   const now = Date.now()
   const render_timestamp = now - INTERPOLATION_OFFSET
-  // const render_timestamp = now - 500
-
-  // console.log(render_timestamp)
 
   for (const i in gameState.entities) {
     const entity = gameState.entities[i]
