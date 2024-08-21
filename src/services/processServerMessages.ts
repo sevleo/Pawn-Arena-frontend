@@ -24,8 +24,9 @@ function processServerMessages() {
           // Received the position of an entity other than this client's.
           // Add it to the position buffer for interpolation.
           const timestamp = Date.now()
-          const timestampDisrapency = timestamp - message.ts
-          entity.position_buffer.push([message.ts - timestampDisrapency, state.position])
+          console.log(timestamp - message.ts)
+          // entity.position_buffer.push([timestamp, state.position])
+          entity.position_buffer.push([message.ts - (timestamp - message.ts), state.position])
         }
       }
     }
