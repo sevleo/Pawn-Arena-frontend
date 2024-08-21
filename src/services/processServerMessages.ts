@@ -7,6 +7,7 @@ function processServerMessages() {
   while (messages.length > 0) {
     const message = getMessage()
     if (message) {
+      console.log(message)
       for (const state of message.data) {
         if (!gameState.entities[state.entity_id]) {
           const entity = new Entity()
@@ -23,7 +24,8 @@ function processServerMessages() {
           // Received the position of an entity other than this client's.
           // Add it to the position buffer for interpolation.
           const timestamp = Date.now()
-          entity.position_buffer.push([timestamp, state.position])
+          // entity.position_buffer.push([timestamp, state.position])
+          entity.position_buffer.push([message.ts, state.position])
         }
       }
     }
