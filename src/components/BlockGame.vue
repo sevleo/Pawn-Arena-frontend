@@ -12,16 +12,16 @@ function startGameLoop() {
   // Use setInterval for input processing and other non-visual updates
   gameState.update_interval = setInterval(() => {
     updateGameState()
-    renderWorld(gameState.canvas, gameState.entities, gameState.entity_id)
+    // renderWorld(gameState.canvas, gameState.entities, gameState.entity_id)
   }, GAME_SPEED_RATE)
 
   // Start the rendering loop with requestAnimationFrame
-  // function renderLoop() {
-  //   renderWorld(gameState.canvas, gameState.entities, gameState.entity_id)
-  //   requestAnimationFrame(renderLoop)
-  // }
+  function renderLoop() {
+    renderWorld(gameState.canvas, gameState.entities, gameState.entity_id)
+    requestAnimationFrame(renderLoop)
+  }
 
-  // renderLoop() // Start the loop
+  renderLoop() // Start the loop
 }
 
 function keyHandler(e: any) {
