@@ -15,7 +15,6 @@ function startGameLoop() {
   // Use setInterval for input processing and other non-visual updates
   gameState.update_interval = setInterval(() => {
     updateGameState()
-    // renderWorld()
   }, GAME_SPEED_RATE)
 
   // Start the rendering loop with requestAnimationFrame
