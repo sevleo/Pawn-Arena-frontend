@@ -17,7 +17,8 @@ function processServerMessages() {
         const entity = gameState.entities[state.entity_id]
         if (state.entity_id == gameState.entity_id) {
           // Received the authoritative position of this client's entity.
-          entity.x = state.position
+          entity.position.x = state.position.x
+          entity.position.y = state.position.y
           // Server Reconciliation. Re-apply all the inputs not yet processed by the server.
           reconcile(entity, state)
         } else {

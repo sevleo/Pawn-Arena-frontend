@@ -35,6 +35,12 @@ function keyHandler(e: any) {
     case 'd':
       gameState.key_right = input
       break
+    case 'w':
+      gameState.key_up = input
+      break
+    case 's':
+      gameState.key_down = input
+      break
   }
 }
 

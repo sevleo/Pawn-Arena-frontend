@@ -23,7 +23,7 @@ export function renderWorld() {
         // const x = (entity.x / 10.0) * gameState.canvas.width
 
         gameState.context.beginPath()
-        gameState.context.arc(entity.x, gameState.canvas.height / 2, radius, 0, 2 * Math.PI)
+        gameState.context.arc(entity.position.x, entity.position.y, radius, 0, 2 * Math.PI)
         gameState.context.fillStyle = color
         gameState.context.fill()
         gameState.context.lineWidth = 1

@@ -10,11 +10,22 @@ function processInputs() {
 
   // Package player's input.
   let input: any
-  if (gameState.key_right) {
-    input = { press_time: dt_sec }
-  }
-  if (gameState.key_left) {
-    input = { press_time: -dt_sec }
+
+  switch (true) {
+    case gameState.key_right:
+      input = { press_time: dt_sec, direction: 'right' }
+      break
+    case gameState.key_left:
+      input = { press_time: dt_sec, direction: 'left' }
+      break
+    case gameState.key_up:
+      input = { press_time: dt_sec, direction: 'up' }
+      break
+    case gameState.key_down:
+      input = { press_time: dt_sec, direction: 'down' }
+      break
+    default:
+      return
   }
 
   // Send the input to the server.

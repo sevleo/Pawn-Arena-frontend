@@ -7,6 +7,8 @@ const gameState = {
   entities: [] as any,
   key_left: false as boolean,
   key_right: false as boolean,
+  key_up: false as boolean,
+  key_down: false as boolean,
   last_ts: null as any,
   entity_id: null as any,
   input_sequence_number: 0 as number,
@@ -49,6 +51,7 @@ function interpolate() {
 
     // Find the two authoritative positions surrounding the rendering timestamp.
     const buffer = entity.position_buffer
+    // console.log(buffer)
 
     // Drop older positions.
     while (buffer.length >= 2 && buffer[1][0] <= render_timestamp) {
@@ -62,10 +65,11 @@ function interpolate() {
       buffer[0][0] <= render_timestamp &&
       render_timestamp <= buffer[1][0]
     ) {
-      const [t0, x0] = buffer[0] // represent the earlier timestamp and position.
-      const [t1, x1] = buffer[1] // represent the later timestamp and position.
+      const [t0, p0] = buffer[0] // represent the earlier timestamp and position.
+      const [t1, p1] = buffer[1] // represent the later timestamp and position.
 
-      entity.x = x0 + ((x1 - x0) * (render_timestamp - t0)) / (t1 - t0)
+      entity.position.x = p0.x + ((p1.x - p0.x) * (render_timestamp - t0)) / (t1 - t0)
+      entity.position.y = p0.y + ((p1.y - p0.y) * (render_timestamp - t0)) / (t1 - t0)
     }
   }
 }
