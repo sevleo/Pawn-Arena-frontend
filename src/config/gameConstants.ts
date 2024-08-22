@@ -1,6 +1,6 @@
 // Pawn
 const RADIUS = 10
-const MOVEMENT_SPEED = 2
+const MOVEMENT_SPEED = 100
 
 // Game
 const GAME_SPEED_RATE = 16.67

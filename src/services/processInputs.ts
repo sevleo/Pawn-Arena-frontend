@@ -12,11 +12,9 @@ function processInputs() {
   let input: any
   if (gameState.key_right) {
     input = { press_time: dt_sec }
-  } else if (gameState.key_left) {
+  }
+  if (gameState.key_left) {
     input = { press_time: -dt_sec }
-  } else {
-    // Nothing interesting happened
-    return
   }
 
   // Send the input to the server.
