@@ -75,6 +75,7 @@ function interpolate() {
 }
 
 function reconcile(entity: any, state: any) {
+  console.log(state)
   let j = 0
   while (j < gameState.pending_inputs.length) {
     const input = gameState.pending_inputs[j]
