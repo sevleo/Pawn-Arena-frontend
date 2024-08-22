@@ -21,7 +21,7 @@ const gameState = {
 }
 
 // Update Client state.
-function updateGameState(world) {
+function updateGameState(world: any) {
   // Listen to the server.
   serverMessages.processServerMessages(world)
 
@@ -84,7 +84,7 @@ function reconcile(entity: any, state: any) {
       gameState.pending_inputs.splice(j, 1)
     } else {
       // Not processed by the server yet. Re-apply it.
-      console.log(input)
+      // console.log(input)
       entity.applyInput(input)
       j++
     }

@@ -8,7 +8,7 @@ import { initializeCanvas, renderWorld } from '@/services/canvasManager'
 import { Engine } from 'matter-js'
 import { createWorld } from '@/services/createWorld'
 
-function startGameLoop(world, engine) {
+function startGameLoop(world: any, engine: any) {
   // Clear the previous interval if any
   clearInterval(gameState.update_interval)
 

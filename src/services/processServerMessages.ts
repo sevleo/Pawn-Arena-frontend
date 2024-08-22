@@ -4,7 +4,7 @@ import { Body } from 'matter-js'
 
 const messages: any = []
 
-function processServerMessages(world) {
+function processServerMessages(world: any) {
   while (messages.length > 0) {
     const message = getMessage()
     if (message) {
