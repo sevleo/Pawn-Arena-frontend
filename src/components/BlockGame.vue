@@ -29,11 +29,11 @@ function startGameLoop() {
 function keyHandler(e: any) {
   let input = e.type == 'keydown'
   switch (e.key) {
-    case 'a':
-      gameState.key_left = input
-      break
     case 'd':
       gameState.key_right = input
+      break
+    case 'a':
+      gameState.key_left = input
       break
     case 'w':
       gameState.key_up = input
@@ -67,12 +67,12 @@ onUnmounted(() => {
 
 <template>
   <div class="main">
-    <div style="border: 5px solid blue; padding: 15px">
+    <div style="padding: 15px">
       <canvas
         height="800"
         ref="player1Canvas"
         width="800"
-        style="border: 0.5px solid wheat"
+        style="border: 0.5px solid grey"
       ></canvas>
       <div ref="player1Status" style="font-family: courier">Waiting for connection…</div>
     </div>

@@ -1,4 +1,5 @@
 import { gameState } from './gameState'
+import { type Input } from '@/types/Input'
 
 // Get inputs and send them to the server
 function processInputs() {
@@ -9,23 +10,24 @@ function processInputs() {
   gameState.last_ts = now_ts
 
   // Package player's input.
-  let input: any
+  const input: Input = {
+    press_time: dt_sec,
+    active_keys: {
+      right: gameState.key_right,
+      left: gameState.key_left,
+      up: gameState.key_up,
+      down: gameState.key_down
+    },
+    input_sequence_number: null
+  }
 
-  switch (true) {
-    case gameState.key_right:
-      input = { press_time: dt_sec, direction: 'right' }
-      break
-    case gameState.key_left:
-      input = { press_time: dt_sec, direction: 'left' }
-      break
-    case gameState.key_up:
-      input = { press_time: dt_sec, direction: 'up' }
-      break
-    case gameState.key_down:
-      input = { press_time: dt_sec, direction: 'down' }
-      break
-    default:
-      return
+  if (
+    !input.active_keys.right &&
+    !input.active_keys.left &&
+    !input.active_keys.up &&
+    !input.active_keys.down
+  ) {
+    return
   }
 
   // Send the input to the server.
@@ -34,7 +36,7 @@ function processInputs() {
 
   // Do client-side prediction.
   if (gameState.entity_id !== null) {
-    gameState.entities[gameState.entity_id].applyInput(input)
+    gameState.entities[gameState.entity_id]?.applyInput(input)
   }
 
   // Save this input for later reconciliation.
