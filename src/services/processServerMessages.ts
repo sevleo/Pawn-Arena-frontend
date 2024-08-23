@@ -17,7 +17,7 @@ function processServerMessages(world: any) {
         }
         const entity = gameState.entities[state.entity_id]
         if (state.entity_id == gameState.entity_id) {
-          // // Received the authoritative position of this client's entity.
+          // Received the authoritative position of this client's entity.
           // entity.position.x = state.position.x
           // entity.position.y = state.position.y
 
