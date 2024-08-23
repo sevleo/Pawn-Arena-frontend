@@ -59,8 +59,7 @@ function interpolate() {
       buffer.shift()
     }
 
-    // Check if there are at least two positions in the buffer that
-    // surround the render_timestamp
+    // Ensure there are at least two positions to interpolate between
     if (
       buffer.length >= 2 &&
       buffer[0][0] <= render_timestamp &&
@@ -69,13 +68,18 @@ function interpolate() {
       const [t0, p0] = buffer[0] // represent the earlier timestamp and position.
       const [t1, p1] = buffer[1] // represent the later timestamp and position.
 
-      entity.position.x = p0.x + ((p1.x - p0.x) * (render_timestamp - t0)) / (t1 - t0)
-      entity.position.y = p0.y + ((p1.y - p0.y) * (render_timestamp - t0)) / (t1 - t0)
       // entity.entityBody.position.x = p0.x + ((p1.x - p0.x) * (render_timestamp - t0)) / (t1 - t0)
       // entity.entityBody.position.y = p0.y + ((p1.y - p0.y) * (render_timestamp - t0)) / (t1 - t0)
 
-      // const interpolatedX = p0.x + ((p1.x - p0.x) * (render_timestamp - t0)) / (t1 - t0)
-      // const interpolatedY = p0.y + ((p1.y - p0.y) * (render_timestamp - t0)) / (t1 - t0)
+      // Calculate interpolation factor
+      const alpha = (render_timestamp - t0) / (t1 - t0)
+
+      // Interpolate positions
+      const interpolatedX = p0.x + (p1.x - p0.x) * alpha
+      const interpolatedY = p0.y + (p1.y - p0.y) * alpha
+
+      entity.position.x = interpolatedX
+      entity.position.y = interpolatedY
 
       // Use setPosition to update the body's position
       // Body.setPosition(entity.entityBody, { x: interpolatedX, y: interpolatedY })
