@@ -69,16 +69,16 @@ function interpolate() {
       const [t0, p0] = buffer[0] // represent the earlier timestamp and position.
       const [t1, p1] = buffer[1] // represent the later timestamp and position.
 
-      // entity.position.x = p0.x + ((p1.x - p0.x) * (render_timestamp - t0)) / (t1 - t0)
-      // entity.position.y = p0.y + ((p1.y - p0.y) * (render_timestamp - t0)) / (t1 - t0)
+      entity.position.x = p0.x + ((p1.x - p0.x) * (render_timestamp - t0)) / (t1 - t0)
+      entity.position.y = p0.y + ((p1.y - p0.y) * (render_timestamp - t0)) / (t1 - t0)
       // entity.entityBody.position.x = p0.x + ((p1.x - p0.x) * (render_timestamp - t0)) / (t1 - t0)
       // entity.entityBody.position.y = p0.y + ((p1.y - p0.y) * (render_timestamp - t0)) / (t1 - t0)
 
-      const interpolatedX = p0.x + ((p1.x - p0.x) * (render_timestamp - t0)) / (t1 - t0)
-      const interpolatedY = p0.y + ((p1.y - p0.y) * (render_timestamp - t0)) / (t1 - t0)
+      // const interpolatedX = p0.x + ((p1.x - p0.x) * (render_timestamp - t0)) / (t1 - t0)
+      // const interpolatedY = p0.y + ((p1.y - p0.y) * (render_timestamp - t0)) / (t1 - t0)
 
       // Use setPosition to update the body's position
-      Body.setPosition(entity.entityBody, { x: interpolatedX, y: interpolatedY })
+      // Body.setPosition(entity.entityBody, { x: interpolatedX, y: interpolatedY })
     }
   }
 }

@@ -38,25 +38,25 @@ function processInputs() {
   // Do client-side prediction.
   if (gameState.entity_id !== null) {
     const entity = gameState.entities[gameState.entity_id]
-    // entity.applyInput(input)
+    entity.applyInput(input)
 
-    const xVelocity = input.active_keys.right
-      ? entity.speed
-      : input.active_keys.left
-        ? -entity.speed
-        : 0
-    const yVelocity = input.active_keys.up
-      ? -entity.speed
-      : input.active_keys.down
-        ? entity.speed
-        : 0
+    // const xVelocity = input.active_keys.right
+    //   ? entity.speed
+    //   : input.active_keys.left
+    //     ? -entity.speed
+    //     : 0
+    // const yVelocity = input.active_keys.up
+    //   ? -entity.speed
+    //   : input.active_keys.down
+    //     ? entity.speed
+    //     : 0
 
-    // Predict new position based on velocity and delta time
-    entity.position.x += xVelocity * dt_sec
-    entity.position.y += yVelocity * dt_sec
+    // // Predict new position based on velocity and delta time
+    // entity.position.x += xVelocity * dt_sec
+    // entity.position.y += yVelocity * dt_sec
 
     // Apply predicted position
-    Body.setPosition(entity.entityBody, entity.position)
+    // Body.setPosition(entity.entityBody, entity.position)
   }
 
   // Save this input for later reconciliation.
