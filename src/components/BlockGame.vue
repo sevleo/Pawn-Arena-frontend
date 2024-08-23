@@ -5,16 +5,24 @@ import { connectToServer } from '@/ws/webSocket'
 import { gameState, updateGameState } from '@/services/gameState'
 import { GAME_SPEED_RATE } from '@/config/gameConstants'
 import { initializeCanvas, renderWorld } from '@/services/canvasManager'
+import { Engine } from 'matter-js'
+import { createWorld } from '@/services/createWorld'
 
-function startGameLoop() {
+function startGameLoop(world: any, engine: any) {
   // Clear the previous interval if any
   clearInterval(gameState.update_interval)
 
   initializeCanvas()
 
+  let lastTime: any
+
   // Use setInterval for input processing and other non-visual updates
   gameState.update_interval = setInterval(() => {
-    updateGameState()
+    updateGameState(world)
+    const now = Date.now()
+    const delta = now - lastTime
+    lastTime = now
+    Engine.update(engine, delta)
   }, GAME_SPEED_RATE)
 
   // Start the rendering loop with requestAnimationFrame
@@ -52,7 +60,11 @@ onMounted(() => {
   gameState.canvas = player1Canvas.value
   gameState.status = player1Status.value
   gameState.socket = connectToServer()
-  startGameLoop()
+
+  const engine = Engine.create()
+  const world = engine.world
+  createWorld(engine, world)
+  startGameLoop(world, engine)
 
   window.addEventListener('keydown', (e) => keyHandler(e))
   window.addEventListener('keyup', (e) => keyHandler(e))

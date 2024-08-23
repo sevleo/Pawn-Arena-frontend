@@ -21,9 +21,9 @@ const gameState = {
 }
 
 // Update Client state.
-function updateGameState() {
+function updateGameState(world: any) {
   // Listen to the server.
-  serverMessages.processServerMessages()
+  serverMessages.processServerMessages(world)
 
   // console.log(entity_id)
   if (gameState.entity_id == null) return // Not connected yet
@@ -68,8 +68,8 @@ function interpolate() {
       const [t0, p0] = buffer[0] // represent the earlier timestamp and position.
       const [t1, p1] = buffer[1] // represent the later timestamp and position.
 
-      entity.position.x = p0.x + ((p1.x - p0.x) * (render_timestamp - t0)) / (t1 - t0)
-      entity.position.y = p0.y + ((p1.y - p0.y) * (render_timestamp - t0)) / (t1 - t0)
+      entity.entityBody.position.x = p0.x + ((p1.x - p0.x) * (render_timestamp - t0)) / (t1 - t0)
+      entity.entityBody.position.y = p0.y + ((p1.y - p0.y) * (render_timestamp - t0)) / (t1 - t0)
     }
   }
 }

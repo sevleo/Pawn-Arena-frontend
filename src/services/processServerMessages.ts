@@ -1,25 +1,36 @@
 import Entity from '@/models/entity'
 import { gameState, reconcile } from '@/services/gameState'
+import { Body } from 'matter-js'
 
 const messages: any = []
 
-function processServerMessages() {
+function processServerMessages(world: any) {
   while (messages.length > 0) {
     const message = getMessage()
     if (message) {
       // console.log(message)
       for (const state of message.data) {
         if (!gameState.entities[state.entity_id]) {
-          const entity = new Entity()
+          const entity = new Entity(world)
           entity.entity_id = state.entity_id
           gameState.entities[state.entity_id] = entity
         }
         const entity = gameState.entities[state.entity_id]
         if (state.entity_id == gameState.entity_id) {
-          // Received the authoritative position of this client's entity.
-          entity.position.x = state.position.x
-          entity.position.y = state.position.y
+          // // Received the authoritative position of this client's entity.
+          // entity.position.x = state.position.x
+          // entity.position.y = state.position.y
+
+          // Use Body.setPosition to update the position safely
+          Body.setPosition(entity.entityBody, {
+            x: state.position.x,
+            y: state.position.y
+          })
+
+          // Reset the velocity to prevent it from flying off
+          // Body.setVelocity(entity.entityBody, { x: 0, y: 0 })
           // Server Reconciliation. Re-apply all the inputs not yet processed by the server.
+
           reconcile(entity, state)
         } else {
           // Received the position of an entity other than this client's.

@@ -1,22 +1,33 @@
 import { MOVEMENT_SPEED } from '@/config/gameConstants'
 import { type Input } from '@/types/Input'
+import { Bodies, Body, Composite } from 'matter-js'
 
 class Entity {
   position: {
     x: number
     y: number
   }
-
   speed: number
   position_buffer: []
   entity_id: any
-  constructor() {
+  entityBody: any
+  constructor(world: any) {
     this.position = {
       x: 0,
       y: 0
     }
-    this.speed = MOVEMENT_SPEED
+    this.speed = 0.02
     this.position_buffer = []
+
+    this.entityBody = Bodies.circle(0, 0, 10, {
+      label: 'entity',
+      isStatic: false,
+      restitution: 0.2,
+      friction: 0.5,
+      frictionAir: 0.1
+    })
+
+    Composite.add(world, this.entityBody)
   }
 
   applyInput(input: Input) {
@@ -37,8 +48,14 @@ class Entity {
       }
 
       // Update the position of the entity
-      this.position.x += xForce
-      this.position.y += yForce
+      // this.position.x += xForce
+      // this.position.y += yForce
+
+      // Apply force to the body
+      Body.applyForce(this.entityBody, this.entityBody.position, {
+        x: xForce,
+        y: yForce
+      })
     }
   }
 }
