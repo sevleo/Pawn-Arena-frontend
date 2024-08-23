@@ -28,9 +28,9 @@ function processServerMessages(world: any) {
           })
 
           // Reset the velocity to prevent it from flying off
-          // Body.setVelocity(entity.entityBody, { x: 0, y: 0 })
-          // Server Reconciliation. Re-apply all the inputs not yet processed by the server.
+          Body.setVelocity(entity.entityBody, { x: 0, y: 0 })
 
+          // Server Reconciliation. Re-apply all the inputs not yet processed by the server.
           reconcile(entity, state)
         } else {
           // Received the position of an entity other than this client's.
