@@ -18,17 +18,17 @@ function processServerMessages(world: any) {
         const entity = gameState.entities[state.entity_id]
         if (state.entity_id == gameState.entity_id) {
           // // Received the authoritative position of this client's entity.
-          // entity.position.x = state.position.x
-          // entity.position.y = state.position.y
+          entity.position.x = state.position.x
+          entity.position.y = state.position.y
 
           // Use Body.setPosition to update the position safely
-          Body.setPosition(entity.entityBody, {
-            x: state.position.x,
-            y: state.position.y
-          })
+          // Body.setPosition(entity.entityBody, {
+          //   x: state.position.x,
+          //   y: state.position.y
+          // })
 
           // Reset the velocity to prevent it from flying off
-          Body.setVelocity(entity.entityBody, { x: 0, y: 0 })
+          // Body.setVelocity(entity.entityBody, { x: 0, y: 0 })
 
           // Server Reconciliation. Re-apply all the inputs not yet processed by the server.
           reconcile(entity, state)
