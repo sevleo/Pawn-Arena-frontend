@@ -35,8 +35,8 @@ function processServerMessages(world: any) {
           const targetPos = { x: state.position.x, y: state.position.y }
 
           // Calculate the smoothed position
-          const smoothedX = currentPos.x + (targetPos.x - currentPos.x) * 0.1
-          const smoothedY = currentPos.y + (targetPos.y - currentPos.y) * 0.1
+          const smoothedX = currentPos.x + (targetPos.x - currentPos.x) * 0.5
+          const smoothedY = currentPos.y + (targetPos.y - currentPos.y) * 0.5
 
           // Update the entity's position smoothly
           Body.setPosition(entity.entityBody, { x: smoothedX, y: smoothedY })
