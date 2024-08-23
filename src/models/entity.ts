@@ -22,9 +22,9 @@ class Entity {
     this.entityBody = Bodies.circle(0, 0, 10, {
       label: 'entity',
       isStatic: false,
-      restitution: 0.2,
+      restitution: 0,
       friction: 0.5,
-      frictionAir: 0.1
+      frictionAir: 0.5
     })
 
     Composite.add(world, this.entityBody)
