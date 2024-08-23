@@ -31,58 +31,72 @@ class Entity {
   }
 
   applyInput(input: Input) {
-    let xVelocity = 0
-    let yVelocity = 0
+    const xVelocity = input.active_keys.right
+      ? this.speed
+      : input.active_keys.left
+        ? -this.speed
+        : 0
+    const yVelocity = input.active_keys.up ? -this.speed : input.active_keys.down ? this.speed : 0
 
-    if (input.active_keys.right) xVelocity = this.speed * input.press_time
-    if (input.active_keys.left) xVelocity = -this.speed * input.press_time
-    if (input.active_keys.up) yVelocity = -this.speed * input.press_time
-    if (input.active_keys.down) yVelocity = this.speed * input.press_time
+    const currentVelocity = this.entityBody.velocity
+    const smoothingFactor = 0.1 // Adjust based on your needs
 
-    if (xVelocity !== 0 || yVelocity !== 0) {
-      const diagonalFactor = 0.7071 // Approximation of 1/√2 for 45-degree movement
+    Body.setVelocity(this.entityBody, {
+      x: currentVelocity.x * (1 - smoothingFactor) + xVelocity * smoothingFactor,
+      y: currentVelocity.y * (1 - smoothingFactor) + yVelocity * smoothingFactor
+    })
+    // let xVelocity = 0
+    // let yVelocity = 0
 
-      if (xVelocity !== 0 && yVelocity !== 0) {
-        xVelocity *= diagonalFactor
-        yVelocity *= diagonalFactor
-      }
+    // if (input.active_keys.right) xVelocity = this.speed * input.press_time
+    // if (input.active_keys.left) xVelocity = -this.speed * input.press_time
+    // if (input.active_keys.up) yVelocity = -this.speed * input.press_time
+    // if (input.active_keys.down) yVelocity = this.speed * input.press_time
 
-      // Apply the velocity directly to the body
-      Body.setVelocity(this.entityBody, {
-        x: xVelocity,
-        y: yVelocity
-      })
+    // if (xVelocity !== 0 || yVelocity !== 0) {
+    //   const diagonalFactor = 0.7071 // Approximation of 1/√2 for 45-degree movement
 
-      // let xForce = 0
-      // let yForce = 0
+    //   if (xVelocity !== 0 && yVelocity !== 0) {
+    //     xVelocity *= diagonalFactor
+    //     yVelocity *= diagonalFactor
+    //   }
 
-      // if (input.active_keys.right) xForce = this.speed * input.press_time
-      // if (input.active_keys.left) xForce = -this.speed * input.press_time
-      // if (input.active_keys.up) yForce = -this.speed * input.press_time
-      // if (input.active_keys.down) yForce = this.speed * input.press_time
+    //   // Apply the velocity directly to the body
+    //   Body.setVelocity(this.entityBody, {
+    //     x: xVelocity,
+    //     y: yVelocity
+    //   })
 
-      // if (xForce !== 0 || yForce !== 0) {
-      //   const diagonalFactor = 0.7071 // Approximation of 1/√2 for 45-degree movement
+    // let xForce = 0
+    // let yForce = 0
 
-      //   if (xForce !== 0 && yForce !== 0) {
-      //     xForce *= diagonalFactor
-      //     yForce *= diagonalFactor
-      //   }
+    // if (input.active_keys.right) xForce = this.speed * input.press_time
+    // if (input.active_keys.left) xForce = -this.speed * input.press_time
+    // if (input.active_keys.up) yForce = -this.speed * input.press_time
+    // if (input.active_keys.down) yForce = this.speed * input.press_time
 
-      //   // Update the position of the entity
-      //   this.position.x += xForce
-      //   this.position.y += yForce
+    // if (xForce !== 0 || yForce !== 0) {
+    //   const diagonalFactor = 0.7071 // Approximation of 1/√2 for 45-degree movement
 
-      // Apply force to the body
-      // Body.applyForce(this.entityBody, this.entityBody.position, {
-      //   x: xForce,
-      //   y: yForce
-      // })
-      // Body.setPosition(this.entityBody, {
-      //   x: this.position.x,
-      //   y: this.position.y
-      // })
-    }
+    //   if (xForce !== 0 && yForce !== 0) {
+    //     xForce *= diagonalFactor
+    //     yForce *= diagonalFactor
+    //   }
+
+    //   // Update the position of the entity
+    //   this.position.x += xForce
+    //   this.position.y += yForce
+
+    // Apply force to the body
+    // Body.applyForce(this.entityBody, this.entityBody.position, {
+    //   x: xForce,
+    //   y: yForce
+    // })
+    // Body.setPosition(this.entityBody, {
+    //   x: this.position.x,
+    //   y: this.position.y
+    // })
+    // }
   }
 }
 
