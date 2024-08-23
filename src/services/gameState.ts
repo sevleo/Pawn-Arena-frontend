@@ -97,16 +97,6 @@ function reconcile(entity: any, state: any) {
       j++
     }
   }
-
-  // Smooth reconciliation
-  const currentPos = entity.entityBody.position
-  const targetPos = { x: state.position.x, y: state.position.y }
-  const smoothingFactor = 0.1 // Adjust this for smoother or quicker correction
-
-  const newX = currentPos.x + (targetPos.x - currentPos.x) * smoothingFactor
-  const newY = currentPos.y + (targetPos.y - currentPos.y) * smoothingFactor
-
-  Body.setPosition(entity.entityBody, { x: newX, y: newY })
 }
 
 export { gameState, updateGameState, reconcile }

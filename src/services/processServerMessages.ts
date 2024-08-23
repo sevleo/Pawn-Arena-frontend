@@ -31,6 +31,15 @@ function processServerMessages(world: any) {
           // Body.setVelocity(entity.entityBody, { x: 0, y: 0 })
 
           // Server Reconciliation. Re-apply all the inputs not yet processed by the server.
+          const currentPos = entity.entityBody.position
+          const targetPos = { x: state.position.x, y: state.position.y }
+
+          // Calculate the smoothed position
+          const smoothedX = currentPos.x + (targetPos.x - currentPos.x) * 0.1
+          const smoothedY = currentPos.y + (targetPos.y - currentPos.y) * 0.1
+
+          // Update the entity's position smoothly
+          Body.setPosition(entity.entityBody, { x: smoothedX, y: smoothedY })
           reconcile(entity, state)
         } else {
           // Received the position of an entity other than this client's.
