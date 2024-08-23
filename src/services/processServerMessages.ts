@@ -22,10 +22,10 @@ function processServerMessages(world: any) {
           // entity.position.y = state.position.y
 
           // Use Body.setPosition to update the position safely
-          Body.setPosition(entity.entityBody, {
-            x: state.position.x,
-            y: state.position.y
-          })
+          // Body.setPosition(entity.entityBody, {
+          //   x: state.position.x,
+          //   y: state.position.y
+          // })
 
           // Reset the velocity to prevent it from flying off
           // Body.setVelocity(entity.entityBody, { x: 0, y: 0 })
