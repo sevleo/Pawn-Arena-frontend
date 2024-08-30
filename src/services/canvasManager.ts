@@ -5,7 +5,19 @@ export function initializeCanvas() {
     gameState.context = gameState.canvas.getContext('2d')
     gameState.canvas.addEventListener('mousemove', (e: MouseEvent) => {
       //   console.log(e)
+      updateMousePosition(e)
     })
+  }
+}
+
+function updateMousePosition(event: MouseEvent) {
+  if (gameState.context) {
+    const rect = gameState.context.canvas.getBoundingClientRect()
+    gameState.mousePosition = {
+      x: event.clientX - rect.left,
+      y: event.clientY - rect.top
+    }
+    gameState.mouseMoved = true
   }
 }
 
@@ -29,6 +41,57 @@ export function renderWorld() {
         gameState.context.lineWidth = 1
         gameState.context.strokeStyle = 'black'
         gameState.context.stroke()
+
+        let targetPosition
+        let weaponPosition
+        const lineLength = 30
+
+        if (gameState.entity_id === entity.entity_id) {
+          const defaultMousePosition = { x: 0, y: 0 }
+
+          const targetX = gameState.mouseMoved ? gameState.mousePosition.x : defaultMousePosition.x
+          const targetY = gameState.mouseMoved ? gameState.mousePosition.y : defaultMousePosition.y
+
+          // Direction from current object coordinates to target coordinates
+          const directionX = targetX - entity.position.x
+          const directionY = targetY - entity.position.y
+
+          const magnitude = Math.sqrt(directionX * directionX + directionY * directionY)
+
+          weaponPosition = {
+            x: entity.position.x + (directionX / magnitude) * lineLength,
+            y: entity.position.y + (directionY / magnitude) * lineLength
+          }
+
+          targetPosition = {
+            x: targetX,
+            y: targetY
+          }
+
+          // Extend the line far beyond the canvas boundaries
+          const lineLength2 = Math.max(gameState.canvas.width, gameState.canvas.height) * 2
+
+          const extendedPosition = {
+            x: entity.position.x + (directionX / magnitude) * lineLength2,
+            y: entity.position.y + (directionY / magnitude) * lineLength2
+          }
+
+          gameState.context.save() // Save the current state
+          gameState.context.strokeStyle = 'red'
+          gameState.context.lineWidth = 1 // Set specific line width for weapon line
+          gameState.context.beginPath()
+          gameState.context.moveTo(entity.position.x, entity.position.y)
+          gameState.context.lineTo(extendedPosition.x, extendedPosition.y)
+          gameState.context.stroke()
+
+          gameState.context.strokeStyle = 'black'
+          gameState.context.lineWidth = 1 // Set specific line width for weapon line
+          gameState.context.beginPath()
+          gameState.context.moveTo(entity.position.x, entity.position.y)
+          gameState.context.lineTo(weaponPosition.x, weaponPosition.y)
+          gameState.context.stroke()
+          gameState.context.restore() // Restore the previous state
+        }
       }
     }
   }

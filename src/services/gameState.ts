@@ -17,7 +17,9 @@ const gameState = {
   canvas: {} as any,
   context: null as CanvasRenderingContext2D | null,
   update_interval: null as any,
-  socket: null as any
+  socket: null as any,
+  mousePosition: null as any,
+  mouseMoved: false as boolean
 }
 
 // Update Client state.
