@@ -18,7 +18,11 @@ function processInputs() {
       up: gameState.key_up,
       down: gameState.key_down
     },
-    input_sequence_number: null
+    input_sequence_number: null,
+    faceDirection: {
+      x: gameState.faceDirection.x,
+      y: gameState.faceDirection.y
+    }
   }
 
   if (

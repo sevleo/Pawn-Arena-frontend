@@ -6,10 +6,13 @@ class Entity {
     x: number
     y: number
   }
-
   speed: number
   position_buffer: []
   entity_id: any
+  faceDirection: {
+    x: number
+    y: number
+  }
   constructor() {
     this.position = {
       x: 0,
@@ -17,6 +20,10 @@ class Entity {
     }
     this.speed = MOVEMENT_SPEED
     this.position_buffer = []
+    this.faceDirection = {
+      x: 0,
+      y: 0
+    }
   }
 
   applyInput(input: Input) {
@@ -40,6 +47,9 @@ class Entity {
       this.position.x += xForce
       this.position.y += yForce
     }
+
+    this.faceDirection.x = input.faceDirection.x
+    this.faceDirection.y = input.faceDirection.y
   }
 }
 

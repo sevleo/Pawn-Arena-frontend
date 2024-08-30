@@ -53,14 +53,17 @@ export function renderWorld() {
           const targetY = gameState.mouseMoved ? gameState.mousePosition.y : defaultMousePosition.y
 
           // Direction from current object coordinates to target coordinates
-          const directionX = targetX - entity.position.x
-          const directionY = targetY - entity.position.y
+          gameState.faceDirection.x = targetX - entity.position.x
+          gameState.faceDirection.y = targetY - entity.position.y
 
-          const magnitude = Math.sqrt(directionX * directionX + directionY * directionY)
+          const magnitude = Math.sqrt(
+            gameState.faceDirection.x * gameState.faceDirection.x +
+              gameState.faceDirection.y * gameState.faceDirection.y
+          )
 
           weaponPosition = {
-            x: entity.position.x + (directionX / magnitude) * lineLength,
-            y: entity.position.y + (directionY / magnitude) * lineLength
+            x: entity.position.x + (gameState.faceDirection.x / magnitude) * lineLength,
+            y: entity.position.y + (gameState.faceDirection.y / magnitude) * lineLength
           }
 
           targetPosition = {
@@ -72,8 +75,8 @@ export function renderWorld() {
           const lineLength2 = Math.max(gameState.canvas.width, gameState.canvas.height) * 2
 
           const extendedPosition = {
-            x: entity.position.x + (directionX / magnitude) * lineLength2,
-            y: entity.position.y + (directionY / magnitude) * lineLength2
+            x: entity.position.x + (gameState.faceDirection.x / magnitude) * lineLength2,
+            y: entity.position.y + (gameState.faceDirection.y / magnitude) * lineLength2
           }
 
           gameState.context.save() // Save the current state
@@ -91,6 +94,8 @@ export function renderWorld() {
           gameState.context.lineTo(weaponPosition.x, weaponPosition.y)
           gameState.context.stroke()
           gameState.context.restore() // Restore the previous state
+        } else {
+          console.log(entity)
         }
       }
     }

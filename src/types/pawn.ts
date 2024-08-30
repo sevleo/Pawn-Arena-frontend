@@ -1,5 +1,5 @@
 export interface Pawn {
-  direction: { directionX: number; directionY: number }
+  direction: { x: number; y: number }
   radius: number
   clientId: string
   position: {
