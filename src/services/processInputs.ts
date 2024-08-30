@@ -29,7 +29,8 @@ function processInputs() {
     !input.active_keys.right &&
     !input.active_keys.left &&
     !input.active_keys.up &&
-    !input.active_keys.down
+    !input.active_keys.down &&
+    !input.faceDirection
   ) {
     return
   }

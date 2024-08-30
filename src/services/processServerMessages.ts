@@ -28,7 +28,14 @@ function processServerMessages() {
           // Add it to the position buffer for interpolation.
           const timestamp = Date.now()
           const timestampDifference = timestamp - message.ts
-          entity.position_buffer.push([message.ts + timestampDifference, state.position])
+          entity.position_buffer.push([
+            message.ts + timestampDifference,
+            state.position,
+            state.faceDirection
+          ])
+
+          // entity.faceDirection.x = state.faceDirection.x
+          // entity.faceDirection.y = state.faceDirection.y
         }
       }
     }

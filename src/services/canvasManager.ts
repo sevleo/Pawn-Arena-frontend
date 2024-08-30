@@ -29,6 +29,7 @@ export function renderWorld() {
 
     for (const entity of gameState.entities) {
       if (entity) {
+        // console.log(entity)
         const color = gameState.entity_id === entity.entity_id ? 'green' : 'red'
         const radius = 10
 
@@ -95,7 +96,23 @@ export function renderWorld() {
           gameState.context.stroke()
           gameState.context.restore() // Restore the previous state
         } else {
-          console.log(entity)
+          const magnitude = Math.sqrt(
+            entity.faceDirection.x * entity.faceDirection.x +
+              entity.faceDirection.y * entity.faceDirection.y
+          )
+
+          weaponPosition = {
+            x: entity.position.x + (entity.faceDirection.x / magnitude) * lineLength,
+            y: entity.position.y + (entity.faceDirection.y / magnitude) * lineLength
+          }
+
+          gameState.context.strokeStyle = 'black'
+          gameState.context.lineWidth = 1 // Set specific line width for weapon line
+          gameState.context.beginPath()
+          gameState.context.moveTo(entity.position.x, entity.position.y)
+          gameState.context.lineTo(weaponPosition.x, weaponPosition.y)
+          gameState.context.stroke()
+          gameState.context.restore() // Restore the previous state
         }
       }
     }
