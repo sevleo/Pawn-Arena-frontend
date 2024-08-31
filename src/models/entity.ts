@@ -1,4 +1,5 @@
 import { MOVEMENT_SPEED } from '@/config/gameConstants'
+import { gameState } from '@/services/gameState'
 import { type Input } from '@/types/Input'
 
 class Entity {
@@ -47,9 +48,18 @@ class Entity {
       this.position.x += xForce
       this.position.y += yForce
     }
+  }
+  updateFaceDirection(mousePosition: { x: number; y: number } | null) {
+    const defaultMousePosition = { x: 0, y: 0 }
+    const targetX = mousePosition ? mousePosition.x : defaultMousePosition.x
+    const targetY = mousePosition ? mousePosition.y : defaultMousePosition.y
 
-    this.faceDirection.x = input.faceDirection.x
-    this.faceDirection.y = input.faceDirection.y
+    gameState.previousFaceDirection.x = gameState.faceDirection.x
+    gameState.previousFaceDirection.y = gameState.faceDirection.y
+
+    // Direction from current object coordinates to target coordinates
+    gameState.faceDirection.x = targetX - gameState.entities[gameState.entity_id].position.x
+    gameState.faceDirection.y = targetY - gameState.entities[gameState.entity_id].position.y
   }
 }
 

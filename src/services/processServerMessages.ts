@@ -21,8 +21,6 @@ function processServerMessages() {
           entity.position.y = state.position.y
           // Server Reconciliation. Re-apply all the inputs not yet processed by the server.
           reconcile(entity, state)
-          entity.faceDirection.x = state.faceDirection.x
-          entity.faceDirection.y = state.faceDirection.y
         } else {
           // Received the position of an entity other than this client's.
           // Add it to the position buffer for interpolation.
