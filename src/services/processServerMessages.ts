@@ -7,8 +7,8 @@ function processServerMessages() {
   while (messages.length > 0) {
     const message = getMessage()
     if (message) {
-      // console.log(message)
-      for (const state of message.data) {
+      console.log(message)
+      for (const state of message.data.entities) {
         if (!gameState.entities[state.entity_id]) {
           const entity = new Entity()
           entity.entity_id = state.entity_id
