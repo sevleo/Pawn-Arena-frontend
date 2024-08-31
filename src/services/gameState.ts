@@ -9,6 +9,7 @@ const gameState = {
   key_right: false as boolean,
   key_up: false as boolean,
   key_down: false as boolean,
+  key_space: false as boolean,
   last_ts: null as any,
   entity_id: null as any,
   input_sequence_number: 0 as number,

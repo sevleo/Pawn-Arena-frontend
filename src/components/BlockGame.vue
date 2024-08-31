@@ -41,6 +41,20 @@ function keyHandler(e: any) {
     case 's':
       gameState.key_down = input
       break
+    case ' ':
+      gameState.key_space = input
+      break
+  }
+}
+
+function updateMousePosition(event: MouseEvent) {
+  if (gameState.context) {
+    const rect = gameState.context.canvas.getBoundingClientRect()
+    gameState.mousePosition = {
+      x: event.clientX - rect.left,
+      y: event.clientY - rect.top
+    }
+    gameState.mouseMoved = true
   }
 }
 
@@ -56,6 +70,10 @@ onMounted(() => {
 
   window.addEventListener('keydown', (e) => keyHandler(e))
   window.addEventListener('keyup', (e) => keyHandler(e))
+  gameState.canvas.addEventListener('mousemove', (e: MouseEvent) => {
+    //   console.log(e)
+    updateMousePosition(e)
+  })
 })
 
 onUnmounted(() => {

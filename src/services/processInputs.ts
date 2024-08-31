@@ -16,7 +16,8 @@ function processInputs() {
       right: gameState.key_right,
       left: gameState.key_left,
       up: gameState.key_up,
-      down: gameState.key_down
+      down: gameState.key_down,
+      space: gameState.key_space
     },
     input_sequence_number: null,
     faceDirection: {
@@ -30,6 +31,7 @@ function processInputs() {
     !input.active_keys.left &&
     !input.active_keys.up &&
     !input.active_keys.down &&
+    !input.active_keys.space &&
     input.faceDirection.x === gameState.previousFaceDirection.x &&
     input.faceDirection.y === gameState.previousFaceDirection.y
   ) {
