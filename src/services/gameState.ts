@@ -101,4 +101,18 @@ function reconcile(entity: any, state: any) {
   }
 }
 
-export { gameState, updateGameState, reconcile }
+function updateFaceDirection() {
+  const defaultMousePosition = { x: 0, y: 0 }
+
+  const targetX = gameState.mouseMoved ? gameState.mousePosition.x : defaultMousePosition.x
+  const targetY = gameState.mouseMoved ? gameState.mousePosition.y : defaultMousePosition.y
+
+  gameState.previousFaceDirection.x = gameState.faceDirection.x
+  gameState.previousFaceDirection.y = gameState.faceDirection.y
+
+  // Direction from current object coordinates to target coordinates
+  gameState.faceDirection.x = targetX - gameState.entities[gameState.entity_id].position.x
+  gameState.faceDirection.y = targetY - gameState.entities[gameState.entity_id].position.y
+}
+
+export { gameState, updateGameState, reconcile, updateFaceDirection }

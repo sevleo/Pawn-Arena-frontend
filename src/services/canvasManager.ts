@@ -1,4 +1,4 @@
-import { gameState } from './gameState'
+import { gameState, updateFaceDirection } from './gameState'
 
 export function initializeCanvas() {
   if (gameState.canvas) {
@@ -35,17 +35,7 @@ export function renderWorld() {
         const lineLength2 = Math.max(gameState.canvas.width, gameState.canvas.height) * 2
 
         if (gameState.entity_id === entity.entity_id) {
-          const defaultMousePosition = { x: 0, y: 0 }
-
-          const targetX = gameState.mouseMoved ? gameState.mousePosition.x : defaultMousePosition.x
-          const targetY = gameState.mouseMoved ? gameState.mousePosition.y : defaultMousePosition.y
-
-          gameState.previousFaceDirection.x = gameState.faceDirection.x
-          gameState.previousFaceDirection.y = gameState.faceDirection.y
-
-          // Direction from current object coordinates to target coordinates
-          gameState.faceDirection.x = targetX - entity.position.x
-          gameState.faceDirection.y = targetY - entity.position.y
+          updateFaceDirection()
 
           const magnitude = Math.sqrt(
             gameState.faceDirection.x * gameState.faceDirection.x +
