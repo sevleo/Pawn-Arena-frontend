@@ -27,7 +27,8 @@ function processServerMessages() {
           const timestamp = Date.now()
           const timestampDifference = timestamp - message.ts
           entity.position_buffer.push([
-            message.ts + timestampDifference,
+            // message.ts + timestampDifference,
+            message.ts,
             state.position,
             state.faceDirection
           ])
