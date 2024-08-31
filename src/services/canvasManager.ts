@@ -53,6 +53,9 @@ export function renderWorld() {
           const targetX = gameState.mouseMoved ? gameState.mousePosition.x : defaultMousePosition.x
           const targetY = gameState.mouseMoved ? gameState.mousePosition.y : defaultMousePosition.y
 
+          gameState.previousFaceDirection.x = gameState.faceDirection.x
+          gameState.previousFaceDirection.y = gameState.faceDirection.y
+
           // Direction from current object coordinates to target coordinates
           gameState.faceDirection.x = targetX - entity.position.x
           gameState.faceDirection.y = targetY - entity.position.y

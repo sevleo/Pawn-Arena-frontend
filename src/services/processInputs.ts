@@ -30,13 +30,15 @@ function processInputs() {
     !input.active_keys.left &&
     !input.active_keys.up &&
     !input.active_keys.down &&
-    !input.faceDirection
+    input.faceDirection.x === gameState.previousFaceDirection.x &&
+    input.faceDirection.y === gameState.previousFaceDirection.y
   ) {
     return
   }
 
   // Send the input to the server.
   input.input_sequence_number = gameState.input_sequence_number++
+  console.log(input.faceDirection)
   gameState.socket.send(JSON.stringify({ type: 'input', data: input }))
 
   // Do client-side prediction.

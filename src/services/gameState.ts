@@ -20,7 +20,8 @@ const gameState = {
   socket: null as any,
   mousePosition: null as any,
   mouseMoved: false as boolean,
-  faceDirection: { x: 0 as number, y: 0 as number }
+  faceDirection: { x: 0 as number, y: 0 as number },
+  previousFaceDirection: { x: 0 as number, y: 0 as number }
 }
 
 // Update Client state.
@@ -74,11 +75,11 @@ function interpolate() {
       entity.position.x = p0.x + ((p1.x - p0.x) * (render_timestamp - t0)) / (t1 - t0)
       entity.position.y = p0.y + ((p1.y - p0.y) * (render_timestamp - t0)) / (t1 - t0)
 
-      // entity.faceDirection.x = fd0.x + ((fd1.x - fd0.x) * (render_timestamp - t0)) / (t1 - t0)
-      // entity.faceDirection.y = fd0.y + ((fd1.y - fd0.y) * (render_timestamp - t0)) / (t1 - t0)
+      entity.faceDirection.x = fd0.x + ((fd1.x - fd0.x) * (render_timestamp - t0)) / (t1 - t0)
+      entity.faceDirection.y = fd0.y + ((fd1.y - fd0.y) * (render_timestamp - t0)) / (t1 - t0)
 
-      entity.faceDirection.x = fd0.x
-      entity.faceDirection.y = fd0.y
+      // entity.faceDirection.x = fd0.x
+      // entity.faceDirection.y = fd0.y
     }
   }
 }
