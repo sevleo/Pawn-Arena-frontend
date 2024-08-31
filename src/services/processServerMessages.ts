@@ -33,6 +33,7 @@ function processServerMessages() {
             state.position,
             state.faceDirection
           ])
+          console.log(entity.position_buffer.length)
 
           // entity.faceDirection.x = state.faceDirection.x
           // entity.faceDirection.y = state.faceDirection.y

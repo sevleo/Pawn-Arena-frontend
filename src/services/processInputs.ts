@@ -38,7 +38,6 @@ function processInputs() {
 
   // Send the input to the server.
   input.input_sequence_number = gameState.input_sequence_number++
-  console.log(input.faceDirection)
   gameState.socket.send(JSON.stringify({ type: 'input', data: input }))
 
   // Do client-side prediction.
