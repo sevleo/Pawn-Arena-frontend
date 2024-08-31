@@ -14,12 +14,10 @@ export function renderWorld() {
 
     for (const entity of gameState.entities) {
       if (entity) {
-        // console.log(entity)
         const color = gameState.entity_id === entity.entity_id ? 'green' : 'red'
         const radius = 10
 
-        // const x = (entity.x / 10.0) * gameState.canvas.width
-
+        // Draw entity
         gameState.context.beginPath()
         gameState.context.arc(entity.position.x, entity.position.y, radius, 0, 2 * Math.PI)
         gameState.context.fillStyle = color
@@ -48,6 +46,7 @@ export function renderWorld() {
           )
         }
 
+        // Draw weapon
         gameState.context.strokeStyle = 'black'
         gameState.context.lineWidth = 1 // Set specific line width for weapon line
         gameState.context.beginPath()
