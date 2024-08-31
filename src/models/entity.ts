@@ -1,6 +1,7 @@
-import { MOVEMENT_SPEED } from '@/config/gameConstants'
+import { MOVEMENT_SPEED, BULLET_COOLDOWN } from '@/config/gameConstants'
 import { gameState } from '@/services/gameState'
 import { type Input } from '@/types/Input'
+import Bullet from './bullet'
 
 class Entity {
   position: {
@@ -14,6 +15,8 @@ class Entity {
     x: number
     y: number
   }
+  lastBulletTimestamp: number | null
+
   constructor() {
     this.position = {
       x: 0,
@@ -25,6 +28,7 @@ class Entity {
       x: 0,
       y: 0
     }
+    this.lastBulletTimestamp = null
   }
 
   applyInput(input: Input) {
@@ -48,7 +52,21 @@ class Entity {
       this.position.x += xForce
       this.position.y += yForce
     }
+
+    if (input.active_keys.space) {
+      const currentTimestamp = Date.now()
+
+      if (
+        this.lastBulletTimestamp === null || // No bullets have been fired yet
+        currentTimestamp - this.lastBulletTimestamp >= BULLET_COOLDOWN // 200ms cooldown
+      ) {
+        const bullet = new Bullet(this.entity_id, this.position, this.faceDirection)
+        gameState.bullets.push(bullet)
+        this.lastBulletTimestamp = currentTimestamp // Update the last bullet timestamp
+      }
+    }
   }
+
   updateFaceDirection(mousePosition: { x: number; y: number } | null) {
     const defaultMousePosition = { x: 0, y: 0 }
     const targetX = mousePosition ? mousePosition.x : defaultMousePosition.x
@@ -60,6 +78,8 @@ class Entity {
     // Direction from current object coordinates to target coordinates
     gameState.faceDirection.x = targetX - gameState.entities[gameState.entity_id].position.x
     gameState.faceDirection.y = targetY - gameState.entities[gameState.entity_id].position.y
+
+    gameState.entities[gameState.entity_id].faceDirection = gameState.faceDirection
   }
 }
 

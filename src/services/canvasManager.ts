@@ -30,7 +30,7 @@ export function renderWorld() {
         const lineLength = 30
 
         if (gameState.entity_id === entity.entity_id) {
-          // entity.updateFaceDirection(gameState.mouseMoved ? gameState.mousePosition : null)
+          entity.updateFaceDirection(gameState.mouseMoved ? gameState.mousePosition : null)
           weaponPosition = getWeaponPosition(
             entity.position,
             gameState.faceDirection,
@@ -54,6 +54,19 @@ export function renderWorld() {
         gameState.context.lineTo(weaponPosition.x, weaponPosition.y)
         gameState.context.stroke()
         gameState.context.restore() // Restore the previous state
+      }
+    }
+
+    for (const bullet of gameState.bullets) {
+      if (bullet) {
+        const color = 'white'
+        const radius = 2
+
+        // Draw bullet
+        gameState.context.beginPath()
+        gameState.context.arc(bullet.position.x, bullet.position.y, radius, 0, 2 * Math.PI)
+        gameState.context.fillStyle = color
+        gameState.context.fill()
       }
     }
   }

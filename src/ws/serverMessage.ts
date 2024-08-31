@@ -18,11 +18,10 @@ export default function handleServerMessage(event: any) {
 function assignEntityId(id: string) {
   gameState.entity_id = id
   console.log(`Assigned entity_id: ${gameState.entity_id}`)
-  console.log(gameState.entity_id)
 }
 
 function saveServerMessage(msg: any) {
-  // console.log(message)
+  // console.log(msg)
   const message = {
     payload: msg
   }

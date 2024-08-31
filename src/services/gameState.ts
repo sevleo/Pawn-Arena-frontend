@@ -1,3 +1,4 @@
+import type Bullet from '@/models/bullet'
 import { processInputs } from './processInputs'
 import serverMessages from './processServerMessages'
 import { INTERPOLATION_OFFSET } from '@/config/gameConstants'
@@ -5,6 +6,7 @@ import { INTERPOLATION_OFFSET } from '@/config/gameConstants'
 // Unique ID of our entity. Assigned by Server on connection.
 const gameState = {
   entities: [] as any,
+  bullets: [] as any,
   key_left: false as boolean,
   key_right: false as boolean,
   key_up: false as boolean,
@@ -35,6 +37,8 @@ function updateGameState() {
 
   processInputs()
   interpolate()
+
+  updateBullets()
 
   // Show some info.
   const info = `Non-acknowledged inputs: ${gameState.pending_inputs.length}`
@@ -99,6 +103,12 @@ function reconcile(entity: any, state: any) {
       j++
     }
   }
+}
+
+function updateBullets() {
+  gameState.bullets.forEach((bullet: Bullet) => {
+    bullet.updatePosition()
+  })
 }
 
 export { gameState, updateGameState, reconcile }
