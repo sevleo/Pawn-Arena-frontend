@@ -57,3 +57,6 @@ Backend (Node.js)
 
 Fix the jumping effect on live environment (done)
 Try to catch in console log when reconcilation occurs and why it happes so jittering
+
+
+updated branches
