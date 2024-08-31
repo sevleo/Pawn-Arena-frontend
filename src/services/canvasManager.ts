@@ -30,7 +30,7 @@ export function renderWorld() {
         const lineLength = 30
 
         if (gameState.entity_id === entity.entity_id) {
-          entity.updateFaceDirection(gameState.mouseMoved ? gameState.mousePosition : null)
+          // entity.updateFaceDirection(gameState.mouseMoved ? gameState.mousePosition : null)
           weaponPosition = getWeaponPosition(
             entity.position,
             gameState.faceDirection,

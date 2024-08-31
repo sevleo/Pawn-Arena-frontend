@@ -32,9 +32,6 @@ function processServerMessages() {
             state.position,
             state.faceDirection
           ])
-
-          // entity.faceDirection.x = state.faceDirection.x
-          // entity.faceDirection.y = state.faceDirection.y
         }
       }
     }
