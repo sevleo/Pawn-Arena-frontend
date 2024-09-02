@@ -46,14 +46,18 @@ function processServerMessages() {
           //   gameState.gameBullets[bull.bullet_id] = bull
           // }
           // gameState.gameBullets[bull.bullet_id] = bull
-          const bullet = new Bullet(
-            bull.bullet_id,
-            gameState.entity_id,
-            bull.serverPosition,
-            bull.direction,
-            bull.initialPosition
-          )
-          gameState.gameBullets[bull.bullet_id] = bullet
+          if (gameState.gameBullets[bull.bullet_id]) {
+            continue
+          } else {
+            const bullet = new Bullet(
+              bull.bullet_id,
+              gameState.entity_id,
+              bull.serverPosition,
+              bull.direction,
+              bull.initialPosition
+            )
+            gameState.gameBullets[bull.bullet_id] = bullet
+          }
         }
       }
 

@@ -110,9 +110,9 @@ function updateBullets() {
   gameState.clientBullets.forEach((bullet: Bullet) => {
     bullet.updatePosition()
   })
-  // gameState.gameBullets.forEach((bullet: Bullet) => {
-  //   bullet.updateClientPosition()
-  // })
+  gameState.gameBullets.forEach((bullet: Bullet) => {
+    bullet.updateClientPosition()
+  })
 }
 
 export { gameState, updateGameState, reconcile }

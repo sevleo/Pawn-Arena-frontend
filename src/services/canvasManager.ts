@@ -70,24 +70,24 @@ export function renderWorld() {
       }
     }
 
-    // for (const bullet of gameState.gameBullets) {
-    //   if (bullet && bullet.clientCalculatedPosition !== null) {
-    //     const color = 'white'
-    //     const radius = 2
+    for (const bullet of gameState.gameBullets) {
+      if (bullet && bullet.clientCalculatedPosition !== null) {
+        const color = 'white'
+        const radius = 2
 
-    //     // Draw bullet
-    //     gameState.context.beginPath()
-    //     gameState.context.arc(
-    //       bullet.clientCalculatedPosition.x,
-    //       bullet.clientCalculatedPosition.y,
-    //       radius,
-    //       0,
-    //       2 * Math.PI
-    //     )
-    //     gameState.context.fillStyle = color
-    //     gameState.context.fill()
-    //   }
-    // }
+        // Draw bullet
+        gameState.context.beginPath()
+        gameState.context.arc(
+          bullet.clientCalculatedPosition.x,
+          bullet.clientCalculatedPosition.y,
+          radius,
+          0,
+          2 * Math.PI
+        )
+        gameState.context.fillStyle = color
+        gameState.context.fill()
+      }
+    }
   }
 }
 
