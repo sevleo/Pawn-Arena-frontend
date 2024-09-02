@@ -59,8 +59,8 @@ export function renderWorld() {
 
     for (const bullet of gameState.clientBullets) {
       if (bullet) {
-        const color = 'white'
-        const radius = 2
+        const color = 'yellow'
+        const radius = 1.5
 
         // Draw bullet
         gameState.context.beginPath()
@@ -72,8 +72,8 @@ export function renderWorld() {
 
     for (const bullet of gameState.gameBullets) {
       if (bullet && bullet.clientCalculatedPosition !== null) {
-        const color = 'white'
-        const radius = 2
+        const color = 'yellow'
+        const radius = 1.5
 
         // Draw bullet
         gameState.context.beginPath()
