@@ -57,7 +57,7 @@ export function renderWorld() {
       }
     }
 
-    for (const bullet of gameState.bullets) {
+    for (const bullet of gameState.clientBullets) {
       if (bullet) {
         const color = 'white'
         const radius = 2
@@ -69,6 +69,25 @@ export function renderWorld() {
         gameState.context.fill()
       }
     }
+
+    // for (const bullet of gameState.gameBullets) {
+    //   if (bullet && bullet.clientCalculatedPosition !== null) {
+    //     const color = 'white'
+    //     const radius = 2
+
+    //     // Draw bullet
+    //     gameState.context.beginPath()
+    //     gameState.context.arc(
+    //       bullet.clientCalculatedPosition.x,
+    //       bullet.clientCalculatedPosition.y,
+    //       radius,
+    //       0,
+    //       2 * Math.PI
+    //     )
+    //     gameState.context.fillStyle = color
+    //     gameState.context.fill()
+    //   }
+    // }
   }
 }
 

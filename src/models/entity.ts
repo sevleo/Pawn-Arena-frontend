@@ -60,8 +60,8 @@ class Entity {
         this.lastBulletTimestamp === null || // No bullets have been fired yet
         currentTimestamp - this.lastBulletTimestamp >= BULLET_COOLDOWN // 200ms cooldown
       ) {
-        const bullet = new Bullet(this.entity_id, this.position, this.faceDirection)
-        gameState.bullets.push(bullet)
+        const bullet = new Bullet(null, this.entity_id, this.position, this.faceDirection)
+        gameState.clientBullets.push(bullet)
         this.lastBulletTimestamp = currentTimestamp // Update the last bullet timestamp
       }
     }

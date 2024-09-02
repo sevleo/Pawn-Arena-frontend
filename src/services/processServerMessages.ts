@@ -1,5 +1,6 @@
 import Entity from '@/models/entity'
 import { gameState, reconcile } from '@/services/gameState'
+import Bullet from '@/models/bullet'
 
 const messages: any = []
 
@@ -7,20 +8,21 @@ function processServerMessages() {
   while (messages.length > 0) {
     const message = getMessage()
     if (message) {
-      console.log(message)
-      for (const state of message.data.entities) {
-        if (!gameState.entities[state.entity_id]) {
+      // console.log(message)
+      console.log(gameState.gameBullets)
+      for (const ent of message.data.entities) {
+        if (!gameState.entities[ent.entity_id]) {
           const entity = new Entity()
-          entity.entity_id = state.entity_id
-          gameState.entities[state.entity_id] = entity
+          entity.entity_id = ent.entity_id
+          gameState.entities[ent.entity_id] = entity
         }
-        const entity = gameState.entities[state.entity_id]
-        if (state.entity_id == gameState.entity_id) {
+        const entity = gameState.entities[ent.entity_id]
+        if (ent.entity_id == gameState.entity_id) {
           // Received the authoritative position of this client's entity.
-          entity.position.x = state.position.x
-          entity.position.y = state.position.y
+          entity.position.x = ent.position.x
+          entity.position.y = ent.position.y
           // Server Reconciliation. Re-apply all the inputs not yet processed by the server.
-          reconcile(entity, state)
+          reconcile(entity, ent)
         } else {
           // Received the position of an entity other than this client's.
           // Add it to the position buffer for interpolation.
@@ -29,11 +31,33 @@ function processServerMessages() {
           entity.position_buffer.push([
             // message.ts + timestampDifference,
             message.ts,
-            state.position,
-            state.faceDirection
+            ent.position,
+            ent.faceDirection
           ])
         }
       }
+
+      for (const bull of message.data.bullets) {
+        if (gameState.entity_id !== bull.entity_id) {
+          // if (gameState.gameBullets[bull.bullet_id]) {
+          //   console.log('this bullet exists')
+          // } else {
+          //   console.log('this bullet does not exist yet, so lets create it')
+          //   gameState.gameBullets[bull.bullet_id] = bull
+          // }
+          // gameState.gameBullets[bull.bullet_id] = bull
+          const bullet = new Bullet(
+            bull.bullet_id,
+            gameState.entity_id,
+            bull.serverPosition,
+            bull.direction,
+            bull.initialPosition
+          )
+          gameState.gameBullets[bull.bullet_id] = bullet
+        }
+      }
+
+      // for (const )
     }
   }
 }

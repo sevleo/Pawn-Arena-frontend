@@ -6,7 +6,8 @@ import { INTERPOLATION_OFFSET } from '@/config/gameConstants'
 // Unique ID of our entity. Assigned by Server on connection.
 const gameState = {
   entities: [] as any,
-  bullets: [] as any,
+  clientBullets: [] as any,
+  gameBullets: [] as any,
   key_left: false as boolean,
   key_right: false as boolean,
   key_up: false as boolean,
@@ -106,9 +107,12 @@ function reconcile(entity: any, state: any) {
 }
 
 function updateBullets() {
-  gameState.bullets.forEach((bullet: Bullet) => {
+  gameState.clientBullets.forEach((bullet: Bullet) => {
     bullet.updatePosition()
   })
+  // gameState.gameBullets.forEach((bullet: Bullet) => {
+  //   bullet.updateClientPosition()
+  // })
 }
 
 export { gameState, updateGameState, reconcile }
