@@ -22,7 +22,7 @@ const gameState = {
   context: null as CanvasRenderingContext2D | null,
   update_interval: null as any,
   socket: null as any,
-  mousePosition: null as any,
+  mousePosition: { x: 0, y: 0 } as any,
   mouseMoved: false as boolean,
   faceDirection: { x: 0 as number, y: 0 as number },
   previousFaceDirection: { x: 0 as number, y: 0 as number }

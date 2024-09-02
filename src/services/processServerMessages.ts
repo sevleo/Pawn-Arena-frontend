@@ -9,7 +9,8 @@ function processServerMessages() {
     const message = getMessage()
     if (message) {
       // console.log(message)
-      console.log(gameState.gameBullets)
+      // console.log(gameState.gameBullets)
+      // console.log(gameState.entities)
       for (const ent of message.data.entities) {
         if (!gameState.entities[ent.entity_id]) {
           const entity = new Entity()
@@ -34,6 +35,7 @@ function processServerMessages() {
             ent.position,
             ent.faceDirection
           ])
+          entity.mousePosition = ent.mousePosition
         }
       }
 
@@ -49,14 +51,21 @@ function processServerMessages() {
           if (gameState.gameBullets[bull.bullet_id]) {
             continue
           } else {
+            // console.log(bull.entity_id)
             const bullet = new Bullet(
               bull.bullet_id,
-              gameState.entity_id,
+              bull.entity_id,
               bull.serverPosition,
               bull.direction,
-              bull.initialPosition
+              bull.initialPosition,
+              // bull.entity_id.position,
+              bull.mousePosition
             )
             gameState.gameBullets[bull.bullet_id] = bullet
+            // console.log(bullet)
+            console.log(bull.mousePosition)
+            console.log(gameState.entities[gameState.entity_id].position)
+            console.log(bull.initialPosition)
           }
         }
       }

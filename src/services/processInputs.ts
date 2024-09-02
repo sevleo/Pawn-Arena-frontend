@@ -23,7 +23,8 @@ function processInputs() {
     faceDirection: {
       x: gameState.faceDirection.x,
       y: gameState.faceDirection.y
-    }
+    },
+    mousePosition: gameState.mousePosition
   }
 
   if (

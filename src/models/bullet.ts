@@ -21,13 +21,22 @@ class Bullet {
     x: number
     y: number
   } | null
+  mousePosition: {
+    x: number
+    y: number
+  } | null
+  clientDirection: {
+    x: number
+    y: number
+  } | null
 
   constructor(
     bullet_id: number | null,
     entity_id: number,
     position: { x: number; y: number },
     direction: { x: number; y: number },
-    initialPosition: { x: number; y: number } | null
+    initialPosition: { x: number; y: number } | null,
+    mousePosition: { x: number; y: number } | null
   ) {
     this.bullet_id = bullet_id !== null ? bullet_id : null
     this.entity_id = entity_id
@@ -42,10 +51,8 @@ class Bullet {
     this.speed = BULLET_SPEED
     this.initialPosition = initialPosition !== null ? initialPosition : null
     this.clientCalculatedPosition = null
-
-    // console.log('gg')
-    // console.log(this.position)
-    // console.log(this.direction)
+    this.mousePosition = mousePosition
+    this.clientDirection = null // New attribute for client-side direction
   }
 
   updatePosition() {
@@ -53,16 +60,36 @@ class Bullet {
       (this.direction.x / Math.sqrt(this.direction.x ** 2 + this.direction.y ** 2)) * this.speed
     this.position.y +=
       (this.direction.y / Math.sqrt(this.direction.x ** 2 + this.direction.y ** 2)) * this.speed
-    // console.log(this.position)
   }
+
   updateClientPosition() {
-    if (this.clientCalculatedPosition === null) {
-      this.clientCalculatedPosition = this.initialPosition
-    } else {
-      this.clientCalculatedPosition.x +=
-        (this.direction.x / Math.sqrt(this.direction.x ** 2 + this.direction.y ** 2)) * this.speed
-      this.clientCalculatedPosition.y +=
-        (this.direction.y / Math.sqrt(this.direction.x ** 2 + this.direction.y ** 2)) * this.speed
+    const entity = gameState.entities[this.entity_id]
+    if (entity) {
+      if (this.clientCalculatedPosition === null) {
+        // Set the initial position of the bullet to match the entity's position on the screen
+        this.clientCalculatedPosition = {
+          x: entity.position.x,
+          y: entity.position.y
+        }
+
+        if (this.mousePosition) {
+          const directionX = this.mousePosition.x - this.clientCalculatedPosition.x
+          const directionY = this.mousePosition.y - this.clientCalculatedPosition.y
+          const distance = Math.sqrt(directionX ** 2 + directionY ** 2)
+
+          if (distance > 0) {
+            this.clientDirection = {
+              x: directionX / distance,
+              y: directionY / distance
+            }
+          }
+        }
+      } else {
+        if (this.clientDirection) {
+          this.clientCalculatedPosition.x += this.clientDirection.x * this.speed
+          this.clientCalculatedPosition.y += this.clientDirection.y * this.speed
+        }
+      }
     }
   }
 }
