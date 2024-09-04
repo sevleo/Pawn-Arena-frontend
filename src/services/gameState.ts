@@ -78,8 +78,12 @@ function interpolate() {
       const [t0, p0, fd0] = buffer[0] // represent the earlier timestamp and position.
       const [t1, p1, fd1] = buffer[1] // represent the later timestamp and position.
 
-      entity.position.x = p0.x + ((p1.x - p0.x) * (render_timestamp - t0)) / (t1 - t0)
-      entity.position.y = p0.y + ((p1.y - p0.y) * (render_timestamp - t0)) / (t1 - t0)
+      entity.position = {
+        x: p0.x + ((p1.x - p0.x) * (render_timestamp - t0)) / (t1 - t0),
+        y: p0.y + ((p1.y - p0.y) * (render_timestamp - t0)) / (t1 - t0)
+      }
+      // entity.position.x = p0.x + ((p1.x - p0.x) * (render_timestamp - t0)) / (t1 - t0)
+      // entity.position.y = p0.y + ((p1.y - p0.y) * (render_timestamp - t0)) / (t1 - t0)
 
       entity.faceDirection.x = fd0.x + ((fd1.x - fd0.x) * (render_timestamp - t0)) / (t1 - t0)
       entity.faceDirection.y = fd0.y + ((fd1.y - fd0.y) * (render_timestamp - t0)) / (t1 - t0)

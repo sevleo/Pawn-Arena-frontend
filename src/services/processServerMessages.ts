@@ -20,8 +20,8 @@ function processServerMessages() {
         const entity = gameState.entities[ent.entity_id]
         if (ent.entity_id == gameState.entity_id) {
           // Received the authoritative position of this client's entity.
-          entity.position.x = ent.position.x
-          entity.position.y = ent.position.y
+          entity.position = { x: ent.position.x, y: ent.position.y }
+
           // Server Reconciliation. Re-apply all the inputs not yet processed by the server.
           reconcile(entity, ent)
         } else {
@@ -52,20 +52,28 @@ function processServerMessages() {
             continue
           } else {
             // console.log(bull.entity_id)
+            // console.log('new bullet')
+            // console.log(bull.initialPosition)
+            const entity = gameState.entities[bull.entity_id]
+
             const bullet = new Bullet(
               bull.bullet_id,
               bull.entity_id,
               bull.serverPosition,
               bull.direction,
-              bull.initialPosition,
+              entity?.position,
+              // bull.initialPosition,
+              // { x: 500, y: 500 },
               // bull.entity_id.position,
-              bull.mousePosition
+              bull.mousePosition,
+              bull.newBullet
             )
+            // console.log(bullet)
             gameState.gameBullets[bull.bullet_id] = bullet
             // console.log(bullet)
-            console.log(bull.mousePosition)
-            console.log(gameState.entities[gameState.entity_id].position)
-            console.log(bull.initialPosition)
+            // console.log(bull.mousePosition)
+            // console.log(gameState.entities[gameState.entity_id].position)
+            // console.log(bull.initialPosition)
           }
         }
       }

@@ -7,7 +7,7 @@ class Entity {
   position: {
     x: number
     y: number
-  }
+  } | null
   speed: number
   position_buffer: []
   entity_id: any
@@ -18,10 +18,7 @@ class Entity {
   lastBulletTimestamp: number | null
 
   constructor() {
-    this.position = {
-      x: 0,
-      y: 0
-    }
+    this.position = null
     this.speed = MOVEMENT_SPEED
     this.position_buffer = []
     this.faceDirection = {

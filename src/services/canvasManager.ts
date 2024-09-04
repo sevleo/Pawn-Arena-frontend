@@ -13,7 +13,7 @@ export function renderWorld() {
     gameState.context.fillRect(0, 0, gameState.canvas.width, gameState.canvas.height)
 
     for (const entity of gameState.entities) {
-      if (entity) {
+      if (entity && entity.position !== null) {
         const color = gameState.entity_id === entity.entity_id ? 'green' : 'red'
         const radius = 10
 
@@ -72,6 +72,7 @@ export function renderWorld() {
 
     for (const bullet of gameState.gameBullets) {
       if (bullet && bullet.clientCalculatedPosition !== null) {
+        // console.log(bullet.clientCalculatedPosition)
         const color = 'yellow'
         const radius = 1.5
 

@@ -29,6 +29,7 @@ class Bullet {
     x: number
     y: number
   } | null
+  newBullet: boolean
 
   constructor(
     bullet_id: number | null,
@@ -36,7 +37,8 @@ class Bullet {
     position: { x: number; y: number },
     direction: { x: number; y: number },
     initialPosition: { x: number; y: number } | null,
-    mousePosition: { x: number; y: number } | null
+    mousePosition: { x: number; y: number } | null,
+    newBullet: boolean
   ) {
     this.bullet_id = bullet_id !== null ? bullet_id : null
     this.entity_id = entity_id
@@ -53,6 +55,7 @@ class Bullet {
     this.clientCalculatedPosition = null
     this.mousePosition = mousePosition
     this.clientDirection = null // New attribute for client-side direction
+    this.newBullet = newBullet
   }
 
   updatePosition() {
@@ -65,11 +68,22 @@ class Bullet {
   updateClientPosition() {
     const entity = gameState.entities[this.entity_id]
     if (entity) {
-      if (this.clientCalculatedPosition === null) {
+      if (this.clientCalculatedPosition === null && entity.position !== null) {
         // Set the initial position of the bullet to match the entity's position on the screen
-        this.clientCalculatedPosition = {
-          x: entity.position.x,
-          y: entity.position.y
+        if (this.newBullet) {
+          this.clientCalculatedPosition = {
+            x: entity.position.x,
+            y: entity.position.y
+            // x: this.position.x,
+            // y: this.position.y
+          }
+        } else {
+          this.clientCalculatedPosition = {
+            // x: entity.position.x,
+            // y: entity.position.y
+            x: this.position.x,
+            y: this.position.y
+          }
         }
 
         if (this.mousePosition) {

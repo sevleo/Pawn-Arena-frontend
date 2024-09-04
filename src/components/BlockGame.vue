@@ -43,8 +43,8 @@ function keyHandler(e: any) {
       break
     case ' ':
       gameState.key_space = input
-      console.log(gameState.mousePosition)
-      console.log(gameState.entities[gameState.entity_id].position)
+      // console.log(gameState.mousePosition)
+      // console.log(gameState.entities[gameState.entity_id].position)
       break
   }
 }
