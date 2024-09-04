@@ -86,20 +86,29 @@ class Bullet {
           }
         }
 
-        if (this.mousePosition) {
-          const directionX = this.mousePosition.x - this.clientCalculatedPosition.x
-          const directionY = this.mousePosition.y - this.clientCalculatedPosition.y
-          const distance = Math.sqrt(directionX ** 2 + directionY ** 2)
+        if (this.newBullet) {
+          if (this.mousePosition) {
+            const directionX = this.mousePosition.x - this.clientCalculatedPosition.x
+            const directionY = this.mousePosition.y - this.clientCalculatedPosition.y
+            const distance = Math.sqrt(directionX ** 2 + directionY ** 2)
 
-          if (distance > 0) {
-            this.clientDirection = {
-              x: directionX / distance,
-              y: directionY / distance
+            if (distance > 0) {
+              this.clientDirection = {
+                x: directionX / distance,
+                y: directionY / distance
+              }
             }
+          }
+        } else {
+          const distance = Math.sqrt(this.direction.x ** 2 + this.direction.y ** 2)
+
+          this.clientDirection = {
+            x: this.direction.x / distance,
+            y: this.direction.y / distance
           }
         }
       } else {
-        if (this.clientDirection) {
+        if (this.clientDirection && this.clientCalculatedPosition) {
           this.clientCalculatedPosition.x += this.clientDirection.x * this.speed
           this.clientCalculatedPosition.y += this.clientDirection.y * this.speed
         }

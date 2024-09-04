@@ -46,8 +46,12 @@ class Entity {
       }
 
       // Update the position of the entity
-      this.position.x += xForce
-      this.position.y += yForce
+      if (this.position) {
+        this.position = {
+          x: (this.position.x += xForce),
+          y: (this.position.y += yForce)
+        }
+      }
     }
 
     if (input.active_keys.space) {
@@ -57,16 +61,19 @@ class Entity {
         this.lastBulletTimestamp === null || // No bullets have been fired yet
         currentTimestamp - this.lastBulletTimestamp >= BULLET_COOLDOWN // 200ms cooldown
       ) {
-        const bullet = new Bullet(
-          null,
-          this.entity_id,
-          this.position,
-          this.faceDirection,
-          null,
-          null
-        )
-        gameState.clientBullets.push(bullet)
-        this.lastBulletTimestamp = currentTimestamp // Update the last bullet timestamp
+        if (this.position) {
+          const bullet = new Bullet(
+            null,
+            this.entity_id,
+            this.position,
+            this.faceDirection,
+            null,
+            null,
+            true
+          )
+          gameState.clientBullets.push(bullet)
+          this.lastBulletTimestamp = currentTimestamp // Update the last bullet timestamp
+        }
       }
     }
   }

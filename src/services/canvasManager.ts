@@ -73,6 +73,7 @@ export function renderWorld() {
     for (const bullet of gameState.gameBullets) {
       if (bullet && bullet.clientCalculatedPosition !== null) {
         // console.log(bullet.clientCalculatedPosition)
+        // console.log(bullet.clientDirection)
         const color = 'yellow'
         const radius = 1.5
 
