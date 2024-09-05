@@ -64,8 +64,10 @@ function processServerMessages() {
       for (const bull of message.data.bullets) {
         if (bull.entity_id === gameState.entity_id) {
           for (const clientBull of gameState.clientBullets) {
-            if (clientBull.bullet_sequence_number === bull.bullet_sequence_number) {
-              clientBull.bullet_id = bull.bullet_id
+            if (clientBull) {
+              if (clientBull.bullet_sequence_number === bull.bullet_sequence_number) {
+                clientBull.bullet_id = bull.bullet_id
+              }
             }
           }
         }
