@@ -62,6 +62,8 @@ class Entity {
         currentTimestamp - this.lastBulletTimestamp >= BULLET_COOLDOWN // 200ms cooldown
       ) {
         if (this.position) {
+          const bullet_sequence_number = gameState.bullet_sequence_number
+          console.log(bullet_sequence_number)
           const bullet = new Bullet(
             null,
             this.entity_id,
@@ -69,10 +71,13 @@ class Entity {
             this.faceDirection,
             null,
             null,
-            true
+            true,
+            bullet_sequence_number
           )
           gameState.clientBullets.push(bullet)
+          // gameState.gameBullets.push(bullet)
           this.lastBulletTimestamp = currentTimestamp // Update the last bullet timestamp
+          gameState.bullet_sequence_number++
         }
       }
     }

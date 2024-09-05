@@ -8,7 +8,29 @@ function processServerMessages() {
   while (messages.length > 0) {
     const message = getMessage()
     if (message) {
-      // console.log(message)
+      console.log(message)
+      console.log(gameState.gameBullets)
+      console.log(gameState.clientBullets)
+      for (const bull of message.data.removedBullets) {
+        for (const gameBull of gameState.gameBullets) {
+          if (gameBull !== undefined) {
+            if (gameBull.bullet_id === bull.bullet_id) {
+              console.log('need to delete it')
+              // Remove the bullet from gameBullets
+              delete gameState.gameBullets[gameBull.bullet_id]
+            }
+          }
+        }
+        for (const clientBull of gameState.clientBullets) {
+          if (clientBull !== undefined) {
+            if (clientBull.bullet_id === bull.bullet_id) {
+              console.log('need to delete it')
+              // Remove the bullet from gameBullets
+              delete gameState.clientBullets[clientBull.bullet_id]
+            }
+          }
+        }
+      }
       // console.log(gameState.gameBullets)
       // console.log(gameState.entities)
       for (const ent of message.data.entities) {
@@ -40,42 +62,50 @@ function processServerMessages() {
       }
 
       for (const bull of message.data.bullets) {
-        if (gameState.entity_id !== bull.entity_id) {
-          // if (gameState.gameBullets[bull.bullet_id]) {
-          //   console.log('this bullet exists')
-          // } else {
-          //   console.log('this bullet does not exist yet, so lets create it')
-          //   gameState.gameBullets[bull.bullet_id] = bull
-          // }
-          // gameState.gameBullets[bull.bullet_id] = bull
-          if (gameState.gameBullets[bull.bullet_id]) {
-            continue
-          } else {
-            // console.log(bull.entity_id)
-            // console.log('new bullet')
-            // console.log(bull.initialPosition)
-            const entity = gameState.entities[bull.entity_id]
-
-            const bullet = new Bullet(
-              bull.bullet_id,
-              bull.entity_id,
-              bull.serverPosition,
-              bull.direction,
-              entity?.position,
-              // bull.initialPosition,
-              // { x: 500, y: 500 },
-              // bull.entity_id.position,
-              bull.mousePosition,
-              bull.newBullet
-            )
-            // console.log(bullet)
-            gameState.gameBullets[bull.bullet_id] = bullet
-            // console.log(bullet)
-            // console.log(bull.mousePosition)
-            // console.log(gameState.entities[gameState.entity_id].position)
-            // console.log(bull.initialPosition)
+        if (bull.entity_id === gameState.entity_id) {
+          for (const clientBull of gameState.clientBullets) {
+            if (clientBull.bullet_sequence_number === bull.bullet_sequence_number) {
+              clientBull.bullet_id = bull.bullet_id
+            }
           }
         }
+        // if (gameState.entity_id !== bull.entity_id) {
+        // if (gameState.gameBullets[bull.bullet_id]) {
+        //   console.log('this bullet exists')
+        // } else {
+        //   console.log('this bullet does not exist yet, so lets create it')
+        //   gameState.gameBullets[bull.bullet_id] = bull
+        // }
+        // gameState.gameBullets[bull.bullet_id] = bull
+        if (gameState.gameBullets[bull.bullet_id]) {
+          continue
+        } else {
+          // console.log(bull.entity_id)
+          // console.log('new bullet')
+          // console.log(bull.initialPosition)
+          const entity = gameState.entities[bull.entity_id]
+
+          const bullet = new Bullet(
+            bull.bullet_id,
+            bull.entity_id,
+            bull.serverPosition,
+            bull.direction,
+            entity?.position,
+            // bull.initialPosition,
+            // { x: 500, y: 500 },
+            // bull.entity_id.position,
+            bull.mousePosition,
+            bull.newBullet,
+            bull.bullet_sequence_number
+          )
+          // console.log(bullet)
+          gameState.gameBullets[bull.bullet_id] = bullet
+          // console.log(bullet)
+          // console.log(bull.mousePosition)
+          // console.log(gameState.entities[gameState.entity_id].position)
+          // console.log(bull.initialPosition)
+        }
+        // }
       }
 
       // for (const )

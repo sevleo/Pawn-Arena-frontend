@@ -25,7 +25,8 @@ const gameState = {
   mousePosition: { x: 0, y: 0 } as any,
   mouseMoved: false as boolean,
   faceDirection: { x: 0 as number, y: 0 as number },
-  previousFaceDirection: { x: 0 as number, y: 0 as number }
+  previousFaceDirection: { x: 0 as number, y: 0 as number },
+  bullet_sequence_number: 0 as number
 }
 
 // Update Client state.

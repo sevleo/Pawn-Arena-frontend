@@ -24,8 +24,12 @@ function processInputs() {
       x: gameState.faceDirection.x,
       y: gameState.faceDirection.y
     },
-    mousePosition: gameState.mousePosition
+    mousePosition: gameState.mousePosition,
+    bullet_sequence_number: gameState.bullet_sequence_number
   }
+
+  // console.log(input.bullet_sequence_number)
+  // console.log(gameState.bullet_sequence_number)
 
   if (
     !input.active_keys.right &&
@@ -42,6 +46,8 @@ function processInputs() {
   // Send the input to the server.
   input.input_sequence_number = gameState.input_sequence_number++
   gameState.socket.send(JSON.stringify({ type: 'input', data: input }))
+
+  // gameState.bullet_sequence_number++
 
   // Do client-side prediction.
   if (gameState.entity_id !== null) {

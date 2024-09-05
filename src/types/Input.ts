@@ -4,4 +4,5 @@ export interface Input {
   input_sequence_number: number | null
   faceDirection: { x: number; y: number }
   mousePosition: { x: number; y: number }
+  bullet_sequence_number: number | null
 }

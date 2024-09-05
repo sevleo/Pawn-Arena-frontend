@@ -71,7 +71,11 @@ export function renderWorld() {
     }
 
     for (const bullet of gameState.gameBullets) {
-      if (bullet && bullet.clientCalculatedPosition !== null) {
+      if (
+        bullet &&
+        bullet.clientCalculatedPosition !== null &&
+        gameState.entity_id !== bullet.entity_id
+      ) {
         // console.log(bullet.clientCalculatedPosition)
         // console.log(bullet.clientDirection)
         const color = 'yellow'

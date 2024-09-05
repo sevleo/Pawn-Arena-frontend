@@ -30,6 +30,7 @@ class Bullet {
     y: number
   } | null
   newBullet: boolean
+  bullet_sequence_number: number | null
 
   constructor(
     bullet_id: number | null,
@@ -38,7 +39,8 @@ class Bullet {
     direction: { x: number; y: number },
     initialPosition: { x: number; y: number } | null,
     mousePosition: { x: number; y: number } | null,
-    newBullet: boolean
+    newBullet: boolean,
+    bullet_sequence_number: number | null
   ) {
     this.bullet_id = bullet_id !== null ? bullet_id : null
     this.entity_id = entity_id
@@ -56,6 +58,7 @@ class Bullet {
     this.mousePosition = mousePosition
     this.clientDirection = null // New attribute for client-side direction
     this.newBullet = newBullet
+    this.bullet_sequence_number = bullet_sequence_number !== null ? bullet_sequence_number : null
   }
 
   updatePosition() {
