@@ -1,5 +1,7 @@
 import { gameState } from './gameState'
 
+const GRID_SIZE = 50
+
 export function initializeCanvas() {
   if (gameState.canvas) {
     gameState.context = gameState.canvas.getContext('2d')
@@ -64,6 +66,7 @@ export function renderWorld() {
     }
   })
 
+  // Draw Bullets
   for (const bullet of gameState.clientBullets.values()) {
     if (bullet) {
       const color = 'yellow'
@@ -105,6 +108,8 @@ export function renderWorld() {
       }
     }
   }
+
+  drawGrid()
 }
 
 function getMagnitude(x: number, y: number) {
@@ -120,5 +125,73 @@ function getWeaponPosition(
   return {
     x: startPos.x + (direction.x / magnitude) * length,
     y: startPos.y + (direction.y / magnitude) * length
+  }
+}
+
+// function drawGrid(canvasWidth: number, canvasHeight: number, cameraX: number, cameraY: number) {
+//   if (gameState.context) {
+//     gameState.context.strokeStyle = 'gray'
+//     gameState.context.lineWidth = 0.2
+
+//     // Define the boundaries of the game area
+//     const GAME_WIDTH = 2000
+//     const GAME_HEIGHT = 2000
+
+//     // Determine the visible area based on the camera position
+//     const visibleXStart = Math.max(cameraX, 0)
+//     const visibleYStart = Math.max(cameraY, 0)
+//     const visibleXEnd = Math.min(cameraX + canvasWidth, GAME_WIDTH)
+//     const visibleYEnd = Math.min(cameraY + canvasHeight, GAME_HEIGHT)
+
+//     // Determine where to start drawing grid lines based on the camera position
+//     const startX = Math.floor(visibleXStart / GRID_SIZE) * GRID_SIZE
+//     const startY = Math.floor(visibleYStart / GRID_SIZE) * GRID_SIZE
+
+//     // Draw vertical lines
+//     for (let x = -startX; x <= visibleXEnd; x += GRID_SIZE) {
+//       gameState.context.beginPath()
+//       gameState.context.moveTo(x - cameraX, Math.max(visibleYStart - cameraY, 0))
+//       gameState.context.lineTo(x - cameraX, Math.min(visibleYEnd - cameraY, canvasHeight))
+//       gameState.context.stroke()
+//     }
+
+//     // Draw horizontal lines
+//     for (let y = startY; y <= visibleYEnd; y += GRID_SIZE) {
+//       gameState.context.beginPath()
+//       gameState.context.moveTo(Math.max(visibleXStart - cameraX, 0), y - cameraY)
+//       gameState.context.lineTo(Math.min(visibleXEnd - cameraX, canvasWidth), y - cameraY)
+//       gameState.context.stroke()
+//     }
+//   }
+// }
+
+function drawGrid() {
+  if (gameState.context) {
+    gameState.context.strokeStyle = 'gray'
+    gameState.context.lineWidth = 0.2
+
+    // Define the boundaries of the game area
+    const GAME_WIDTH = 800
+    const GAME_HEIGHT = 800
+
+    // Determine where to start drawing grid lines based on the canvas size
+    const startX = Math.floor(-gameState.canvas.width / 2 / GRID_SIZE) * GRID_SIZE
+    const startY = Math.floor(-gameState.canvas.height / 2 / GRID_SIZE) * GRID_SIZE
+
+    // Draw vertical lines
+    for (let x = startX; x <= GAME_WIDTH; x += GRID_SIZE) {
+      gameState.context.beginPath()
+      gameState.context.moveTo(x, 0)
+      gameState.context.lineTo(x, GAME_HEIGHT)
+      gameState.context.stroke()
+    }
+
+    // Draw horizontal lines
+    for (let y = startY; y <= GAME_HEIGHT; y += GRID_SIZE) {
+      gameState.context.beginPath()
+      gameState.context.moveTo(0, y)
+      gameState.context.lineTo(GAME_WIDTH, y)
+      gameState.context.stroke()
+    }
   }
 }

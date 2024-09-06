@@ -78,8 +78,6 @@ class Bullet {
           this.clientCalculatedPosition = {
             x: entity.position.x,
             y: entity.position.y
-            // x: this.position.x,
-            // y: this.position.y
           }
         } else {
           this.clientCalculatedPosition = {
