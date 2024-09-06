@@ -51,7 +51,8 @@ function processInputs() {
 
   // Do client-side prediction.
   if (gameState.entity_id !== null) {
-    gameState.entities[gameState.entity_id]?.applyInput(input)
+    gameState.entities.get(gameState.entity_id).applyInput(input)
+    // gameState.entities[gameState.entity_id]?.applyInput(input)
     // gameState.entities[gameState.entity_id]?.updateFaceDirection(
     //   gameState.mouseMoved ? gameState.mousePosition : null
     // )

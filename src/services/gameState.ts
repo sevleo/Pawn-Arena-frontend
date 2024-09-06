@@ -6,7 +6,8 @@ import type { Input } from '@/types/Input'
 
 // Unique ID of our entity. Assigned by Server on connection.
 const gameState = {
-  entities: [] as any,
+  // entities: [] as any,
+  entities: new Map<number, any>(),
   clientBullets: new Map<string, Bullet>(),
   gameBullets: new Map<number, Bullet>(),
   key_left: false as boolean,
@@ -53,13 +54,18 @@ function interpolate() {
   const now = Date.now()
   const render_timestamp = now - INTERPOLATION_OFFSET
 
-  for (const i in gameState.entities) {
-    const entity = gameState.entities[i]
-
+  // for (const i in gameState.entities) {
+  //   const entity = gameState.entities[i]
+  gameState.entities.forEach((entity: any) => {
     // No point in interpolating this client's entity.
     if (entity.entity_id == gameState.entity_id) {
-      continue
+      return
     }
+
+    // No point in interpolating this client's entity.
+    // if (entity.entity_id == gameState.entity_id) {
+    //   continue
+    // }
 
     // Find the two authoritative positions surrounding the rendering timestamp.
     const buffer = entity.position_buffer
@@ -93,7 +99,7 @@ function interpolate() {
       // entity.faceDirection.x = fd0.x
       // entity.faceDirection.y = fd0.y
     }
-  }
+  })
 }
 
 function reconcile(entity: any, state: any) {

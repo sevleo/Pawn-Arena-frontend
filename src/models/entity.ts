@@ -94,10 +94,17 @@ class Entity {
     gameState.previousFaceDirection.y = gameState.faceDirection.y
 
     // Direction from current object coordinates to target coordinates
-    gameState.faceDirection.x = targetX - gameState.entities[gameState.entity_id].position.x
-    gameState.faceDirection.y = targetY - gameState.entities[gameState.entity_id].position.y
+    const clientEntity = gameState.entities.get(gameState.entity_id)
+    if (clientEntity && clientEntity.position) {
+      gameState.faceDirection.x = targetX - clientEntity.position.x
+      gameState.faceDirection.y = targetY - clientEntity.position.y
 
-    gameState.entities[gameState.entity_id].faceDirection = gameState.faceDirection
+      clientEntity.faceDirection = gameState.faceDirection
+    }
+    // gameState.faceDirection.x = targetX - gameState.entities[gameState.entity_id].position.x
+    // gameState.faceDirection.y = targetY - gameState.entities[gameState.entity_id].position.y
+
+    // gameState.entities[gameState.entity_id].faceDirection = gameState.faceDirection
   }
 }
 

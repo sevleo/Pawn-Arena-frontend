@@ -12,12 +12,20 @@ export default function handleServerMessage(event: any) {
     case 'world_state':
       saveServerMessage(message)
       break
+
+    case 'disconnect':
+      removePlayerEntity(message.entity_id)
+      break
   }
 }
 
 function assignEntityId(id: string) {
   gameState.entity_id = id
   console.log(`Assigned entity_id: ${gameState.entity_id}`)
+}
+
+function removePlayerEntity(entity_id: any) {
+  gameState.entities.delete(entity_id)
 }
 
 function saveServerMessage(msg: any) {

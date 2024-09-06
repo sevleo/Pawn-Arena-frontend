@@ -12,12 +12,15 @@ function processServerMessages() {
       // console.log(gameState.gameBullets)
       // console.log(gameState.clientBullets)
       for (const ent of message.data.entities) {
-        if (!gameState.entities[ent.entity_id]) {
+        // if (!gameState.entities[ent.entity_id]) {
+        if (!gameState.entities.has(ent.entity_id)) {
           const entity = new Entity()
           entity.entity_id = ent.entity_id
-          gameState.entities[ent.entity_id] = entity
+          gameState.entities.set(ent.entity_id, entity)
+          // gameState.entities[ent.entity_id] = entity
         }
-        const entity = gameState.entities[ent.entity_id]
+        // const entity = gameState.entities[ent.entity_id]
+        const entity = gameState.entities.get(ent.entity_id)
         if (ent.entity_id == gameState.entity_id) {
           // Received the authoritative position of this client's entity.
           entity.position = { x: ent.position.x, y: ent.position.y }
@@ -60,7 +63,8 @@ function processServerMessages() {
         if (gameState.gameBullets.has(bull.bullet_id)) {
           continue
         } else {
-          const entity = gameState.entities[bull.entity_id]
+          // const entity = gameState.entities[bull.entity_id]
+          const entity = gameState.entities.get(bull.entity_id)
 
           const bullet = new Bullet(
             bull.bullet_id,

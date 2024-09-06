@@ -11,13 +11,17 @@ export function renderWorld() {
     gameState.context.clearRect(0, 0, gameState.canvas.width, gameState.canvas.height)
     gameState.context.fillStyle = '#333300' // Set your desired background color here
     gameState.context.fillRect(0, 0, gameState.canvas.width, gameState.canvas.height)
+  }
 
-    for (const entity of gameState.entities) {
-      if (entity && entity.position !== null) {
-        const color = gameState.entity_id === entity.entity_id ? 'green' : 'red'
-        const radius = 10
+  // for (const entity of gameState.entities) {
+  gameState.entities.forEach((entity: any) => {
+    // console.log(gameState.entities)
+    if (entity && entity.position !== null) {
+      const color = gameState.entity_id === entity.entity_id ? 'green' : 'red'
+      const radius = 10
 
-        // Draw entity
+      // Draw entity
+      if (gameState.context) {
         gameState.context.beginPath()
         gameState.context.arc(entity.position.x, entity.position.y, radius, 0, 2 * Math.PI)
         gameState.context.fillStyle = color
@@ -25,28 +29,30 @@ export function renderWorld() {
         gameState.context.lineWidth = 1
         gameState.context.strokeStyle = 'black'
         gameState.context.stroke()
+      }
 
-        let weaponPosition
-        const lineLength = 30
+      let weaponPosition
+      const lineLength = 30
 
-        if (gameState.entity_id === entity.entity_id) {
-          entity.updateFaceDirection(gameState.mouseMoved ? gameState.mousePosition : null)
-          weaponPosition = getWeaponPosition(
-            entity.position,
-            gameState.faceDirection,
-            getMagnitude(gameState.faceDirection.x, gameState.faceDirection.y),
-            lineLength
-          )
-        } else {
-          weaponPosition = getWeaponPosition(
-            entity.position,
-            entity.faceDirection,
-            getMagnitude(entity.faceDirection.x, entity.faceDirection.y),
-            lineLength
-          )
-        }
+      if (gameState.entity_id === entity.entity_id) {
+        entity.updateFaceDirection(gameState.mouseMoved ? gameState.mousePosition : null)
+        weaponPosition = getWeaponPosition(
+          entity.position,
+          gameState.faceDirection,
+          getMagnitude(gameState.faceDirection.x, gameState.faceDirection.y),
+          lineLength
+        )
+      } else {
+        weaponPosition = getWeaponPosition(
+          entity.position,
+          entity.faceDirection,
+          getMagnitude(entity.faceDirection.x, entity.faceDirection.y),
+          lineLength
+        )
+      }
 
-        // Draw weapon
+      // Draw weapon
+      if (gameState.context) {
         gameState.context.strokeStyle = 'black'
         gameState.context.lineWidth = 1 // Set specific line width for weapon line
         gameState.context.beginPath()
@@ -56,32 +62,36 @@ export function renderWorld() {
         gameState.context.restore() // Restore the previous state
       }
     }
+  })
 
-    for (const bullet of gameState.clientBullets.values()) {
-      if (bullet) {
-        const color = 'yellow'
-        const radius = 1.5
+  for (const bullet of gameState.clientBullets.values()) {
+    if (bullet) {
+      const color = 'yellow'
+      const radius = 1.5
 
-        // Draw bullet
+      // Draw bullet
+      if (gameState.context) {
         gameState.context.beginPath()
         gameState.context.arc(bullet.position.x, bullet.position.y, radius, 0, 2 * Math.PI)
         gameState.context.fillStyle = color
         gameState.context.fill()
       }
     }
+  }
 
-    for (const bullet of gameState.gameBullets.values()) {
-      if (
-        bullet &&
-        bullet.clientCalculatedPosition !== null &&
-        gameState.entity_id !== bullet.entity_id
-      ) {
-        // console.log(bullet.clientCalculatedPosition)
-        // console.log(bullet.clientDirection)
-        const color = 'yellow'
-        const radius = 1.5
+  for (const bullet of gameState.gameBullets.values()) {
+    if (
+      bullet &&
+      bullet.clientCalculatedPosition !== null &&
+      gameState.entity_id !== bullet.entity_id
+    ) {
+      // console.log(bullet.clientCalculatedPosition)
+      // console.log(bullet.clientDirection)
+      const color = 'yellow'
+      const radius = 1.5
 
-        // Draw bullet
+      // Draw bullet
+      if (gameState.context) {
         gameState.context.beginPath()
         gameState.context.arc(
           bullet.clientCalculatedPosition.x,
