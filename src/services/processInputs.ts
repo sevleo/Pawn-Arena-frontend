@@ -58,7 +58,7 @@ function processInputs() {
   }
 
   // Save this input for later reconciliation.
-  gameState.pending_inputs.push(input)
+  gameState.pending_inputs.set(input.input_sequence_number, input)
 }
 
 export { processInputs }

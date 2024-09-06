@@ -2,6 +2,7 @@ import type Bullet from '@/models/bullet'
 import { processInputs } from './processInputs'
 import serverMessages from './processServerMessages'
 import { INTERPOLATION_OFFSET } from '@/config/gameConstants'
+import type { Input } from '@/types/Input'
 
 // Unique ID of our entity. Assigned by Server on connection.
 const gameState = {
@@ -16,7 +17,7 @@ const gameState = {
   last_ts: null as any,
   entity_id: null as any,
   input_sequence_number: 0 as number,
-  pending_inputs: [] as any,
+  pending_inputs: new Map<number, Input>(),
   status: { textContent: null as any } as any,
   canvas: {} as any,
   context: null as CanvasRenderingContext2D | null,
@@ -43,7 +44,7 @@ function updateGameState() {
   updateBullets()
 
   // Show some info.
-  const info = `Non-acknowledged inputs: ${gameState.pending_inputs.length}`
+  const info = `Non-acknowledged inputs: ${gameState.pending_inputs.size}`
   gameState.status.textContent = info
 }
 
@@ -96,17 +97,14 @@ function interpolate() {
 }
 
 function reconcile(entity: any, state: any) {
-  let j = 0
-  while (j < gameState.pending_inputs.length) {
-    const input = gameState.pending_inputs[j]
-    if (input.input_sequence_number <= state.last_processed_input) {
-      // Already processed. Its effect is already taken into account into the world update
-      // we just got, so we can drop it.
-      gameState.pending_inputs.splice(j, 1)
+  for (const [key, input] of gameState.pending_inputs) {
+    if (
+      input.input_sequence_number !== null &&
+      input.input_sequence_number <= state.last_processed_input
+    ) {
+      gameState.pending_inputs.delete(key)
     } else {
-      // Not processed by the server yet. Re-apply it.
       entity.applyInput(input)
-      j++
     }
   }
 }
