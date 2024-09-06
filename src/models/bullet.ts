@@ -70,7 +70,7 @@ class Bullet {
 
   updateClientPosition() {
     // const entity = gameState.entities[this.entity_id]
-    const entity = gameState.entities.get(gameState.entity_id)
+    const entity = gameState.entities.get(this.entity_id)
     if (entity) {
       if (this.clientCalculatedPosition === null && entity.position !== null) {
         // Set the initial position of the bullet to match the entity's position on the screen
