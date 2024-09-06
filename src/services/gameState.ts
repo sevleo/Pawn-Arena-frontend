@@ -6,8 +6,8 @@ import { INTERPOLATION_OFFSET } from '@/config/gameConstants'
 // Unique ID of our entity. Assigned by Server on connection.
 const gameState = {
   entities: [] as any,
-  clientBullets: [] as any,
-  gameBullets: [] as any,
+  clientBullets: new Map<string, Bullet>(),
+  gameBullets: new Map<number, Bullet>(),
   key_left: false as boolean,
   key_right: false as boolean,
   key_up: false as boolean,

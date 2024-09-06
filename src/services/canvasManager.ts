@@ -57,7 +57,7 @@ export function renderWorld() {
       }
     }
 
-    for (const bullet of gameState.clientBullets) {
+    for (const bullet of gameState.clientBullets.values()) {
       if (bullet) {
         const color = 'yellow'
         const radius = 1.5
@@ -70,7 +70,7 @@ export function renderWorld() {
       }
     }
 
-    for (const bullet of gameState.gameBullets) {
+    for (const bullet of gameState.gameBullets.values()) {
       if (
         bullet &&
         bullet.clientCalculatedPosition !== null &&

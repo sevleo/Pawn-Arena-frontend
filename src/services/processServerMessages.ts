@@ -8,31 +8,9 @@ function processServerMessages() {
   while (messages.length > 0) {
     const message = getMessage()
     if (message) {
-      console.log(message)
-      console.log(gameState.gameBullets)
-      console.log(gameState.clientBullets)
-      for (const bull of message.data.removedBullets) {
-        for (const gameBull of gameState.gameBullets) {
-          if (gameBull !== undefined) {
-            if (gameBull.bullet_id === bull.bullet_id) {
-              console.log('need to delete it')
-              // Remove the bullet from gameBullets
-              delete gameState.gameBullets[gameBull.bullet_id]
-            }
-          }
-        }
-        for (const clientBull of gameState.clientBullets) {
-          if (clientBull !== undefined) {
-            if (clientBull.bullet_id === bull.bullet_id) {
-              console.log('need to delete it')
-              // Remove the bullet from gameBullets
-              delete gameState.clientBullets[clientBull.bullet_id]
-            }
-          }
-        }
-      }
+      // console.log(message)
       // console.log(gameState.gameBullets)
-      // console.log(gameState.entities)
+      // console.log(gameState.clientBullets)
       for (const ent of message.data.entities) {
         if (!gameState.entities[ent.entity_id]) {
           const entity = new Entity()
@@ -63,28 +41,25 @@ function processServerMessages() {
 
       for (const bull of message.data.bullets) {
         if (bull.entity_id === gameState.entity_id) {
-          for (const clientBull of gameState.clientBullets) {
-            if (clientBull) {
-              if (clientBull.bullet_sequence_number === bull.bullet_sequence_number) {
-                clientBull.bullet_id = bull.bullet_id
-              }
+          const bullet = gameState.clientBullets.get('client-' + bull.bullet_sequence_number)
+          if (bullet) {
+            if (bullet.bullet_sequence_number !== null && bullet.bullet_id === null) {
+              // Remove the entry with the local bullet_sequence_number
+
+              gameState.clientBullets.delete('client-' + bullet.bullet_sequence_number)
+
+              // Assign the correct bullet_id
+              bullet.bullet_id = bull.bullet_id
+
+              // Now store the bullet in the Map using bullet_id as the key
+              gameState.clientBullets.set(bull.bullet_id, bullet)
             }
           }
         }
-        // if (gameState.entity_id !== bull.entity_id) {
-        // if (gameState.gameBullets[bull.bullet_id]) {
-        //   console.log('this bullet exists')
-        // } else {
-        //   console.log('this bullet does not exist yet, so lets create it')
-        //   gameState.gameBullets[bull.bullet_id] = bull
-        // }
-        // gameState.gameBullets[bull.bullet_id] = bull
-        if (gameState.gameBullets[bull.bullet_id]) {
+
+        if (gameState.gameBullets.has(bull.bullet_id)) {
           continue
         } else {
-          // console.log(bull.entity_id)
-          // console.log('new bullet')
-          // console.log(bull.initialPosition)
           const entity = gameState.entities[bull.entity_id]
 
           const bullet = new Bullet(
@@ -93,24 +68,28 @@ function processServerMessages() {
             bull.serverPosition,
             bull.direction,
             entity?.position,
-            // bull.initialPosition,
-            // { x: 500, y: 500 },
-            // bull.entity_id.position,
             bull.mousePosition,
             bull.newBullet,
             bull.bullet_sequence_number
           )
-          // console.log(bullet)
-          gameState.gameBullets[bull.bullet_id] = bullet
-          // console.log(bullet)
-          // console.log(bull.mousePosition)
-          // console.log(gameState.entities[gameState.entity_id].position)
-          // console.log(bull.initialPosition)
+          gameState.gameBullets.set(bull.bullet_id, bullet)
         }
-        // }
       }
-
-      // for (const )
+      for (const bull of message.data.removedBullets) {
+        // Remove from gameBullets map
+        if (gameState.gameBullets.has(bull.bullet_id)) {
+          gameState.gameBullets.delete(bull.bullet_id)
+        }
+        // Remove from clientBullets map
+        if (gameState.clientBullets.has(bull.bullet_id)) {
+          // console.log('Removing bullet with bullet_id')
+          gameState.clientBullets.delete(bull.bullet_id)
+        }
+        if (gameState.clientBullets.has('client-' + (bull.bullet_sequence_number - 1))) {
+          console.log('Removing bullet with bullet_sequence_number minus one')
+          gameState.clientBullets.delete('client-' + (bull.bullet_sequence_number - 1))
+        }
+      }
     }
   }
 }

@@ -63,7 +63,6 @@ class Entity {
       ) {
         if (this.position) {
           const bullet_sequence_number = gameState.bullet_sequence_number
-          console.log(bullet_sequence_number)
           const bullet = new Bullet(
             null,
             this.entity_id,
@@ -74,10 +73,13 @@ class Entity {
             true,
             bullet_sequence_number
           )
-          gameState.clientBullets.push(bullet)
-          // gameState.gameBullets.push(bullet)
+          // gameState.clientBullets.push(bullet)
+          // Use bullet_sequence_number as the key temporarily
+          if (bullet.bullet_sequence_number !== null) {
+            gameState.clientBullets.set('client-' + bullet.bullet_sequence_number, bullet)
+            gameState.bullet_sequence_number++
+          }
           this.lastBulletTimestamp = currentTimestamp // Update the last bullet timestamp
-          gameState.bullet_sequence_number++
         }
       }
     }
