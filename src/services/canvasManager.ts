@@ -1,6 +1,5 @@
 import { gameState } from './gameState'
-
-const GRID_SIZE = 50
+import { CANVAS_HEIGHT, CANVAS_WIDTH, GRID_SIZE } from '@/config/gameConstants'
 
 export function initializeCanvas() {
   if (gameState.canvas) {
@@ -170,27 +169,23 @@ function drawGrid() {
     gameState.context.strokeStyle = 'gray'
     gameState.context.lineWidth = 0.2
 
-    // Define the boundaries of the game area
-    const GAME_WIDTH = 800
-    const GAME_HEIGHT = 800
-
     // Determine where to start drawing grid lines based on the canvas size
     const startX = Math.floor(-gameState.canvas.width / 2 / GRID_SIZE) * GRID_SIZE
     const startY = Math.floor(-gameState.canvas.height / 2 / GRID_SIZE) * GRID_SIZE
 
     // Draw vertical lines
-    for (let x = startX; x <= GAME_WIDTH; x += GRID_SIZE) {
+    for (let x = startX; x <= CANVAS_WIDTH; x += GRID_SIZE) {
       gameState.context.beginPath()
       gameState.context.moveTo(x, 0)
-      gameState.context.lineTo(x, GAME_HEIGHT)
+      gameState.context.lineTo(x, CANVAS_HEIGHT)
       gameState.context.stroke()
     }
 
     // Draw horizontal lines
-    for (let y = startY; y <= GAME_HEIGHT; y += GRID_SIZE) {
+    for (let y = startY; y <= CANVAS_HEIGHT; y += GRID_SIZE) {
       gameState.context.beginPath()
       gameState.context.moveTo(0, y)
-      gameState.context.lineTo(GAME_WIDTH, y)
+      gameState.context.lineTo(CANVAS_WIDTH, y)
       gameState.context.stroke()
     }
   }

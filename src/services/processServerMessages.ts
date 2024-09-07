@@ -9,8 +9,8 @@ function processServerMessages() {
     const message = getMessage()
     if (message) {
       // console.log(message)
-      // console.log(gameState.gameBullets)
-      // console.log(gameState.clientBullets)
+      console.log(gameState.gameBullets)
+      console.log(gameState.clientBullets)
       for (const ent of message.data.entities) {
         // if (!gameState.entities[ent.entity_id]) {
         if (!gameState.entities.has(ent.entity_id)) {

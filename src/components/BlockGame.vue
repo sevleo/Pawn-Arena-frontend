@@ -3,7 +3,7 @@
 import { ref, onMounted, onUnmounted } from 'vue'
 import { connectToServer } from '@/ws/webSocket'
 import { gameState, updateGameState } from '@/services/gameState'
-import { GAME_SPEED_RATE } from '@/config/gameConstants'
+import { GAME_SPEED_RATE, CANVAS_HEIGHT, CANVAS_WIDTH } from '@/config/gameConstants'
 import { initializeCanvas, renderWorld } from '@/services/canvasManager'
 
 function startGameLoop() {
@@ -89,9 +89,9 @@ onUnmounted(() => {
   <div class="main">
     <div style="padding: 15px">
       <canvas
-        height="800"
+        :height="CANVAS_HEIGHT"
+        :width="CANVAS_WIDTH"
         ref="player1Canvas"
-        width="800"
         style="border: 0.5px solid grey"
       ></canvas>
       <div ref="player1Status" style="font-family: courier">Waiting for connection…</div>
