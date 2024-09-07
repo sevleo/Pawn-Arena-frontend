@@ -8,7 +8,7 @@ function processServerMessages() {
   while (messages.length > 0) {
     const message = getMessage()
     if (message) {
-      console.log(message)
+      // console.log(message)
       // console.log(gameState.gameBullets)
       // console.log(gameState.clientBullets)
       for (const ent of message.data.entities) {

@@ -81,11 +81,16 @@ onUnmounted(() => {
   window.removeEventListener('keyup', keyHandler)
   clearInterval(gameState.update_interval)
 })
+
+function requestToEnterGame() {
+  gameState.socket.send(JSON.stringify({ type: 'enter_game_request', data: {} }))
+}
 </script>
 
 <template>
   <div class="main">
     <div style="padding: 15px">
+      <button @click="requestToEnterGame">Join Game</button>
       <canvas
         :height="CANVAS_HEIGHT"
         :width="CANVAS_WIDTH"
