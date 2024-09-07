@@ -87,8 +87,6 @@ export function renderWorld() {
       bullet.clientCalculatedPosition !== null &&
       gameState.entity_id !== bullet.entity_id
     ) {
-      // console.log(bullet.clientCalculatedPosition)
-      // console.log(bullet.clientDirection)
       const color = 'yellow'
       const radius = 1.5
 

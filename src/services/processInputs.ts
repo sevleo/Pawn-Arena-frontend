@@ -28,9 +28,6 @@ function processInputs() {
     bullet_sequence_number: gameState.bullet_sequence_number
   }
 
-  // console.log(input.bullet_sequence_number)
-  // console.log(gameState.bullet_sequence_number)
-
   if (
     !input.active_keys.right &&
     !input.active_keys.left &&
@@ -47,15 +44,9 @@ function processInputs() {
   input.input_sequence_number = gameState.input_sequence_number++
   gameState.socket.send(JSON.stringify({ type: 'input', data: input }))
 
-  // gameState.bullet_sequence_number++
-
   // Do client-side prediction.
   if (gameState.entity_id !== null) {
     gameState.entities.get(gameState.entity_id)?.applyInput(input)
-    // gameState.entities[gameState.entity_id]?.applyInput(input)
-    // gameState.entities[gameState.entity_id]?.updateFaceDirection(
-    //   gameState.mouseMoved ? gameState.mousePosition : null
-    // )
   }
 
   // Save this input for later reconciliation.
