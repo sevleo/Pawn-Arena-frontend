@@ -16,7 +16,7 @@ class Entity {
   } | null
   speed: number
   position_buffer: []
-  entity_id: any
+  clientId: any
   faceDirection: {
     x: number
     y: number
@@ -79,7 +79,7 @@ class Entity {
           const bullet_sequence_number = gameState.bullet_sequence_number
           const bullet = new Bullet(
             null,
-            this.entity_id,
+            this.clientId,
             this.position,
             this.faceDirection,
             null,
@@ -108,17 +108,13 @@ class Entity {
     gameState.previousFaceDirection.y = gameState.faceDirection.y
 
     // Direction from current object coordinates to target coordinates
-    const clientEntity = gameState.entities.get(gameState.entity_id)
+    const clientEntity = gameState.entities.get(gameState.clientId)
     if (clientEntity && clientEntity.position) {
       gameState.faceDirection.x = targetX - clientEntity.position.x
       gameState.faceDirection.y = targetY - clientEntity.position.y
 
       clientEntity.faceDirection = gameState.faceDirection
     }
-    // gameState.faceDirection.x = targetX - gameState.entities[gameState.entity_id].position.x
-    // gameState.faceDirection.y = targetY - gameState.entities[gameState.entity_id].position.y
-
-    // gameState.entities[gameState.entity_id].faceDirection = gameState.faceDirection
   }
 }
 

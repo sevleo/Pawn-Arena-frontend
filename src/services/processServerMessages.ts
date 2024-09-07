@@ -8,20 +8,17 @@ function processServerMessages() {
   while (messages.length > 0) {
     const message = getMessage()
     if (message) {
-      // console.log(message)
+      console.log(message)
       // console.log(gameState.gameBullets)
       // console.log(gameState.clientBullets)
       for (const ent of message.data.entities) {
-        // if (!gameState.entities[ent.entity_id]) {
-        if (!gameState.entities.has(ent.entity_id)) {
+        if (!gameState.entities.has(ent.clientId)) {
           const entity = new Entity()
-          entity.entity_id = ent.entity_id
-          gameState.entities.set(ent.entity_id, entity)
-          // gameState.entities[ent.entity_id] = entity
+          entity.clientId = ent.clientId
+          gameState.entities.set(ent.clientId, entity)
         }
-        // const entity = gameState.entities[ent.entity_id]
-        const entity = gameState.entities.get(ent.entity_id)
-        if (ent.entity_id == gameState.entity_id) {
+        const entity = gameState.entities.get(ent.clientId)
+        if (ent.clientId == gameState.clientId) {
           // Received the authoritative position of this client's entity.
           entity.position = { x: ent.position.x, y: ent.position.y }
 
@@ -43,7 +40,7 @@ function processServerMessages() {
       }
 
       for (const bull of message.data.bullets) {
-        if (bull.entity_id === gameState.entity_id) {
+        if (bull.clientId === gameState.clientId) {
           const bullet = gameState.clientBullets.get('client-' + bull.bullet_sequence_number)
           if (bullet) {
             if (bullet.bullet_sequence_number !== null && bullet.bullet_id === null) {
@@ -63,12 +60,11 @@ function processServerMessages() {
         if (gameState.gameBullets.has(bull.bullet_id)) {
           continue
         } else {
-          // const entity = gameState.entities[bull.entity_id]
-          const entity = gameState.entities.get(bull.entity_id)
+          const entity = gameState.entities.get(bull.clientId)
 
           const bullet = new Bullet(
             bull.bullet_id,
-            bull.entity_id,
+            bull.clientId,
             bull.serverPosition,
             bull.direction,
             entity?.position,

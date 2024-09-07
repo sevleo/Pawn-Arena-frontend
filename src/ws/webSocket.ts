@@ -3,7 +3,7 @@ import handleServerMessage from './serverMessage'
 export function connectToServer() {
   const socket = new WebSocket(`${import.meta.env.VITE_BACKEND_URL}`)
 
-  // Listen for the server to send the entity_id
+  // Listen for the server to send the clientId
   socket.onmessage = (event: any) => {
     handleServerMessage(event)
   }

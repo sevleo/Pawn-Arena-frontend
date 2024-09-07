@@ -18,7 +18,7 @@ export function renderWorld() {
   gameState.entities.forEach((entity: any) => {
     // console.log(gameState.entities)
     if (entity && entity.position !== null) {
-      const color = gameState.entity_id === entity.entity_id ? 'green' : 'red'
+      const color = gameState.clientId === entity.clientId ? 'green' : 'red'
       const radius = 10
 
       // Draw entity
@@ -35,7 +35,7 @@ export function renderWorld() {
       let weaponPosition
       const lineLength = 30
 
-      if (gameState.entity_id === entity.entity_id) {
+      if (gameState.clientId === entity.clientId) {
         entity.updateFaceDirection(gameState.mouseMoved ? gameState.mousePosition : null)
         weaponPosition = getWeaponPosition(
           entity.position,
@@ -85,7 +85,7 @@ export function renderWorld() {
     if (
       bullet &&
       bullet.clientCalculatedPosition !== null &&
-      gameState.entity_id !== bullet.entity_id
+      gameState.clientId !== bullet.clientId
     ) {
       const color = 'yellow'
       const radius = 1.5

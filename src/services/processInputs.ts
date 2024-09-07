@@ -45,8 +45,8 @@ function processInputs() {
   gameState.socket.send(JSON.stringify({ type: 'input', data: input }))
 
   // Do client-side prediction.
-  if (gameState.entity_id !== null) {
-    gameState.entities.get(gameState.entity_id)?.applyInput(input)
+  if (gameState.clientId !== null) {
+    gameState.entities.get(gameState.clientId)?.applyInput(input)
   }
 
   // Save this input for later reconciliation.

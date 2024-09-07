@@ -6,7 +6,7 @@ export default function handleServerMessage(event: any) {
 
   switch (message.type) {
     case 'connection':
-      assignEntityId(message.entity_id)
+      assignClientId(message.clientId)
       break
 
     case 'world_state':
@@ -14,18 +14,18 @@ export default function handleServerMessage(event: any) {
       break
 
     case 'disconnect':
-      removePlayerEntity(message.entity_id)
+      removePlayerEntity(message.clientId)
       break
   }
 }
 
-function assignEntityId(id: string) {
-  gameState.entity_id = id
-  console.log(`Assigned entity_id: ${gameState.entity_id}`)
+function assignClientId(id: string) {
+  gameState.clientId = id
+  console.log(`Assigned clientId: ${gameState.clientId}`)
 }
 
-function removePlayerEntity(entity_id: any) {
-  gameState.entities.delete(entity_id)
+function removePlayerEntity(clientId: any) {
+  gameState.entities.delete(clientId)
 }
 
 function saveServerMessage(msg: any) {

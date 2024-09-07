@@ -16,7 +16,7 @@ const gameState = {
   key_down: false as boolean,
   key_space: false as boolean,
   last_ts: null as any,
-  entity_id: null as any,
+  clientId: null as any,
   input_sequence_number: 0 as number,
   pending_inputs: new Map<number, Input>(),
   status: { textContent: null as any } as any,
@@ -36,8 +36,7 @@ function updateGameState() {
   // Listen to the server.
   serverMessages.processServerMessages()
 
-  // console.log(entity_id)
-  if (gameState.entity_id == null) return // Not connected yet
+  if (gameState.clientId == null) return // Not connected yet
 
   processInputs()
   interpolate()
@@ -58,14 +57,9 @@ function interpolate() {
   //   const entity = gameState.entities[i]
   gameState.entities.forEach((entity: any) => {
     // No point in interpolating this client's entity.
-    if (entity.entity_id == gameState.entity_id) {
+    if (entity.clientId == gameState.clientId) {
       return
     }
-
-    // No point in interpolating this client's entity.
-    // if (entity.entity_id == gameState.entity_id) {
-    //   continue
-    // }
 
     // Find the two authoritative positions surrounding the rendering timestamp.
     const buffer = entity.position_buffer

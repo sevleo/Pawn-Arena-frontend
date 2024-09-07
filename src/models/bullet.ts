@@ -3,7 +3,7 @@ import { gameState } from '@/services/gameState'
 
 class Bullet {
   bullet_id: number | null
-  entity_id: number
+  clientId: number
   position: {
     x: number
     y: number
@@ -34,7 +34,7 @@ class Bullet {
 
   constructor(
     bullet_id: number | null,
-    entity_id: number,
+    clientId: number,
     position: { x: number; y: number },
     direction: { x: number; y: number },
     initialPosition: { x: number; y: number } | null,
@@ -43,7 +43,7 @@ class Bullet {
     bullet_sequence_number: number | null
   ) {
     this.bullet_id = bullet_id !== null ? bullet_id : null
-    this.entity_id = entity_id
+    this.clientId = clientId
     this.position = {
       x: position.x,
       y: position.y
@@ -69,8 +69,7 @@ class Bullet {
   }
 
   updateClientPosition() {
-    // const entity = gameState.entities[this.entity_id]
-    const entity = gameState.entities.get(this.entity_id)
+    const entity = gameState.entities.get(this.clientId)
     if (entity) {
       if (this.clientCalculatedPosition === null && entity.position !== null) {
         // Set the initial position of the bullet to match the entity's position on the screen
