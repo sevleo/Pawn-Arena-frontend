@@ -86,9 +86,23 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
+  // console.log('ss')
   window.removeEventListener('keydown', keyHandler)
   window.removeEventListener('keyup', keyHandler)
   clearInterval(gameState.update_interval)
+  hasClientId.value = false
+  isInGame.value = false
+  playerHealth.value = null
+  gameState.entities.clear()
+
+  // If the socket connection exists, send a disconnect message and disconnect
+  if (gameState.socket) {
+    // Optional: Notify the server about disconnection
+    // gameState.socket.send(
+    //   JSON.stringify({ type: 'disconnect', data: { clientId: gameState.clientId } })
+    // )
+    gameState.socket.close()
+  }
 })
 
 function requestToEnterGame() {
