@@ -16,14 +16,8 @@ export function renderWorld() {
 
   // for (const entity of gameState.entities) {
   gameState.entities.forEach((entity: any) => {
-    // console.log(gameState.entities)
     if (entity && entity.position !== null) {
-      // console.log(gameState.entityId)
-      // console.log(entity.entityId)
-      // console.log(entity)
-      // console.log(gameState.entities)
       if (gameState.entityId !== null && gameState.clientId === entity.clientId) {
-        // console.log(entity)
         const color = 'green'
         const radius = 10
         // Draw client entity

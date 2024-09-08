@@ -6,7 +6,9 @@ import { gameState, updateGameState } from '@/services/gameState'
 import { GAME_SPEED_RATE, CANVAS_HEIGHT, CANVAS_WIDTH } from '@/config/gameConstants'
 import { initializeCanvas, renderWorld } from '@/services/canvasManager'
 
+const hasClientId = ref(false)
 const isInGame = ref(false)
+const playerHealth = ref(null)
 
 function startGameLoop() {
   // Clear the previous interval if any
@@ -15,7 +17,7 @@ function startGameLoop() {
 
   // Use setInterval for input processing and other non-visual updates
   gameState.update_interval = setInterval(() => {
-    updateGameState(isInGame)
+    updateGameState(isInGame, playerHealth)
   }, GAME_SPEED_RATE)
 
   // Start the rendering loop with requestAnimationFrame
@@ -71,7 +73,7 @@ const player1Status = ref<HTMLElement | null>(null)
 onMounted(() => {
   gameState.canvas = player1Canvas.value
   gameState.status = player1Status.value
-  gameState.socket = connectToServer(isInGame)
+  gameState.socket = connectToServer(isInGame, hasClientId)
   startGameLoop()
 
   window.addEventListener('keydown', (e) => keyHandler(e))
@@ -97,13 +99,17 @@ function requestToEnterGame() {
   <div class="main">
     <div style="padding: 15px">
       <button
-        :style="{ opacity: isInGame ? '0' : '1', pointerEvents: isInGame ? 'none' : 'auto' }"
+        :style="{
+          opacity: isInGame || !hasClientId ? '0' : '1',
+          pointerEvents: isInGame || !hasClientId ? 'none' : 'auto'
+        }"
         @click="requestToEnterGame"
         tabindex="-1"
         :class="'bg-green-500'"
       >
         Spawn
       </button>
+      <p :style="{ opacity: isInGame ? '1' : '0' }">Health: {{ playerHealth }}</p>
       <canvas
         :height="CANVAS_HEIGHT"
         :width="CANVAS_WIDTH"

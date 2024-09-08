@@ -2,12 +2,17 @@ import { gameState } from '@/services/gameState'
 import serverMessages from '@/services/processServerMessages'
 import { type Ref } from 'vue'
 
-export default function handleServerMessage(event: any, isInGame: Ref<boolean>) {
+export default function handleServerMessage(
+  event: any,
+  isInGame: Ref<boolean>,
+  hasClientId: Ref<boolean>
+) {
   const message = JSON.parse(event.data)
 
   switch (message.type) {
     case 'connection':
       assignClientId(message.clientId)
+      hasClientId.value = true
       break
 
     case 'newEntityId':
@@ -29,6 +34,7 @@ export default function handleServerMessage(event: any, isInGame: Ref<boolean>) 
 
     case 'disconnect':
       removePlayerEntity(message.clientId)
+      // hasClientId.value = false
       break
   }
 }

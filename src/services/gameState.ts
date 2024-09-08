@@ -31,13 +31,14 @@ const gameState = {
   mouseMoved: false as boolean,
   faceDirection: { x: 0 as number, y: 0 as number },
   previousFaceDirection: { x: 0 as number, y: 0 as number },
-  bullet_sequence_number: 0 as number
+  bullet_sequence_number: 0 as number,
+  health: null as any
 }
 
 // Update Client state.
-function updateGameState(isInGame: Ref<boolean>) {
+function updateGameState(isInGame: Ref<boolean>, playerHealth: Ref<number | null>) {
   // Listen to the server.
-  serverMessages.processServerMessages()
+  serverMessages.processServerMessages(playerHealth)
 
   if (gameState.clientId == null) return // Not connected yet
 
@@ -58,8 +59,6 @@ function interpolate() {
   const now = Date.now()
   const render_timestamp = now - INTERPOLATION_OFFSET
 
-  // for (const i in gameState.entities) {
-  //   const entity = gameState.entities[i]
   gameState.entities.forEach((entity: any) => {
     // No point in interpolating this client's entity.
     if (entity.clientId == gameState.clientId) {
@@ -68,7 +67,6 @@ function interpolate() {
 
     // Find the two authoritative positions surrounding the rendering timestamp.
     const buffer = entity.position_buffer
-    // console.log(buffer)
 
     // Drop older positions.
     while (buffer.length >= 2 && buffer[1][0] <= render_timestamp) {

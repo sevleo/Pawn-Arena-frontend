@@ -1,13 +1,15 @@
 import Entity from '@/models/entity'
 import { gameState, reconcile } from '@/services/gameState'
 import Bullet from '@/models/bullet'
+import { type Ref } from 'vue'
 
 const messages: any = []
 
-function processServerMessages() {
+function processServerMessages(playerHealth: Ref<number | null>) {
   while (messages.length > 0) {
     const message = getMessage()
     if (message) {
+      console.log(message)
       for (const ent of message.data.entities) {
         if (!gameState.entities.has(ent.clientId)) {
           const entity = new Entity()
@@ -16,13 +18,17 @@ function processServerMessages() {
           gameState.entities.set(ent.clientId, entity)
         }
         const entity = gameState.entities.get(ent.clientId)
+
+        // This client's entity
         if (ent.clientId == gameState.clientId) {
           // Received the authoritative position of this client's entity.
           entity.position = { x: ent.position.x, y: ent.position.y }
+          playerHealth.value = ent.health
 
           // Server Reconciliation. Re-apply all the inputs not yet processed by the server.
           reconcile(entity, ent)
         } else {
+          // Other entities
           // Received the position of an entity other than this client's.
           // Add it to the position buffer for interpolation.
           const timestamp = Date.now()
