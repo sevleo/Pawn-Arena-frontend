@@ -3,6 +3,7 @@ import { processInputs } from './processInputs'
 import serverMessages from './processServerMessages'
 import { INTERPOLATION_OFFSET } from '@/config/gameConstants'
 import type { Input } from '@/types/Input'
+import { type Ref } from 'vue'
 
 // Unique ID of our entity. Assigned by Server on connection.
 const gameState = {
@@ -17,6 +18,7 @@ const gameState = {
   key_space: false as boolean,
   last_ts: null as any,
   clientId: null as any,
+  entityId: null as any,
   input_sequence_number: 0 as number,
   pending_inputs: new Map<number, Input>(),
   status: { textContent: null as any } as any,
@@ -32,13 +34,15 @@ const gameState = {
 }
 
 // Update Client state.
-function updateGameState() {
+function updateGameState(isInGame: Ref<boolean>) {
   // Listen to the server.
   serverMessages.processServerMessages()
 
   if (gameState.clientId == null) return // Not connected yet
 
-  processInputs()
+  if (isInGame.value) {
+    processInputs()
+  }
   interpolate()
 
   updateBullets()

@@ -6,6 +6,8 @@ import { gameState, updateGameState } from '@/services/gameState'
 import { GAME_SPEED_RATE, CANVAS_HEIGHT, CANVAS_WIDTH } from '@/config/gameConstants'
 import { initializeCanvas, renderWorld } from '@/services/canvasManager'
 
+const isInGame = ref(false)
+
 function startGameLoop() {
   // Clear the previous interval if any
   clearInterval(gameState.update_interval)
@@ -14,7 +16,7 @@ function startGameLoop() {
 
   // Use setInterval for input processing and other non-visual updates
   gameState.update_interval = setInterval(() => {
-    updateGameState()
+    updateGameState(isInGame)
   }, GAME_SPEED_RATE)
 
   // Start the rendering loop with requestAnimationFrame
@@ -65,7 +67,7 @@ const player1Status = ref<HTMLElement | null>(null)
 onMounted(() => {
   gameState.canvas = player1Canvas.value
   gameState.status = player1Status.value
-  gameState.socket = connectToServer()
+  gameState.socket = connectToServer(isInGame)
   startGameLoop()
 
   window.addEventListener('keydown', (e) => keyHandler(e))
