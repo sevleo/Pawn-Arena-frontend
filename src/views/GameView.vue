@@ -1,11 +1,14 @@
 <script setup lang="ts">
 import { RouterLink } from 'vue-router'
+
+import BlockGame from '@/components/BlockGame.vue'
 </script>
 
 <template>
   <div class="about flex flex-col">
     <RouterLink to="/">Home</RouterLink>
-    <canvas></canvas>
+    <RouterLink to="/about">About</RouterLink>
+    <BlockGame />
   </div>
 </template>
 
