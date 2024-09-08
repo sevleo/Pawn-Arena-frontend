@@ -21,7 +21,6 @@ export default function handleServerMessage(event: any, isInGame: Ref<boolean>) 
         isInGame.value = false
         gameState.entityId = null
       }
-      console.log(gameState.entities)
       break
 
     case 'world_state':
@@ -37,7 +36,6 @@ export default function handleServerMessage(event: any, isInGame: Ref<boolean>) 
 function assignClientId(id: string) {
   gameState.clientId = id
   console.log(`Assigned clientId: ${gameState.clientId}`)
-  // isInGame.value = true
 }
 
 function removePlayerEntity(clientId: any) {

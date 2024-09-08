@@ -104,7 +104,7 @@ function processServerMessages() {
           gameState.clientBullets.delete(bull.bullet_id)
         }
         if (gameState.clientBullets.has('client-' + (bull.bullet_sequence_number - 1))) {
-          console.log('Removing bullet with bullet_sequence_number minus one')
+          // console.log('Removing bullet with bullet_sequence_number minus one')
           gameState.clientBullets.delete('client-' + (bull.bullet_sequence_number - 1))
         }
       }

@@ -9,9 +9,9 @@ export function initializeCanvas() {
 
 export function renderWorld() {
   if (gameState.context) {
-    gameState.context.clearRect(0, 0, gameState.canvas.width, gameState.canvas.height)
+    gameState.context.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT)
     gameState.context.fillStyle = '#333300' // Set your desired background color here
-    gameState.context.fillRect(0, 0, gameState.canvas.width, gameState.canvas.height)
+    gameState.context.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT)
   }
 
   // for (const entity of gameState.entities) {
@@ -232,8 +232,8 @@ function drawGrid() {
     gameState.context.lineWidth = 0.2
 
     // Determine where to start drawing grid lines based on the canvas size
-    const startX = Math.floor(-gameState.canvas.width / 2 / GRID_SIZE) * GRID_SIZE
-    const startY = Math.floor(-gameState.canvas.height / 2 / GRID_SIZE) * GRID_SIZE
+    const startX = Math.floor(-CANVAS_WIDTH / 2 / GRID_SIZE) * GRID_SIZE
+    const startY = Math.floor(-CANVAS_HEIGHT / 2 / GRID_SIZE) * GRID_SIZE
 
     // Draw vertical lines
     for (let x = startX; x <= CANVAS_WIDTH; x += GRID_SIZE) {

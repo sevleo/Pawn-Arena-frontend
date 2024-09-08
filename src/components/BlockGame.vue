@@ -11,7 +11,6 @@ const isInGame = ref(false)
 function startGameLoop() {
   // Clear the previous interval if any
   clearInterval(gameState.update_interval)
-
   initializeCanvas()
 
   // Use setInterval for input processing and other non-visual updates
@@ -44,7 +43,12 @@ function keyHandler(e: any) {
       gameState.key_down = input
       break
     case ' ':
-      gameState.key_space = input
+      if (e.target.tagName !== 'BUTTON') {
+        // Prevent space from interacting with buttons
+        gameState.key_space = input
+      } else {
+        e.preventDefault() // Prevent space bar from triggering button clicks
+      }
       break
   }
 }
@@ -92,7 +96,14 @@ function requestToEnterGame() {
 <template>
   <div class="main">
     <div style="padding: 15px">
-      <button @click="requestToEnterGame">Join Game</button>
+      <button
+        :style="{ opacity: isInGame ? '0' : '1', pointerEvents: isInGame ? 'none' : 'auto' }"
+        @click="requestToEnterGame"
+        tabindex="-1"
+        :class="'bg-green-500'"
+      >
+        Spawn
+      </button>
       <canvas
         :height="CANVAS_HEIGHT"
         :width="CANVAS_WIDTH"
