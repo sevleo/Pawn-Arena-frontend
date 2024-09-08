@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import BlockGame from './components/BlockGame.vue'
+import HomeView from './views/HomeView.vue'
 </script>
 
 <template>
   <div className="">
+    <!-- <HomeView /> -->
     <BlockGame />
   </div>
 </template>

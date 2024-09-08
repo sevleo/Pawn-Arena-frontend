@@ -558,8 +558,16 @@ video {
   visibility: visible;
 }
 
+.flex {
+  display: flex;
+}
+
 .grid {
   display: grid;
+}
+
+.flex-col {
+  flex-direction: column;
 }
 
 .border {

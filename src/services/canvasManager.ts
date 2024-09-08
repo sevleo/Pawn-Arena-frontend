@@ -10,7 +10,7 @@ export function initializeCanvas() {
 export function renderWorld() {
   if (gameState.context) {
     gameState.context.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT)
-    gameState.context.fillStyle = '#333300' // Set your desired background color here
+    gameState.context.fillStyle = '#191919' // Set your desired background color here
     gameState.context.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT)
   }
 
@@ -18,17 +18,16 @@ export function renderWorld() {
   gameState.entities.forEach((entity: any) => {
     if (entity && entity.position !== null) {
       if (gameState.entityId !== null && gameState.clientId === entity.clientId) {
-        const color = 'green'
         const radius = 10
         // Draw client entity
         if (gameState.context) {
           gameState.context.beginPath()
           gameState.context.arc(entity.position.x, entity.position.y, radius, 0, 2 * Math.PI)
-          gameState.context.fillStyle = color
+          gameState.context.fillStyle = '#076ba3'
           gameState.context.fill()
-          gameState.context.lineWidth = 1
-          gameState.context.strokeStyle = 'black'
-          gameState.context.stroke()
+          // gameState.context.lineWidth = 0.5
+          // gameState.context.strokeStyle = 'white'
+          // gameState.context.stroke()
         }
 
         entity.updateFaceDirection(gameState.mouseMoved ? gameState.mousePosition : null)
@@ -41,7 +40,7 @@ export function renderWorld() {
 
         // Draw weapon
         if (gameState.context) {
-          gameState.context.strokeStyle = 'black'
+          gameState.context.strokeStyle = 'white'
           gameState.context.lineWidth = 1 // Set specific line width for weapon line
           gameState.context.beginPath()
           gameState.context.moveTo(entity.position.x, entity.position.y)
@@ -52,7 +51,7 @@ export function renderWorld() {
       }
 
       if (gameState.clientId !== entity.clientId) {
-        const color = 'red'
+        const color = '#980002'
         const radius = 10
 
         // Draw other players entities
@@ -61,9 +60,6 @@ export function renderWorld() {
           gameState.context.arc(entity.position.x, entity.position.y, radius, 0, 2 * Math.PI)
           gameState.context.fillStyle = color
           gameState.context.fill()
-          gameState.context.lineWidth = 1
-          gameState.context.strokeStyle = 'black'
-          gameState.context.stroke()
         }
 
         const weaponPosition = getWeaponPosition(
@@ -75,7 +71,7 @@ export function renderWorld() {
 
         // Draw weapon
         if (gameState.context) {
-          gameState.context.strokeStyle = 'black'
+          gameState.context.strokeStyle = 'white'
           gameState.context.lineWidth = 1 // Set specific line width for weapon line
           gameState.context.beginPath()
           gameState.context.moveTo(entity.position.x, entity.position.y)
@@ -90,7 +86,7 @@ export function renderWorld() {
   // Draw dead entities
   gameState.deadEntities.forEach((entity: any) => {
     if (entity && entity.position !== null) {
-      const color = 'grey'
+      const color = '#373737'
       const radius = 10
       // Draw client entity
       if (gameState.context) {
@@ -98,9 +94,6 @@ export function renderWorld() {
         gameState.context.arc(entity.position.x, entity.position.y, radius, 0, 2 * Math.PI)
         gameState.context.fillStyle = color
         gameState.context.fill()
-        gameState.context.lineWidth = 1
-        gameState.context.strokeStyle = 'black'
-        gameState.context.stroke()
       }
 
       const weaponPosition = getWeaponPosition(
