@@ -9,7 +9,7 @@ function processServerMessages(playerHealth: Ref<number | null>, countEntities: 
   while (messages.length > 0) {
     const message = getMessage()
     if (message) {
-      console.log(message)
+      // console.log(message)
       countEntities.value = message.data.entities.length
       for (const ent of message.data.entities) {
         if (!gameState.entities.has(ent.clientId)) {

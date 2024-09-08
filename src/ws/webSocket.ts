@@ -15,10 +15,10 @@ export function connectToServer(
   }
 
   socket.onopen = () => {
-    console.log('Connected to the server')
+    // console.log('Connected to the server')
   }
   socket.onclose = () => {
-    console.log('Disconnected from the server')
+    // console.log('Disconnected from the server')
   }
 
   return socket

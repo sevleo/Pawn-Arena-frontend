@@ -43,7 +43,7 @@ export default function handleServerMessage(
 
 function assignClientId(id: string) {
   gameState.clientId = id
-  console.log(`Assigned clientId: ${gameState.clientId}`)
+  // console.log(`Assigned clientId: ${gameState.clientId}`)
 }
 
 function removePlayerEntity(clientId: any) {

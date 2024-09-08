@@ -80,7 +80,6 @@ onMounted(() => {
   window.addEventListener('keydown', (e) => keyHandler(e))
   window.addEventListener('keyup', (e) => keyHandler(e))
   gameState.canvas.addEventListener('mousemove', (e: MouseEvent) => {
-    //   console.log(e)
     updateMousePosition(e)
   })
 })
