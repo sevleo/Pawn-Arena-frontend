@@ -4,7 +4,7 @@ import GameView from '@/views/GameView.vue'
 
 // console.log(import.meta.env.VITE_BACKEND_URL)
 const router = createRouter({
-  history: createWebHistory(import.meta.env.VITE_BACKEND_URL),
+  history: createWebHistory(),
   routes: [
     {
       name: 'home',
