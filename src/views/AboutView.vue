@@ -36,7 +36,25 @@ import { RouterLink } from 'vue-router'
           Finally, happy and enthusiastic I'm going ahead with publishing it on Adaptable & Netlify.
           Whoops....
         </li>
-        <li>Glitching, wobbling, and jittering.</li>
+        <li>
+          Glitching, wobbling, and jittering everywhere. Unplayable. After quick googling, decided
+          to switch from Adaptable.io to Fly.io. Still completely unplayable, although at least a
+          slightly better.
+        </li>
+        <li>
+          Next, deciding that Redis will be my panacea. Long story short – it is not. Althought it
+          was nice to learn a little about it, I was lucky to quickly realize that I'm digging into
+          a completely wrong direction here, so I did not spend too much time there.
+        </li>
+        <li>
+          Finally, I'm beginning to learn the terms that later I'll have to spend a lot, a lot, a
+          lot of time trying to figure out.
+        </li>
+        <li>These terms include: client prediction, reconciliation, and interpolation.</li>
+        <li>
+          These are the techniques used to fight the wobbling and jittering caused by unstable ping
+          and latency in the settings of an online game development.
+        </li>
       </ul>
     </div>
   </div>
