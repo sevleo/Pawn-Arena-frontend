@@ -16,7 +16,7 @@ export default function handleServerMessage(event: any, isInGame: Ref<boolean>) 
       break
 
     case 'entityDestroyed':
-      console.log(message)
+      // console.log(message)
       if (message.entityId === gameState.entityId) {
         isInGame.value = false
         gameState.entityId = null

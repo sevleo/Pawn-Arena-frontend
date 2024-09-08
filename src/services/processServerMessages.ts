@@ -8,13 +8,11 @@ function processServerMessages() {
   while (messages.length > 0) {
     const message = getMessage()
     if (message) {
-      // console.log(message)
-      // console.log(gameState.gameBullets)
-      // console.log(gameState.clientBullets)
       for (const ent of message.data.entities) {
         if (!gameState.entities.has(ent.clientId)) {
           const entity = new Entity()
           entity.clientId = ent.clientId
+          entity.entityId = ent.entityId
           gameState.entities.set(ent.clientId, entity)
         }
         const entity = gameState.entities.get(ent.clientId)
@@ -36,6 +34,26 @@ function processServerMessages() {
             ent.faceDirection
           ])
           entity.mousePosition = ent.mousePosition
+        }
+      }
+
+      for (const deadEnt of message.data.deadEntities) {
+        if (!gameState.deadEntities.has(deadEnt.entityId)) {
+          const deadEntity = {
+            clientId: deadEnt.clientId,
+            entityId: deadEnt.entityId,
+            position: deadEnt.position,
+            faceDirection: deadEnt.faceDirection
+          }
+          gameState.deadEntities.set(deadEntity.entityId, deadEntity)
+          // Check if the map size exceeds 15
+          if (gameState.deadEntities.size > 15) {
+            const oldestKey = gameState.deadEntities.keys().next().value // Get the first (oldest) key
+            gameState.deadEntities.delete(oldestKey) // Remove the oldest entry
+          }
+        }
+        if (gameState.entities.has(deadEnt.clientId)) {
+          // gameState.entities.delete(deadEnt.clientId)
         }
       }
 

@@ -18,7 +18,12 @@ export function renderWorld() {
   gameState.entities.forEach((entity: any) => {
     // console.log(gameState.entities)
     if (entity && entity.position !== null) {
+      // console.log(gameState.entityId)
+      // console.log(entity.entityId)
+      // console.log(entity)
+      // console.log(gameState.entities)
       if (gameState.entityId !== null && gameState.clientId === entity.clientId) {
+        // console.log(entity)
         const color = 'green'
         const radius = 10
         // Draw client entity
@@ -84,6 +89,42 @@ export function renderWorld() {
           gameState.context.stroke()
           gameState.context.restore() // Restore the previous state
         }
+      }
+    }
+  })
+
+  // Draw dead entities
+  gameState.deadEntities.forEach((entity: any) => {
+    if (entity && entity.position !== null) {
+      const color = 'grey'
+      const radius = 10
+      // Draw client entity
+      if (gameState.context) {
+        gameState.context.beginPath()
+        gameState.context.arc(entity.position.x, entity.position.y, radius, 0, 2 * Math.PI)
+        gameState.context.fillStyle = color
+        gameState.context.fill()
+        gameState.context.lineWidth = 1
+        gameState.context.strokeStyle = 'black'
+        gameState.context.stroke()
+      }
+
+      const weaponPosition = getWeaponPosition(
+        entity.position,
+        entity.faceDirection,
+        getMagnitude(entity.faceDirection.x, entity.faceDirection.y),
+        30
+      )
+
+      // Draw weapon
+      if (gameState.context) {
+        gameState.context.strokeStyle = 'black'
+        gameState.context.lineWidth = 1 // Set specific line width for weapon line
+        gameState.context.beginPath()
+        gameState.context.moveTo(entity.position.x, entity.position.y)
+        gameState.context.lineTo(weaponPosition.x, weaponPosition.y)
+        gameState.context.stroke()
+        gameState.context.restore() // Restore the previous state
       }
     }
   })

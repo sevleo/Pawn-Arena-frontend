@@ -9,6 +9,7 @@ import { type Ref } from 'vue'
 const gameState = {
   // entities: [] as any,
   entities: new Map<number, any>(),
+  deadEntities: new Map<number, any>(),
   clientBullets: new Map<string, Bullet>(),
   gameBullets: new Map<number, Bullet>(),
   key_left: false as boolean,

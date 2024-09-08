@@ -17,6 +17,7 @@ class Entity {
   speed: number
   position_buffer: []
   clientId: any
+  entityId: any
   faceDirection: {
     x: number
     y: number
@@ -24,6 +25,7 @@ class Entity {
   lastBulletTimestamp: number | null
 
   constructor() {
+    this.entityId = null
     this.position = null
     this.speed = MOVEMENT_SPEED
     this.position_buffer = []
