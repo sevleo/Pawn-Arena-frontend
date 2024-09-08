@@ -9,6 +9,7 @@ import { initializeCanvas, renderWorld } from '@/services/canvasManager'
 const hasClientId = ref(false)
 const isInGame = ref(false)
 const playerHealth = ref(null)
+const countEntities = ref(0)
 
 function startGameLoop() {
   // Clear the previous interval if any
@@ -17,7 +18,7 @@ function startGameLoop() {
 
   // Use setInterval for input processing and other non-visual updates
   gameState.update_interval = setInterval(() => {
-    updateGameState(isInGame, playerHealth)
+    updateGameState(isInGame, playerHealth, countEntities)
   }, GAME_SPEED_RATE)
 
   // Start the rendering loop with requestAnimationFrame
@@ -73,7 +74,7 @@ const player1Status = ref<HTMLElement | null>(null)
 onMounted(() => {
   gameState.canvas = player1Canvas.value
   gameState.status = player1Status.value
-  gameState.socket = connectToServer(isInGame, hasClientId)
+  gameState.socket = connectToServer(isInGame, hasClientId, playerHealth)
   startGameLoop()
 
   window.addEventListener('keydown', (e) => keyHandler(e))
@@ -98,6 +99,7 @@ function requestToEnterGame() {
 <template>
   <div class="main">
     <div style="padding: 15px">
+      <p>{{ countEntities }} {{ countEntities === 1 ? 'player' : 'players' }} in game</p>
       <button
         :style="{
           opacity: isInGame || !hasClientId ? '0' : '1',

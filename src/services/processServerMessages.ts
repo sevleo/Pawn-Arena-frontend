@@ -5,11 +5,12 @@ import { type Ref } from 'vue'
 
 const messages: any = []
 
-function processServerMessages(playerHealth: Ref<number | null>) {
+function processServerMessages(playerHealth: Ref<number | null>, countEntities: Ref<number>) {
   while (messages.length > 0) {
     const message = getMessage()
     if (message) {
-      console.log(message)
+      // console.log(message)
+      countEntities.value = message.data.entities.length
       for (const ent of message.data.entities) {
         if (!gameState.entities.has(ent.clientId)) {
           const entity = new Entity()

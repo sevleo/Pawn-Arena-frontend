@@ -36,9 +36,13 @@ const gameState = {
 }
 
 // Update Client state.
-function updateGameState(isInGame: Ref<boolean>, playerHealth: Ref<number | null>) {
+function updateGameState(
+  isInGame: Ref<boolean>,
+  playerHealth: Ref<number | null>,
+  countEntities: Ref<number>
+) {
   // Listen to the server.
-  serverMessages.processServerMessages(playerHealth)
+  serverMessages.processServerMessages(playerHealth, countEntities)
 
   if (gameState.clientId == null) return // Not connected yet
 

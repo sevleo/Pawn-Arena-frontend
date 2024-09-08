@@ -5,7 +5,8 @@ import { type Ref } from 'vue'
 export default function handleServerMessage(
   event: any,
   isInGame: Ref<boolean>,
-  hasClientId: Ref<boolean>
+  hasClientId: Ref<boolean>,
+  playerHealth: Ref<number | null>
 ) {
   const message = JSON.parse(event.data)
 
@@ -24,6 +25,7 @@ export default function handleServerMessage(
       // console.log(message)
       if (message.entityId === gameState.entityId) {
         isInGame.value = false
+        playerHealth.value = null
         gameState.entityId = null
       }
       break
