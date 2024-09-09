@@ -108,29 +108,55 @@ function requestToEnterGame() {
   <div class="main">
     <div v-if="hasClientId">
       <p>{{ countEntities }} {{ countEntities === 1 ? 'player' : 'players' }} in game</p>
+      <p :style="{ opacity: isInGame ? '0' : '1' }">Health: {{ playerHealth }}</p>
+    </div>
+    <div v-else>Waiting for connection</div>
+    <div class="canvas-container">
+      <canvas
+        :height="CANVAS_HEIGHT"
+        :width="CANVAS_WIDTH"
+        ref="player1Canvas"
+        style="border: 0.5px solid grey"
+        class="opacity-100"
+      ></canvas>
       <button
-        :style="{
-          opacity: isInGame || !hasClientId ? '0' : '1',
-          pointerEvents: isInGame || !hasClientId ? 'none' : 'auto'
-        }"
+        v-show="!isInGame && hasClientId"
+        class="spawn-button"
         @click="requestToEnterGame"
         tabindex="-1"
-        :class="'bg-transparent'"
-        class="text-[#00bd7e]"
       >
         Spawn
       </button>
-      <p :style="{ opacity: isInGame ? '0' : '1' }">Health: {{ playerHealth }}</p>
-
-      <!-- <div ref="player1Status" style="font-family: courier">Waiting for connection…</div> -->
     </div>
-    <div v-if="!hasClientId">Waiting for connection</div>
-    <canvas
-      :height="CANVAS_HEIGHT"
-      :width="CANVAS_WIDTH"
-      ref="player1Canvas"
-      style="border: 0.5px solid grey"
-    ></canvas>
+    <!-- <div ref="player1Status" style="font-family: courier">Waiting for connection…</div> -->
   </div>
 </template>
-<style scoped></style>
+<style scoped>
+.canvas-container {
+  position: relative;
+  display: inline-block; /* Adjust if needed */
+}
+
+.spawn-button {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 1;
+  pointer-events: auto;
+  background-color: transparent;
+  color: #00bd7e;
+  border: none;
+  cursor: pointer;
+  font-size: 30px;
+}
+
+.spawn-button:hover {
+  /* color:; */
+}
+
+.spawn-button:disabled {
+  opacity: 0;
+  pointer-events: none;
+}
+</style>

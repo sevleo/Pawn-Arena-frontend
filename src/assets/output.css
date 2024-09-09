@@ -686,6 +686,14 @@ video {
   color: rgb(0 189 126 / var(--tw-text-opacity));
 }
 
+.opacity-30 {
+  opacity: 0.3;
+}
+
+.opacity-100 {
+  opacity: 1;
+}
+
 /* color palette from <https://github.com/vuejs/theme> */
 
 :root {
