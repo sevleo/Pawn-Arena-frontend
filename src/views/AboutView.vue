@@ -4,8 +4,9 @@ import { RouterLink } from 'vue-router'
 
 <template>
   <div class="about flex flex-col">
-    <RouterLink to="/">Home</RouterLink>
-    <RouterLink to="/game">Play</RouterLink>
+    <RouterLink to="/" class="text-[20px] hover:bg-transparent hover:text-red-600 p-0">
+      Go to home
+    </RouterLink>
     <br />
     <div class="max-w-[400px]">
       <ul>

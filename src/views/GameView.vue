@@ -6,8 +6,10 @@ import BlockGame from '@/components/BlockGame.vue'
 
 <template>
   <div class="about flex flex-col">
-    <RouterLink to="/">Home</RouterLink>
-    <RouterLink to="/about">About</RouterLink>
+    <RouterLink to="/" class="text-[20px] hover:bg-transparent hover:text-red-600 p-0">
+      Go to home
+    </RouterLink>
+    <br />
     <BlockGame />
   </div>
 </template>

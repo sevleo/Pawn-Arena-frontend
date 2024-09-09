@@ -106,7 +106,7 @@ function requestToEnterGame() {
 
 <template>
   <div class="main">
-    <div style="padding: 15px">
+    <div v-if="hasClientId">
       <p>{{ countEntities }} {{ countEntities === 1 ? 'player' : 'players' }} in game</p>
       <button
         :style="{
@@ -115,19 +115,22 @@ function requestToEnterGame() {
         }"
         @click="requestToEnterGame"
         tabindex="-1"
-        :class="'bg-green-500'"
+        :class="'bg-transparent'"
+        class="text-[#00bd7e]"
       >
         Spawn
       </button>
-      <p :style="{ opacity: isInGame ? '1' : '0' }">Health: {{ playerHealth }}</p>
-      <canvas
-        :height="CANVAS_HEIGHT"
-        :width="CANVAS_WIDTH"
-        ref="player1Canvas"
-        style="border: 0.5px solid grey"
-      ></canvas>
-      <div ref="player1Status" style="font-family: courier">Waiting for connection…</div>
+      <p :style="{ opacity: isInGame ? '0' : '1' }">Health: {{ playerHealth }}</p>
+
+      <!-- <div ref="player1Status" style="font-family: courier">Waiting for connection…</div> -->
     </div>
+    <div v-if="!hasClientId">Waiting for connection</div>
+    <canvas
+      :height="CANVAS_HEIGHT"
+      :width="CANVAS_WIDTH"
+      ref="player1Canvas"
+      style="border: 0.5px solid grey"
+    ></canvas>
   </div>
 </template>
 <style scoped></style>

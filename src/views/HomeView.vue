@@ -18,10 +18,10 @@ import { RouterLink } from 'vue-router'
       </div>
     </div>
     <div class="mt-[10px] flex flex-col">
-      <RouterLink to="/game" class="text-[20px] hover:bg-transparent hover:text-red-600">
+      <RouterLink to="/game" class="text-[20px] hover:bg-transparent hover:text-red-600 p-0">
         Play the game
       </RouterLink>
-      <RouterLink to="/about" class="text-[20px] hover:bg-transparent hover:text-red-600"
+      <RouterLink to="/about" class="text-[20px] hover:bg-transparent hover:text-red-600 p-0"
         >Read about project</RouterLink
       >
     </div>
