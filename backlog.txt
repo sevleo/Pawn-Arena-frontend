@@ -1,0 +1,6 @@
+Potential changes:
+
+1. Interpolate buttons similar to entities using buffer
+2. Update design of the website
+3. Add Rooms
+4. Store Scores on the server, save them when server shuts down and load them when server opens up again.
