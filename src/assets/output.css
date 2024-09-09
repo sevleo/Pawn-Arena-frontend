@@ -602,6 +602,10 @@ video {
   display: grid;
 }
 
+.hidden {
+  display: none;
+}
+
 .h-\[60px\] {
   height: 60px;
 }
@@ -630,12 +634,25 @@ video {
   justify-content: center;
 }
 
+.justify-between {
+  justify-content: space-between;
+}
+
 .rounded-\[15px\] {
   border-radius: 15px;
 }
 
 .border {
   border-width: 1px;
+}
+
+.border-2 {
+  border-width: 2px;
+}
+
+.border-white {
+  --tw-border-opacity: 1;
+  border-color: rgb(255 255 255 / var(--tw-border-opacity));
 }
 
 .bg-green-500 {
@@ -692,6 +709,14 @@ video {
 
 .opacity-100 {
   opacity: 1;
+}
+
+.opacity-10 {
+  opacity: 0.1;
+}
+
+.opacity-0 {
+  opacity: 0;
 }
 
 /* color palette from <https://github.com/vuejs/theme> */

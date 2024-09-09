@@ -106,9 +106,9 @@ function requestToEnterGame() {
 
 <template>
   <div class="main">
-    <div v-if="hasClientId">
+    <div v-if="hasClientId" class="flex justify-between">
       <p>{{ countEntities }} {{ countEntities === 1 ? 'player' : 'players' }} in game</p>
-      <p :style="{ opacity: isInGame ? '0' : '1' }">Health: {{ playerHealth }}</p>
+      <p :style="{ opacity: isInGame ? '1' : '0' }">Health: {{ playerHealth }}</p>
     </div>
     <div v-else>Waiting for connection</div>
     <div class="canvas-container">
@@ -117,7 +117,7 @@ function requestToEnterGame() {
         :width="CANVAS_WIDTH"
         ref="player1Canvas"
         style="border: 0.5px solid grey"
-        class="opacity-100"
+        :class="isInGame ? 'opacity-100' : 'opacity-30'"
       ></canvas>
       <button
         v-show="!isInGame && hasClientId"
@@ -128,7 +128,9 @@ function requestToEnterGame() {
         Spawn
       </button>
     </div>
-    <!-- <div ref="player1Status" style="font-family: courier">Waiting for connection…</div> -->
+    <div class="opacity-0" ref="player1Status" style="font-family: courier">
+      Waiting for connection…
+    </div>
   </div>
 </template>
 <style scoped>
@@ -152,7 +154,7 @@ function requestToEnterGame() {
 }
 
 .spawn-button:hover {
-  /* color:; */
+  color: #dc2626;
 }
 
 .spawn-button:disabled {
