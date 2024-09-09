@@ -23,7 +23,7 @@ export function renderWorld() {
         if (gameState.context) {
           gameState.context.beginPath()
           gameState.context.arc(entity.position.x, entity.position.y, radius, 0, 2 * Math.PI)
-          gameState.context.fillStyle = '#076ba3'
+          gameState.context.fillStyle = '#0000fd'
           gameState.context.fill()
           // gameState.context.lineWidth = 0.5
           // gameState.context.strokeStyle = 'white'
