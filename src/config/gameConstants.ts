@@ -1,6 +1,6 @@
 // Canvas
-const CANVAS_WIDTH = 600
-const CANVAS_HEIGHT = 600
+const CANVAS_WIDTH = 500
+const CANVAS_HEIGHT = 500
 const GRID_SIZE = 50
 
 // Pawn
